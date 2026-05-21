@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: western-import-site
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npx prisma db seed
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: western-db
+          property: connectionString
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        sync: false
+      - key: NEXT_PUBLIC_SITE_NAME
+        value: Western Import
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+
+databases:
+  - name: western-db
+    plan: free
+    region: frankfurt
