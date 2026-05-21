@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -29,6 +30,7 @@ function bannerToSlide(banner: Banner): Slide {
 }
 
 export default function HeroSection() {
+  const router = useRouter();
   const { t } = useLanguage();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);

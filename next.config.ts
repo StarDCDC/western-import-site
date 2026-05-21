@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  turbopackRoot: __dirname,
+  turbopack: {
+    root: __dirname,
+  },
 
   allowedDevOrigins: ['172.25.17.179', 'localhost'],
   devIndicators: false,

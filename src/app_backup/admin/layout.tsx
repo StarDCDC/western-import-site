@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   const handleLogout = async () => {
-    await import('next-auth').then(({ signOut }) => signOut({ callbackUrl: '/admin/login' }));
+    await import('next-auth/react').then(({ signOut }) => signOut({ callbackUrl: '/admin/login' }));
   };
 
   // Meniul admin
