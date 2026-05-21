@@ -1,0 +1,45 @@
+
+> western-import-site@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.255.255.254:3000
+- Environments: .env
+✓ Ready in 244ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/dumitru/.openclaw/workspace/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/dumitru/.openclaw/workspace/western-import-site/package-lock.json
+
+
+⨯ ./western-import-site/src/app/ru/page.tsx:1:10
+You're importing a module that depends on `useEffect` into a React Server Component module. This API is only available in Client Components. To fix, mark the file (or its parent) with the `"use client"` directive.
+    Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { useEffect } [36mfrom[0m [32m'react'[0m;
+  [90m  |[0m          [31m[1m^^^^^^^^^[0m
+  [90m2 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m3 |[0m [36mimport[0m { useLanguage } [36mfrom[0m [32m'@/components/ui/LanguageProvider'[0m;
+  [90m4 |[0m [36mimport[0m [33mHeader[0m [36mfrom[0m [32m'@/components/layout/Header'[0m;
+
+Ecmascript file had an error
+
+
+
+./western-import-site/src/app/ru/page.tsx:2:10
+You're importing a module that depends on `useRouter` into a React Server Component module. This API is only available in Client Components. To fix, mark the file (or its parent) with the `"use client"` directive.
+    Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+  [90m1 |[0m [36mimport[0m { useEffect } [36mfrom[0m [32m'react'[0m;
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+  [90m  |[0m          [31m[1m^^^^^^^^^[0m
+  [90m3 |[0m [36mimport[0m { useLanguage } [36mfrom[0m [32m'@/components/ui/LanguageProvider'[0m;
+  [90m4 |[0m [36mimport[0m [33mHeader[0m [36mfrom[0m [32m'@/components/layout/Header'[0m;
+  [90m5 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'@/components/layout/Footer'[0m;
+
+Ecmascript file had an error
+
+
+ GET /ru 500 in 130ms (next.js: 56ms, application-code: 74ms)
+[?25h
