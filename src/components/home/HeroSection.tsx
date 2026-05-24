@@ -3,160 +3,269 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Heart } from 'lucide-react';
 import Link from 'next/link';
-import { getBanners, type Banner } from '@/lib/api';
+import { getBanners, formatPrice, type Banner } from '@/lib/api';
+import { useCartStore, useWishlistStore } from '@/lib/store';
 import { useLanguage } from '@/components/ui/LanguageProvider';
-import { subscribeNewsletter } from '@/lib/api';
 
-interface Slide {
-  badge: string;
+interface PromoCard {
+  id: string;
   title: string;
   subtitle: string;
-  cta1: { text: string; href: string };
-  cta2: { text: string; href: string };
+  image?: string;
+  price?: string;
+  oldPrice?: string;
+  link: string;
+  cta: string;
   gradient: string;
 }
 
-function bannerToSlide(banner: Banner): Slide {
-  return {
-    badge: banner.badge || '🔥 Ofertă',
-    title: banner.title,
-    subtitle: banner.subtitle,
-    cta1: { text: banner.buttonText || 'Vezi detalii', href: banner.link || '/catalog' },
-    cta2: { text: 'Vezi catalog', href: '/catalog' },
-    gradient: banner.gradient || 'from-[#0c3a8f] via-[#1a56db] to-[#2563eb]',
-  };
-}
+// Fallback promos when no sidebar banners
+const fallbackPromos: PromoCard[] = [
+  {
+    id: 'fallback-1',
+    title: 'Laptopuri Gaming',
+    subtitle: 'De la 2990 MDL',
+    price: 'de la 2,990 MDL',
+    link: '/catalog?category=laptopuri',
+    cta: 'Vezi oferta',
+    gradient: 'from-[#1a56db] to-[#0c3a8f]',
+  },
+  {
+    id: 'fallback-2',
+    title: 'iPhone Recondiționat',
+    subtitle: 'Verificat și garanție 12 luni',
+    price: 'de la 8,990 MDL',
+    link: '/catalog?category=telefoane',
+    cta: 'Descoperă',
+    gradient: 'from-amber-500 to-orange-600',
+  },
+];
 
 export default function HeroSection() {
   const router = useRouter();
   const { t } = useLanguage();
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [sidebarBanners, setSidebarBanners] = useState<PromoCard[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const [subError, setSubError] = useState('');
+  const addToCart = useCartStore((s) => s.addItem);
+  const toggleWishlist = useWishlistStore((s) => s.addItem);
+  const isInWishlist = useWishlistStore((s) => s.isInWishlist);
+  const removeWishlist = useWishlistStore((s) => s.removeItem);
 
   useEffect(() => {
-    async function loadBanners() {
+    async function load() {
       try {
-        const data = await getBanners();
-        setBanners(data);
+        const bannerData = await getBanners();
+        setBanners(bannerData);
+
+        // Sidebar banners: get banners with SIDEBAR or MIDDLE position (max 2)
+        const sideBanners = bannerData
+          .filter((b) => b.position === 'SIDEBAR' || b.position === 'MIDDLE')
+          .slice(0, 2)
+          .map((b) => ({
+            id: b.id,
+            title: b.title,
+            subtitle: b.subtitle || '',
+            image: b.image,
+            link: b.link || '/catalog',
+            cta: b.buttonText || 'Vezi detalii',
+            gradient: b.gradient || 'from-[#1a56db] to-[#0c3a8f]',
+          }));
+        setSidebarBanners(sideBanners);
       } catch (e) {
-        console.error('Failed to load banners:', e);
+        console.error('Failed to load hero data:', e);
       }
     }
-    loadBanners();
+    load();
   }, []);
 
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setSubError('');
-    const ok = await subscribeNewsletter(email);
-    if (ok) {
-      setSubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubscribed(false), 3000);
-    } else {
-      setSubError(t('home.newsletter.error') || 'Nu am putut abona. Încearcă din nou.');
-      setTimeout(() => setSubError(''), 3000);
-    }
-  };
-
-  // Auto-slide logic
+  // Auto-slide
   useEffect(() => {
     if (banners.length <= 1) return;
-    
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % banners.length);
     }, 5000);
-    
     return () => clearInterval(interval);
   }, [banners.length]);
 
-  const displaySlides = banners.map(bannerToSlide);
-  
-  // Fallback when no banners
+  // Use sidebar banners from DB, fallback if none
+  const displayPromos = sidebarBanners.length >= 2 ? sidebarBanners : fallbackPromos;
+
   if (banners.length === 0) {
+    // No banners — full-width hero with side promos
     return (
-      <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-dark to-primary">
-        <div className="text-white text-center max-w-3xl mx-auto px-5">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">{t('home.hero.title')}</h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90">{t('home.hero.subtitle')}</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => router.push('/catalog?promo=true')}
-              className="px-8 py-4 bg-white text-primary rounded-xl font-bold hover:bg-slate-100 transition-all shadow-lg hover:shadow-xl"
-            >
-              🔥 {t('nav.promotions')}
-            </button>
-            <button
-              onClick={() => router.push('/catalog')}
-              className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition-all"
-            >
-              💻 {t('catalog.title')}
-            </button>
+      <section className="max-w-[1280px] mx-auto px-5 pt-6 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+          {/* Hero main */}
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary-dark to-primary min-h-[420px] flex items-center">
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=1200&q=80')] bg-cover bg-center opacity-20" />
+            <div className="relative z-10 p-8 md:p-12 text-white max-w-xl">
+              <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-sm font-medium mb-4">{t('home.hero.badge')}</span>
+              <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+                {t('home.hero.title')}
+              </h1>
+              <p className="text-base md:text-lg opacity-90 mb-8">
+                {t('home.hero.subtitle')} — livrare în toată Moldova
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => router.push('/catalog?promo=true')}
+                  className="px-7 py-3.5 bg-white text-primary-dark rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-sm"
+                >
+                  🔥 {t('home.hero.ctaPromo')}
+                </button>
+                <button
+                  onClick={() => router.push('/catalog')}
+                  className="px-7 py-3.5 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition text-sm"
+                >
+                  💻 {t('home.hero.ctaCatalog')}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Side promo cards */}
+          <div className="flex flex-col gap-4">
+            {fallbackPromos.map((promo, i) => (
+              <div
+                key={i}
+                className={`flex-1 rounded-2xl bg-gradient-to-br ${promo.gradient} p-6 text-white flex flex-col justify-between min-h-[190px] cursor-pointer hover:scale-[1.02] transition-transform`}
+                onClick={() => router.push(promo.link)}
+              >
+                <div>
+                  <p className="text-sm font-medium opacity-80 mb-1">{promo.subtitle}</p>
+                  <h3 className="text-lg font-bold leading-snug">{promo.title}</h3>
+                </div>
+                <div>
+                  <p className="text-2xl font-extrabold mb-2">{promo.price}</p>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-lg">
+                    {promo.cta} →
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
     );
   }
-  
-  const slide = displaySlides[currentSlide];
+
+  const banner = banners[currentSlide];
 
   return (
-    <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} text-white`}
-        >
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="relative max-w-[1280px] mx-auto px-5 h-full flex items-center justify-center text-center">
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center">
-                <div className="mb-6">{slide.badge}</div>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">{slide.title}</h1>
-                <p className="text-lg md:text-xl mb-10 opacity-90">{slide.subtitle}</p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+    <section className="max-w-[1280px] mx-auto px-5 pt-6 pb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+        {/* Left: Banner slider (60-70%) */}
+        <div className="relative rounded-2xl overflow-hidden min-h-[420px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className={`absolute inset-0 ${banner.image ? '' : `bg-gradient-to-br ${banner.gradient || 'from-[#0c3a8f] via-[#1a56db] to-[#2563eb]'}`}`}
+            >
+              <div className="absolute inset-0 bg-black/30" />
+              {banner.image && (
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${banner.image})` }}
+                />
+              )}
+              <div className="relative z-10 h-full flex flex-col justify-center p-8 md:p-12 text-white">
+                <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-4 w-fit shadow-lg">
+                  {banner.badge || '🔥 Ofertă'}
+                </span>
+                <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight max-w-xl drop-shadow-lg">
+                  {banner.title}
+                </h1>
+                <p className="text-base md:text-lg opacity-90 mb-8 max-w-md drop-shadow-md">
+                  {banner.subtitle}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
-                    onClick={() => router.push(slide.cta1.href)}
-                    className="px-8 py-4 bg-white text-primary rounded-xl font-bold hover:bg-slate-100 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+                    onClick={() => router.push(banner.link || '/catalog')}
+                    className="px-7 py-3.5 bg-white text-primary rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-sm w-fit"
                   >
-                    {slide.cta1.text}
-                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    {banner.buttonText || 'Vezi detalii'}
                   </button>
                   <button
-                    onClick={() => router.push(slide.cta2.href)}
-                    className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2 group"
+                    onClick={() => router.push('/catalog')}
+                    className="px-7 py-3.5 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition text-sm w-fit"
                   >
-                    {slide.cta2.text}
-                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    💻 Catalog
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
 
-      {/* Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {displaySlides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentSlide(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-all ${
-              i === currentSlide ? 'bg-white w-7' : 'bg-white/50'
-            }`}
-          />
-        ))}
+          {/* Arrows */}
+          {banners.length > 1 && (
+            <>
+              <button
+                onClick={() => setCurrentSlide(prev => (prev - 1 + banners.length) % banners.length)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur rounded-full flex items-center justify-center text-white transition"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setCurrentSlide(prev => (prev + 1) % banners.length)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur rounded-full flex items-center justify-center text-white transition"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              {/* Dots */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                {banners.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentSlide(i)}
+                    className={`h-2 rounded-full transition-all ${i === currentSlide ? 'bg-white w-6' : 'bg-white/50 w-2'}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Right: 2 stacked promo cards (30-40%) */}
+        <div className="flex flex-col gap-4">
+          {displayPromos.map((promo) => (
+            <div
+              key={promo.id}
+              className="flex-1 rounded-2xl overflow-hidden relative min-h-[190px] cursor-pointer hover:scale-[1.02] transition-transform group"
+              onClick={() => router.push(promo.link)}
+            >
+              {/* Background image or gradient */}
+              {promo.image ? (
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${promo.image})` }} />
+              ) : (
+                <div className={`absolute inset-0 bg-gradient-to-br ${promo.gradient}`} />
+              )}
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-black/30" />
+              {/* Content */}
+              <div className="relative z-10 h-full p-5 flex flex-col justify-between text-white">
+                <div>
+                  <p className="text-xs font-medium opacity-80 mb-1 drop-shadow-md">{promo.subtitle}</p>
+                  <h3 className="text-base font-bold leading-snug line-clamp-2 drop-shadow-lg">{promo.title}</h3>
+                </div>
+                <div>
+                  {promo.price && <p className="text-xl font-extrabold mb-1 drop-shadow-lg">{promo.price}</p>}
+                  {promo.oldPrice && <p className="text-xs opacity-60 line-through mb-1">{promo.oldPrice}</p>}
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg">
+                    {promo.cta} →
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -142,8 +142,8 @@ export default function PromoSection() {
 
             {/* Countdown */}
             <div className="flex items-center gap-2">
-              <Clock size={16} className="text-white/60 hidden sm:block" />
-              <span className="text-white/60 text-sm mr-2 hidden sm:block">Se încheie în:</span>
+              <Clock size={16} className="text-white/60" />
+              <span className="text-white/60 text-sm mr-2">Se încheie în:</span>
               <div className="flex gap-2">
                 <CountdownBlock value={timeLeft.days} label="Zile" />
                 <span className="text-white/40 text-2xl font-bold self-start mt-3">:</span>

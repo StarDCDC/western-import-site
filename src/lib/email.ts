@@ -34,9 +34,10 @@ export async function sendEmail({ to, subject, html, replyTo }: EmailOptions): P
       html,
       replyTo,
     });
+    console.log(`[EMAIL] ✅ Sent successfully → ${to} | Subject: "${subject}"`);
     return true;
   } catch (error) {
-    console.error('Email send error:', error);
+    console.error(`[EMAIL] ❌ Failed to send to ${to}:`, error);
     return false;
   }
 }

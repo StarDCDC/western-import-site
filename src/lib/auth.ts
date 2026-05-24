@@ -2,6 +2,7 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import prisma from './prisma';
+import { verifyCaptcha } from './captcha';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,10 +11,20 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        captchaToken: { label: 'Captcha', type: 'text' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email și parolă sunt obligatorii');
+        }
+
+        // reCAPTCHA v3 verification
+        const captchaToken = (credentials as Record<string, string | undefined>).captchaToken;
+        if (captchaToken) {
+          const result = await verifyCaptcha(captchaToken);
+          if (!result.success) {
+            throw new Error('Verificarea CAPTCHA a eșuat. Te rugăm să reîncerci.');
+          }
         }
 
         const user = await prisma.user.findUnique({

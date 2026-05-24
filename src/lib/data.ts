@@ -20,6 +20,16 @@ export interface Product {
     tip?: string;
     producator?: string;
     extra?: string;
+    // New spec fields
+    weight?: string;
+    refreshRate?: string;
+    gpuModel?: string;
+    cpuModel?: string;
+    resolution?: string;
+    gpuSeries?: string;
+    cpuSeries?: string;
+    storageType?: string;
+    gpuType?: string;
   };
   description: string;
   images: string[];
@@ -46,6 +56,9 @@ export interface Category {
 export interface Brand {
   id: string;
   name: string;
+  slug?: string;
+  logo?: string;
+  description?: string;
 }
 
 export const categories: Category[] = [

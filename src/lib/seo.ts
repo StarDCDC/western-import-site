@@ -288,7 +288,7 @@ export function organizationJsonLd() {
       "Laptopuri, telefoane și electronică premium la prețuri accesibile. Garanție reală și livrare în toată Moldova.",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "str. Ștefan cel Mare 1",
+      streetAddress: "str. Podgorenilor 17",
       addressLocality: "Chișinău",
       addressCountry: "MD",
     },
@@ -339,7 +339,7 @@ export function localBusinessJsonLd() {
     telephone: "+373-60-000-000",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "str. Ștefan cel Mare 1",
+      streetAddress: "str. Podgorenilor 17",
       addressLocality: "Chișinău",
       addressRegion: "Chișinău",
       postalCode: "MD-2001",
@@ -347,8 +347,8 @@ export function localBusinessJsonLd() {
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 47.0105,
-      longitude: 28.8638,
+      latitude: 47.0456,
+      longitude: 28.8345,
     },
     openingHoursSpecification: [
       {
@@ -373,6 +373,113 @@ export function localBusinessJsonLd() {
     priceRange: "$$",
     currenciesAccepted: "MDL",
     paymentAccepted: "Cash, Credit Card",
+  };
+}
+
+// ─── Structured Data: Product (enhanced) ─────────────────────────
+
+export interface ProductSchema {
+  name: string;
+  description: string;
+  price: number;
+  currency?: string;
+  image?: string;
+  brand?: string;
+  sku?: string;
+  condition?: string;
+  inStock?: boolean;
+  rating?: number;
+  reviewCount?: number;
+  url?: string;
+}
+
+export function generateProductSchema(product: ProductSchema) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.image ? ogImage(product.image) : undefined,
+    ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+    ...(product.sku ? { sku: product.sku } : {}),
+    itemCondition:
+      product.condition === "nou"
+        ? "https://schema.org/NewCondition"
+        : "https://schema.org/RefurbishedCondition",
+    offers: {
+      "@type": "Offer",
+      url: product.url || undefined,
+      priceCurrency: product.currency || "MDL",
+      price: product.price,
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+    },
+    ...(product.rating
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: product.rating,
+            bestRating: 5,
+            worstRating: 1,
+            reviewCount: product.reviewCount || 1,
+          },
+        }
+      : {}),
+  };
+}
+
+// ─── Structured Data: Organization (enhanced) ─────────────────────
+
+export interface OrganizationSchemaOptions {
+  name?: string;
+  url?: string;
+  logo?: string;
+  description?: string;
+  address?: string;
+  city?: string;
+  phone?: string;
+  email?: string;
+  socialLinks?: string[];
+}
+
+export function generateOrganizationSchema({
+  name = SITE_NAME,
+  url = SITE_URL,
+  logo = `${SITE_URL}/logo.png`,
+  description = "Laptopuri, telefoane și electronică premium la prețuri accesibile. Garanție reală și livrare în toată Moldova.",
+  address = "str. Podgorenilor 17",
+  city = "Chișinău",
+  phone = "+373 69 466 585",
+  email = "info@westernimport.md",
+  socialLinks = ["https://www.facebook.com/westernimport", "https://www.instagram.com/westernimport"],
+}: OrganizationSchemaOptions = {}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name,
+    url,
+    logo,
+    description,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: address,
+      addressLocality: city,
+      addressCountry: "MD",
+    },
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: phone,
+        email,
+        contactType: "customer service",
+        availableLanguage: ["Romanian", "Russian"],
+      },
+    ],
+    sameAs: socialLinks,
   };
 }
 

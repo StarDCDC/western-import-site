@@ -2,33 +2,34 @@
 
 import { Truck, ShieldCheck, Zap, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/components/ui/LanguageProvider";
 
 interface Feature {
   icon: React.ReactNode;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
 }
 
 const FEATURES: Feature[] = [
   {
     icon: <Truck size={24} />,
-    title: "Transport Gratuit",
-    description: "Livrare gratuită în toată Moldova pentru comenzi peste 3000 MDL",
+    titleKey: "features.transportFree",
+    descriptionKey: "features.transportFreeDesc",
   },
   {
     icon: <ShieldCheck size={24} />,
-    title: "Garanție Reală",
-    description: "Garanție 3-24 luni pe toate produsele, service propriu",
+    titleKey: "features.warranty",
+    descriptionKey: "features.warrantyDesc",
   },
   {
     icon: <Zap size={24} />,
-    title: "Livrare Rapidă",
-    description: "Expediere în 24h, livrare express în Chișinău în 24-48 ore",
+    titleKey: "features.fastDelivery",
+    descriptionKey: "features.fastDeliveryDesc",
   },
   {
     icon: <Headphones size={24} />,
-    title: "Suport 24/7",
-    description: "Asistență telefonică și online, consultații tehnice gratuite",
+    titleKey: "features.support247",
+    descriptionKey: "features.support247Desc",
   },
 ];
 
@@ -43,6 +44,8 @@ const itemVariants = {
 };
 
 export default function FeaturesBar() {
+  const { t } = useLanguage();
+
   return (
     <section className="py-8 border-t border-slate-200 dark:border-slate-700">
       <div className="max-w-[1280px] mx-auto px-5">
@@ -55,7 +58,7 @@ export default function FeaturesBar() {
         >
           {FEATURES.map((feature) => (
             <motion.div
-              key={feature.title}
+              key={feature.titleKey}
               variants={itemVariants}
               className="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all hover:shadow-md hover:-translate-y-0.5"
             >
@@ -64,10 +67,10 @@ export default function FeaturesBar() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200 mb-1">
-                  {feature.title}
+                  {t(feature.titleKey)}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  {feature.description}
+                  {t(feature.descriptionKey)}
                 </p>
               </div>
             </motion.div>

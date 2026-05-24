@@ -145,12 +145,36 @@ model Product {
   cartItems     CartItem[]
   recentViews   RecentView[]
   flashSales    FlashSale[]
+  spec          ProductSpec?
 
   @@index([categoryId])
   @@index([brandId])
   @@index([isActive])
   @@index([isFeatured])
   @@map("products")
+}
+
+model ProductSpec {
+  id        String  @id @default(cuid())
+  productId String  @unique
+
+  display      String?   // "15.6 inch"
+  storage      String?   // "512GB SSD"
+  weight       String?   // "1.8 kg"
+  refreshRate  String?   // "144Hz"
+  ram          String?   // "16GB DDR4"
+  gpuModel     String?   // "RTX 4060"
+  cpuModel     String?   // "Intel i7-13700H"
+  resolution   String?   // "1920x1080"
+  gpuSeries    String?   // "NVIDIA GeForce"
+  cpuSeries    String?   // "Intel Core"
+  os           String?   // "Windows 11"
+  storageType  String?   // "SSD"
+  gpuType      String?   // "Dedicată"
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_specs")
 }
 
 // ─── ProductAttribute ──────────────────────────────────────────────

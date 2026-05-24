@@ -25,10 +25,8 @@ async function main() {
   const cats = [
     { nameRo: 'Laptopuri', nameRu: 'Ноутбуки', slug: 'laptopuri', order: 1 },
     { nameRo: 'Telefoane', nameRu: 'Телефоны', slug: 'telefoane', order: 2 },
-    { nameRo: 'PC & Monitoare', nameRu: 'ПК и Мониторы', slug: 'pc-monitoare', order: 3 },
+    { nameRo: 'Mini PC', nameRu: 'Мини ПК', slug: 'mini-pc', order: 3 },
     { nameRo: 'Tablete', nameRu: 'Планшеты', slug: 'tablete', order: 4 },
-    { nameRo: 'Componente', nameRu: 'Компоненты', slug: 'componente', order: 5 },
-    { nameRo: 'Accesorii', nameRu: 'Аксессуары', slug: 'accesorii', order: 6 },
   ];
 
   for (const cat of cats) {
@@ -68,7 +66,7 @@ async function main() {
   // Get category and brand IDs
   const laptopCat = await prisma.category.findUnique({ where: { slug: 'laptopuri' } });
   const phoneCat = await prisma.category.findUnique({ where: { slug: 'telefoane' } });
-  const pcCat = await prisma.category.findUnique({ where: { slug: 'pc-monitoare' } });
+  const pcCat = await prisma.category.findUnique({ where: { slug: 'mini-pc' } });
 
   const acerBrand = await prisma.brand.findUnique({ where: { slug: 'acer' } });
   const lenovoBrand = await prisma.brand.findUnique({ where: { slug: 'lenovo' } });

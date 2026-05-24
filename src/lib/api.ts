@@ -46,6 +46,20 @@ export interface ProductsFilters {
   limit?: number;
   search?: string;
   featured?: boolean;
+  // Spec filters
+  display?: string;
+  storage?: string;
+  weight?: string;
+  refreshRate?: string;
+  ram?: string;
+  gpuModel?: string;
+  cpuModel?: string;
+  resolution?: string;
+  gpuSeries?: string;
+  cpuSeries?: string;
+  os?: string;
+  storageType?: string;
+  gpuType?: string;
 }
 
 export interface ProductsResponse {
@@ -57,9 +71,32 @@ export interface ProductsResponse {
 
 /** Maps a DB product row back to the frontend MockProduct shape */
 function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
-  const specs = (p.specs as Record<string, string>) || {};
+  // Support both old JSON specs column and new ProductSpec relation
+  const legacySpecs = (p.specs as Record<string, string>) || {};
+  const specRelation = p.spec as Record<string, string | null> | null;
   const brand = p.brand as Record<string, string> | null;
   const category = p.category as Record<string, string> | null;
+
+  const specs = {
+    procesor: legacySpecs.procesor || legacySpecs.cpu || specRelation?.cpuModel || specRelation?.cpuSeries || '',
+    display: legacySpecs.display || specRelation?.display || '',
+    ram: legacySpecs.ram || specRelation?.ram || '',
+    stocare: legacySpecs.stocare || legacySpecs.storage || specRelation?.storage || '',
+    gpu: legacySpecs.gpu || specRelation?.gpuModel || undefined,
+    os: legacySpecs.os || specRelation?.os || undefined,
+    tip: legacySpecs.tip || specRelation?.gpuType || undefined,
+    producator: legacySpecs.producator || brand?.name || undefined,
+    extra: legacySpecs.extra || undefined,
+    weight: legacySpecs.weight || specRelation?.weight || undefined,
+    refreshRate: legacySpecs.refreshRate || specRelation?.refreshRate || undefined,
+    gpuModel: legacySpecs.gpuModel || specRelation?.gpuModel || undefined,
+    cpuModel: legacySpecs.cpuModel || specRelation?.cpuModel || undefined,
+    resolution: legacySpecs.resolution || specRelation?.resolution || undefined,
+    gpuSeries: legacySpecs.gpuSeries || specRelation?.gpuSeries || undefined,
+    cpuSeries: legacySpecs.cpuSeries || specRelation?.cpuSeries || undefined,
+    storageType: legacySpecs.storageType || specRelation?.storageType || undefined,
+    gpuType: legacySpecs.gpuType || specRelation?.gpuType || undefined,
+  };
 
   return {
     id: p.id as string,
@@ -70,15 +107,24 @@ function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
     price: Number(p.price),
     oldPrice: p.oldPrice ? Number(p.oldPrice) : undefined,
     specs: {
-      procesor: specs.procesor || specs.cpu || '',
-      display: specs.display || '',
-      ram: specs.ram || '',
-      stocare: specs.stocare || specs.storage || '',
-      gpu: specs.gpu || undefined,
-      os: specs.os || undefined,
-      tip: specs.tip || undefined,
-      producator: specs.producator || brand?.name || undefined,
-      extra: specs.extra || undefined,
+      procesor: legacySpecs.procesor || legacySpecs.cpu || specRelation?.cpuModel || specRelation?.cpuSeries || '',
+      display: legacySpecs.display || specRelation?.display || '',
+      ram: legacySpecs.ram || specRelation?.ram || '',
+      stocare: legacySpecs.stocare || legacySpecs.storage || specRelation?.storage || '',
+      gpu: legacySpecs.gpu || specRelation?.gpuModel || undefined,
+      os: legacySpecs.os || specRelation?.os || undefined,
+      tip: legacySpecs.tip || specRelation?.gpuType || undefined,
+      producator: legacySpecs.producator || brand?.name || undefined,
+      extra: legacySpecs.extra || undefined,
+      weight: legacySpecs.weight || specRelation?.weight || undefined,
+      refreshRate: legacySpecs.refreshRate || specRelation?.refreshRate || undefined,
+      gpuModel: legacySpecs.gpuModel || specRelation?.gpuModel || undefined,
+      cpuModel: legacySpecs.cpuModel || specRelation?.cpuModel || undefined,
+      resolution: legacySpecs.resolution || specRelation?.resolution || undefined,
+      gpuSeries: legacySpecs.gpuSeries || specRelation?.gpuSeries || undefined,
+      cpuSeries: legacySpecs.cpuSeries || specRelation?.cpuSeries || undefined,
+      storageType: legacySpecs.storageType || specRelation?.storageType || undefined,
+      gpuType: legacySpecs.gpuType || specRelation?.gpuType || undefined,
     },
     description: (p.descriptionRo as string) || '',
     images: (p.images as string[]) || [],
@@ -111,6 +157,13 @@ export async function getProducts(filters?: ProductsFilters): Promise<ProductsRe
   if (filters?.limit) params.set('limit', String(filters.limit));
   if (filters?.search) params.set('search', filters.search);
   if (filters?.featured) params.set('featured', 'true');
+
+  const specFields = ['display', 'storage', 'weight', 'refreshRate', 'ram', 'gpuModel', 'cpuModel', 'resolution', 'gpuSeries', 'cpuSeries', 'os', 'storageType', 'gpuType'] as const;
+  for (const field of specFields) {
+    if (filters && (filters as any)[field]) {
+      params.set(field, (filters as any)[field]);
+    }
+  }
 
   const url = `/api/products?${params.toString()}`;
   const result = await apiFetch<unknown[]>(url);
@@ -264,7 +317,11 @@ export async function getBanners(): Promise<Banner[]> {
 
 // ─── Brands ───────────────────────────────────────────────────────
 export async function getBrands(): Promise<Brand[]> {
-  // No dedicated brands API yet — return mock
+  try {
+    const res = await fetch('/api/admin/brands');
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data)) return json.data;
+  } catch {}
   return mockBrands;
 }
 
