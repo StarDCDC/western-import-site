@@ -25,8 +25,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
     // Verifică rol — doar ADMIN și MODERATOR pot accesa
     const role = (session.user as { role?: string }).role;
-    if (role !== 'ADMIN' && role !== 'MODERATOR') {
-      router.replace('/account');
+    if (!role || (role !== 'ADMIN' && role !== 'MODERATOR')) {
+      // Dacă role lipsește din token (JWT vechi), forțează re-login
+      // Navighează direct la login cu callback
+      router.replace('/login?callbackUrl=/admin');
       return;
     }
 
