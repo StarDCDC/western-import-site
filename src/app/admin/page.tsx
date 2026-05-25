@@ -56,6 +56,19 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<"7d" | "30d" | "all">("7d");
 
+  useEffect(() => {
+    // Verify admin session before showing anything
+    fetch('/api/auth/session')
+      .then(r => r.json())
+      .then(session => {
+        const role = session?.user?.role;
+        if (!session?.user || (role !== 'ADMIN' && role !== 'MODERATOR')) {
+          router.push('/admin/login?callbackUrl=/admin&error=access_denied');
+        }
+      })
+      .catch(() => router.push('/admin/login'));
+  }, [router]);
+
   const fetchData = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/stats");

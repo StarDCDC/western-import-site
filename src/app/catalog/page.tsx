@@ -1,7 +1,7 @@
 // src/app/catalog/page.tsx
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -61,7 +61,12 @@ function CatalogContent() {
   const [priceMax, setPriceMax] = useState(Number(searchParams.get('maxPrice')) || 50000);
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) || 'popular');
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  // searchQuery is LOCAL ONLY to this component. We write it to URL only via debounce.
+  // We NEVER read search from URL into searchQuery — that was causing the input reset loop.
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchChangeSource = useRef<'input' | 'url' | null>(null);
+  const urlUpdateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mobileFilters, setMobileFilters] = useState(false);
 
   const [categoryList, setCategoryList] = useState<ApiCategory[]>([]);
@@ -102,8 +107,11 @@ function CatalogContent() {
     if (params.search) sp.set('search', String(params.search));
 
     const qs = sp.toString();
-    router.replace(`/catalog${qs ? '?' + qs : ''}`, { scroll: false });
-  }, [router]);
+    if (urlUpdateTimer.current) clearTimeout(urlUpdateTimer.current);
+    urlUpdateTimer.current = setTimeout(() => {
+      router.replace(`/catalog${qs ? '?' + qs : ''}`, { scroll: false });
+    }, 600);
+  }, []);
 
   useEffect(() => {
     const cat = searchParams.get('category');
@@ -129,8 +137,8 @@ function CatalogContent() {
     if (sort !== newSort) setSort(newSort);
     const newPage = Number(searchParams.get('page')) || 1;
     if (page !== newPage) setPage(newPage);
-    const newSearch = searchParams.get('search') || '';
-    if (searchQuery !== newSearch) setSearchQuery(newSearch);
+    // NOOP — we intentionally don't sync search FROM URL into state.
+    // Other filters (category, brand, etc.) sync from URL; search does NOT.
   }, [searchParams]);
 
   // Load categories and brands
@@ -202,7 +210,20 @@ function CatalogContent() {
       page,
       search: searchQuery,
     });
-  }, [selectedCategories, selectedBrands, selectedConditions, priceMin, priceMax, sort, page, searchQuery, updateURL]);
+  }, [selectedCategories, selectedBrands, selectedConditions, priceMin, priceMax, sort, page, updateURL]);
+
+  const handleSearchChange = (q: string) => {
+    setSearchQuery(q);
+    // Debounced URL write — does NOT touch searchQuery state
+    if (searchDebounce.current) clearTimeout(searchDebounce.current);
+    searchDebounce.current = setTimeout(() => {
+      const sp = new URLSearchParams(window.location.search);
+      sp.set('search', q);
+      const qs = sp.toString();
+      router.replace(`/catalog${qs ? '?' + qs : ''}`, { scroll: false });
+    }, 500);
+  };
+
 
   const toggleArray = (arr: string[], setArr: (v: string[]) => void, val: string) => {
     const next = arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val];
@@ -247,7 +268,7 @@ function CatalogContent() {
           type="text"
           placeholder={t('catalog.searchPlaceholder')}
           value={searchQuery}
-          onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+          onChange={(e) => handleSearchChange(e.target.value)}
           className="w-full py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-primary"
         />
       </div>
@@ -517,7 +538,7 @@ function CatalogContent() {
           <div className="flex gap-6">
             <aside className="hidden lg:block w-64 shrink-0">
               <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 sticky top-24">
-                <FilterSidebar />
+                {FilterSidebar()}
               </div>
             </aside>
 
@@ -529,7 +550,7 @@ function CatalogContent() {
                       <h2 className="font-bold text-lg">{t('catalog.filters')}</h2>
                       <button onClick={() => setMobileFilters(false)}><X className="w-5 h-5" /></button>
                     </div>
-                    <FilterSidebar />
+                    {FilterSidebar()}
                   </motion.div>
                 </motion.div>
               )}

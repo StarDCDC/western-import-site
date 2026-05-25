@@ -42,9 +42,15 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       if (hasSQLInjection(search)) return errorResponse('Căutare invalidă');
+      const q = search.toLowerCase();
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { sku: { contains: search, mode: 'insensitive' } },
+        { name: { contains: q } },
+        { sku: { contains: q } },
+        { brand: { name: { contains: q } } },
+        { category: { nameRo: { contains: q } } },
+        { category: { nameRu: { contains: q } } },
+        { descriptionRo: { contains: q } },
+        { descriptionRu: { contains: q } },
       ];
     }
 

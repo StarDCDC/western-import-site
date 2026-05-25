@@ -32,24 +32,30 @@ function LoginForm() {
         email,
         password,
         redirect: false,
-        callbackUrl,
+        callbackUrl: '/api/auth/callback',
       });
 
       if (result?.error) {
         setError('Email sau parolă incorectă');
       } else if (result?.ok) {
-        // Redirect based on role: admin → /admin, customer → /account
-        try {
-          const sessionRes = await fetch('/api/auth/session');
-          const session = await sessionRes.json();
-          const role = session?.user?.role;
-          if (role === 'ADMIN' || role === 'MODERATOR') {
-            router.push(searchParams.get('callbackUrl') || '/admin');
-          } else {
+        // Detectează dacă vine de la admin — verifică direct sesiunea server-side
+        const isAdminCallback = searchParams.get('callbackUrl') === '/admin';
+        if (isAdminCallback) {
+          // Verifică rolul server-side înainte de redirect
+          try {
+            const sessionRes = await fetch('/api/auth/session');
+            const session = await sessionRes.json();
+            const role = session?.user?.role;
+            if (role === 'ADMIN' || role === 'MODERATOR') {
+              router.push('/admin');
+            } else {
+              router.push('/account');
+            }
+          } catch {
             router.push('/account');
           }
-        } catch {
-          router.push('/account');
+        } else {
+          router.push(callbackUrl);
         }
         router.refresh();
       }

@@ -45,9 +45,10 @@ export async function GET(request: NextRequest) {
       };
     }
     if (search) {
+      const q = search.toLowerCase();
       baseWhere.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { sku: { contains: search, mode: 'insensitive' } },
+        { name: { contains: q } },
+        { sku: { contains: q } },
       ];
     }
 
