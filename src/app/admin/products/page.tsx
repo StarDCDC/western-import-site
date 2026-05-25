@@ -93,7 +93,7 @@ export default function AdminProductsPage() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch("/api/admin/products/import", { method: "POST", body: formData });
+      const res = await fetch("/api/admin/products/import", { method: "POST", body: formData, credentials: "include" });
       const json = await res.json();
       if (json.success) {
         alert(`Importate: ${json.data?.imported || 0}, Sărite: ${json.data?.skipped || 0}`);
@@ -128,8 +128,8 @@ export default function AdminProductsPage() {
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Produse</h1>
         <div className="flex gap-2 flex-wrap">
           <label className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer">
-            📥 Import Excel
-            <input type="file" accept=".xlsx,.xls" onChange={handleImportExcel} className="hidden" />
+            📥 Import Excel / CSV
+            <input type="file" accept=".xlsx,.xls,.csv" onChange={handleImportExcel} className="hidden" />
           </label>
           <button onClick={handleExportExcel} className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">📤 Export Excel</button>
           <button onClick={exportCSV} className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">📥 Export CSV</button>

@@ -4,6 +4,23 @@ import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
 import * as XLSX from 'xlsx';
 
+function parseCSV(buffer: Buffer): Record<string, unknown>[] {
+  const text = buffer.toString('utf-8');
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length === 0) return [];
+
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  const rows: Record<string, unknown>[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const row: Record<string, unknown> = {};
+    headers.forEach((h, idx) => { row[h] = values[idx] || ''; });
+    rows.push(row);
+  }
+  return rows;
+}
+
 // POST /api/admin/products/import — import products from Excel
 export async function POST(request: NextRequest) {
   try {
@@ -15,10 +32,18 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File | null;
     if (!file) return errorResponse('Fișier lipsă');
 
-    const bytes = await file.arrayBuffer();
-    const workbook = XLSX.read(Buffer.from(bytes), { type: 'buffer' });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
+    const fileName = file.name.toLowerCase();
+    let rows: Record<string, unknown>[];
+
+    if (fileName.endsWith('.csv')) {
+      const bytes = await file.arrayBuffer();
+      rows = parseCSV(Buffer.from(bytes));
+    } else {
+      const bytes = await file.arrayBuffer();
+      const workbook = XLSX.read(Buffer.from(bytes), { type: 'buffer' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
+    }
 
     if (rows.length === 0) return errorResponse('Fișierul este gol');
 
@@ -52,6 +77,24 @@ export async function POST(request: NextRequest) {
       const brandName = String(row['Brand'] || row['brand'] || '').trim();
       const sku = String(row['SKU'] || row['sku'] || '').trim();
       const description = String(row['Description'] || row['description'] || row['Descriere'] || '').trim();
+      const specsRaw = String(row['Specs'] || row['specs'] || row['Specifications'] || '').trim();
+      const condition = String(row['Condition'] || row['condition'] || 'NEW').trim().toUpperCase();
+      const isActive = String(row['Active'] || row['active'] || 'Yes').trim().toLowerCase() === 'yes';
+      const isFeatured = String(row['Featured'] || row['featured'] || 'No').trim().toLowerCase() === 'yes';
+
+      // Build specs object from "key: value | key2: value2" format
+      let specsObj: Record<string, string> | null = null;
+      if (specsRaw) {
+        specsObj = {};
+        specsRaw.split('|').forEach((pair) => {
+          const idx = pair.indexOf(':');
+          if (idx > 0) {
+            const k = pair.slice(0, idx).trim();
+            const v = pair.slice(idx + 1).trim();
+            if (k && v) specsObj![k] = v;
+          }
+        });
+      }
 
       // Find or create category
       let categoryId = defaultCategory.id;
@@ -95,20 +138,34 @@ export async function POST(request: NextRequest) {
         slug = `${slugBase}-${Date.now()}`;
       }
 
-      await prisma.product.create({
+      // Create product first
+      const created = await prisma.product.create({
         data: {
           name,
           slug,
           price,
           stock,
           sku: sku || undefined,
+          condition: ['NEW', 'REFURBISHED', 'USED'].includes(condition) ? condition : 'NEW',
           descriptionRo: description || null,
           descriptionRu: null,
           images: '[]',
+          isActive,
+          isFeatured,
           categoryId,
           brandId,
         },
       });
+
+      // Create ProductSpec if specs were provided
+      if (specsObj && Object.keys(specsObj).length > 0) {
+        await prisma.productSpec.upsert({
+          where: { productId: created.id },
+          create: { productId: created.id, ...specsObj },
+          update: specsObj,
+        });
+      }
+
       imported++;
     }
 

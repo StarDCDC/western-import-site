@@ -111,7 +111,13 @@ export default function EditProductPage() {
         if (p.images) {
           try {
             if (typeof p.images === 'string') {
-              parsedImages = JSON.parse(p.images);
+              const parsed = JSON.parse(p.images);
+              // Handle case where DB stores images as JSON-stringified empty array "[]" or "\"[]\""
+              if (parsed === '[]' || parsed === '"[]"') {
+                parsedImages = [];
+              } else if (Array.isArray(parsed)) {
+                parsedImages = parsed;
+              }
             } else if (Array.isArray(p.images)) {
               parsedImages = p.images;
             }

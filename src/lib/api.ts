@@ -72,10 +72,24 @@ export interface ProductsResponse {
 /** Maps a DB product row back to the frontend MockProduct shape */
 function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
   // Support both old JSON specs column and new ProductSpec relation
-  const legacySpecs = (p.specs as Record<string, string>) || {};
+  // Parse specs from JSON string if needed
+  const rawSpecs = p.specs;
+  const legacySpecs: Record<string, string> =
+    typeof rawSpecs === 'string'
+      ? (() => { try { return JSON.parse(rawSpecs); } catch { return {}; } })()
+      : (rawSpecs as Record<string, string>) || {};
   const specRelation = p.spec as Record<string, string | null> | null;
   const brand = p.brand as Record<string, string> | null;
   const category = p.category as Record<string, string> | null;
+
+  // Parse images from JSON string if needed
+  let images: string[] = [];
+  const rawImages = p.images;
+  if (typeof rawImages === 'string') {
+    try { images = JSON.parse(rawImages); } catch { images = []; }
+  } else if (Array.isArray(rawImages)) {
+    images = rawImages as string[];
+  }
 
   const specs = {
     procesor: legacySpecs.procesor || legacySpecs.cpu || specRelation?.cpuModel || specRelation?.cpuSeries || '',
@@ -127,7 +141,7 @@ function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
       gpuType: legacySpecs.gpuType || specRelation?.gpuType || undefined,
     },
     description: (p.descriptionRo as string) || '',
-    images: (p.images as string[]) || [],
+    images: images,
     reviews: [],
     rating: (p.avgRating as number) || 0,
     inStock: (p.stock as number) > 0,
@@ -254,13 +268,20 @@ export async function getCategories(): Promise<ApiCategory[]> {
 
   if (result?.data) {
     const flat = result.data.flat || [];
+    const tree = result.data.tree || [];
+    // Build count lookup from tree data (which has _count)
+    const countMap: Record<string, number> = {};
+    for (const node of tree) {
+      const count = (node as any)._count?.products ?? 0;
+      countMap[node.id as string] = count;
+    }
     return flat.map((c) => ({
       id: c.id as string,
       nameRo: c.nameRo as string,
       nameRu: c.nameRu as string,
       slug: c.slug as string,
       icon: (c.slug as string) || '',
-      count: 0,
+      count: countMap[c.id as string] ?? 0,
     }));
   }
 

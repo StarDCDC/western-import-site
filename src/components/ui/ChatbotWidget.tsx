@@ -17,7 +17,7 @@ export default function ChatbotWidget({ widgetId }: ChatbotWidgetProps) {
     }
   }, []);
 
-  if (!widgetId || !enabled) {
+  if (!widgetId || !enabled || widgetId === 'your-widget-id' || widgetId === '') {
     return null;
   }
 

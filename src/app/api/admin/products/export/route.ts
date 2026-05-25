@@ -12,22 +12,31 @@ export async function GET(request: NextRequest) {
     if (error === 'forbidden') return errorResponse('Acces interzis', 403);
 
     const products = await prisma.product.findMany({
-      include: { category: true, brand: true },
+      include: { category: true, brand: true, spec: true },
       orderBy: { createdAt: 'desc' },
     });
 
-    const rows = products.map((p) => ({
-      Name: p.name,
-      Price: p.price,
-      Stock: p.stock,
-      Category: p.category?.nameRo || '',
-      Brand: p.brand?.name || '',
-      SKU: p.sku || '',
-      Description: p.descriptionRo || '',
-      Active: p.isActive ? 'Yes' : 'No',
-      Featured: p.isFeatured ? 'Yes' : 'No',
-      OldPrice: p.oldPrice || '',
-    }));
+    const rows = products.map((p) => {
+      // Build specs key-value pairs as string
+      const specsStr = p.spec
+        ? Object.entries(p.spec).map(([k, v]) => `${k}: ${v}`).join(' | ')
+        : '';
+
+      return {
+        Name: p.name,
+        Price: p.price,
+        OldPrice: p.oldPrice || '',
+        Stock: p.stock,
+        SKU: p.sku || '',
+        Category: p.category?.nameRo || '',
+        Brand: p.brand?.name || '',
+        Condition: p.condition || 'NEW',
+        Description: p.descriptionRo || '',
+        Active: p.isActive ? 'Yes' : 'No',
+        Featured: p.isFeatured ? 'Yes' : 'No',
+        Specs: specsStr,
+      };
+    });
 
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(rows);

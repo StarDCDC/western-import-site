@@ -4,8 +4,8 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: process.env.NODE_ENV === 'development'
-      ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://elfsight.com/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data:; connect-src *; frame-src https://www.google.com/ https://www.google.com/maps/ https://www.googlemaps.com/ https://elfsight.com/;"
-      : "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://elfsight.com/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data:; connect-src *; frame-src https://www.google.com/ https://www.google.com/maps/ https://www.googlemaps.com/ https://elfsight.com/;",
+      ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://elfsight.com/ https://static.elfsight.com/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data:; connect-src *; frame-src https://www.google.com/ https://www.google.com/maps/ https://www.googlemaps.com/ https://elfsight.com/;"
+      : "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://elfsight.com/ https://static.elfsight.com/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data:; connect-src *; frame-src https://www.google.com/ https://www.google.com/maps/ https://www.googlemaps.com/ https://elfsight.com/;",
   },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
