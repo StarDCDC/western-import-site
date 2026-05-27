@@ -11,7 +11,7 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
-  addItem: (product: Product) => void;
+  addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -23,19 +23,37 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      addItem: (product: Product) => {
+      addItem: (product: Product, quantity = 1) => {
         set((state) => {
           const existing = state.items.find((i) => i.product.id === product.id);
           if (existing) {
+            // Validate stock limit for DB products (those with stock field)
+            if (product.stock !== undefined) {
+              const newQty = existing.quantity + quantity;
+              if (newQty > product.stock) {
+                // Cap at available stock
+                return {
+                  items: state.items.map((i) =>
+                    i.product.id === product.id
+                      ? { ...i, quantity: product.stock as number }
+                      : i
+                  ),
+                };
+              }
+            }
             return {
               items: state.items.map((i) =>
                 i.product.id === product.id
-                  ? { ...i, quantity: i.quantity + 1 }
+                  ? { ...i, quantity: i.quantity + quantity }
                   : i
               ),
             };
           }
-          return { items: [...state.items, { product, quantity: 1 }] };
+          // New item — validate stock
+          if (product.stock !== undefined && quantity > product.stock) {
+            quantity = product.stock;
+          }
+          return { items: [...state.items, { product, quantity }] };
         });
       },
       removeItem: (productId: string) => {

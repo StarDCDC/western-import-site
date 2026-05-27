@@ -82,11 +82,32 @@ function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
   const brand = p.brand as Record<string, string> | null;
   const category = p.category as Record<string, string> | null;
 
-  // Parse images from JSON string if needed
+  // Parse images from string (comma-separated) or JSON array
   let images: string[] = [];
   const rawImages = p.images;
   if (typeof rawImages === 'string') {
-    try { images = JSON.parse(rawImages); } catch { images = []; }
+    let s = rawImages.trim();
+    if (s.startsWith('"') && s.endsWith('"')) {
+      // Double-encoded: "["..."]" -> strip outer quotes
+      s = s.slice(1, -1);
+    }
+    // Unescape escaped quotes inside (e.g., " → ")
+    s = s.replace(/\"/g, '"');
+    if (s.startsWith('[')) {
+      // JSON array string: ["url1","url2"] or ["url1","url2"]
+      try { images = JSON.parse(s); } catch { images = []; }
+    } else if (s.startsWith('http')) {
+      // Single URL
+      images = [s];
+    } else if (s.includes(',')) {
+      // Comma-separated URLs
+      images = s.split(',').map(u => u.trim()).filter(u => u.startsWith('http') || u.startsWith('/'));
+    } else if (s.startsWith('/')) {
+      // Local file path: /uploads/xxx
+      images = [s];
+    } else {
+      images = [];
+    }
   } else if (Array.isArray(rawImages)) {
     images = rawImages as string[];
   }
@@ -141,10 +162,12 @@ function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
       gpuType: legacySpecs.gpuType || specRelation?.gpuType || undefined,
     },
     description: (p.descriptionRo as string) || '',
+    descriptionRu: (p.descriptionRu as string) || undefined,
     images: images,
     reviews: [],
     rating: (p.avgRating as number) || 0,
     inStock: (p.stock as number) > 0,
+    stock: p.stock as number,
   };
 }
 

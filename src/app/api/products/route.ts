@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return successResponse(product, 201);
+    return successResponse(transformProduct(product), 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);
     return serverErrorResponse();

@@ -48,6 +48,21 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Navigation */}
+          <div>
+            <h4 className="text-white text-sm font-bold mb-4">{t('footer.navigation')}</h4>
+            <ul className="space-y-2">
+              <li><Link href="/catalog?category=laptopuri" className="text-sm hover:text-white transition-colors">💻 Laptopuri</Link></li>
+              <li><Link href="/catalog?category=telefoane" className="text-sm hover:text-white transition-colors">📱 Telefoane</Link></li>
+              <li><Link href="/catalog?category=tablete" className="text-sm hover:text-white transition-colors">📋 Tablete</Link></li>
+              <li><Link href="/catalog?category=mini-pc" className="text-sm hover:text-white transition-colors">🖥️ Mini PC</Link></li>
+              <li><Link href="/catalog?promo=true" className="text-sm hover:text-white transition-colors">🔥 Promoții</Link></li>
+              <li><Link href="/catalog?discount=true" className="text-sm hover:text-white transition-colors">🏷️ Reduceri</Link></li>
+              <li><Link href="/shipping" className="text-sm hover:text-white transition-colors">🚚 Livrare</Link></li>
+              <li><Link href="/about" className="text-sm hover:text-white transition-colors">ℹ️ Despre</Link></li>
+            </ul>
+          </div>
+
           {/* Company */}
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.company')}</h4>
@@ -73,10 +88,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.payment')}</h4>
             <div className="flex gap-2 flex-wrap mb-5">
-              <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Visa</span>
-              <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">MasterCard</span>
               <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Cash</span>
               <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Transfer</span>
+              <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Credit</span>
             </div>
             <h4 className="text-white text-sm font-bold mb-3">{t('footer.contact')}</h4>
             <div className="space-y-2 text-sm">

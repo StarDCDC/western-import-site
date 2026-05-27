@@ -100,7 +100,17 @@ export default function SearchBar() {
       const parsed = JSON.parse(imagesStr);
       if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
     } catch { /* not json */ }
-    if (typeof imagesStr === 'string' && imagesStr.startsWith('http')) return imagesStr;
+    if (typeof imagesStr === 'string') {
+      if (imagesStr.startsWith('http')) return imagesStr.split(',')[0].trim();
+      // Comma-separated URLs
+      if (imagesStr.includes('http')) {
+        const parts = imagesStr.split(',');
+        for (const p of parts) {
+          const trimmed = p.trim();
+          if (trimmed.startsWith('http')) return trimmed;
+        }
+      }
+    }
     return null;
   };
 

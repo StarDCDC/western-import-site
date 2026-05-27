@@ -13,15 +13,12 @@ import SearchBar from '@/components/ui/SearchBar';
 const navItems = [
   { label: 'nav.laptopuri', icon: '💻', href: '/catalog?category=laptopuri' },
   { label: 'nav.telefoane', icon: '📱', href: '/catalog?category=telefoane' },
-  { label: 'nav.pcMonitoare', icon: '🖥️', href: '/catalog?category=pc-monitoare' },
   { label: 'nav.tablete', icon: '📋', href: '/catalog?category=tablete' },
-  { label: 'nav.componente', icon: '🔧', href: '/catalog?category=componente' },
-  { label: 'nav.accesorii', icon: '🔌', href: '/catalog?category=accesorii' },
+  { label: 'nav.miniPc', icon: '🖥️', href: '/catalog?category=mini-pc' },
   { label: 'nav.promotions', icon: '🔥', href: '/catalog?promo=true', highlight: true },
   { label: 'nav.reduceri', icon: '🏷️', href: '/catalog?discount=true' },
 
   { label: 'nav.livrare', icon: '🚚', href: '/shipping' },
-  { label: 'nav.credit', icon: '💳', href: '/catalog?credit=true' },
 
   { label: 'nav.about', icon: 'ℹ️', href: '/about' },
 ];
@@ -34,10 +31,12 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [session, setSession] = useState<{ user?: { name?: string; email?: string; role?: string } } | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const cartCount = useCartStore((s) => s.getItemCount());
   const wishlistCount = useWishlistStore((s) => s.getCount());
 
   useEffect(() => {
+    setMounted(true);
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll);
     fetch('/api/auth/session').then(r => r.json()).then(s => setSession(s)).catch(() => setSession(null));
@@ -157,7 +156,7 @@ export default function Header() {
             >
               <Heart className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
               <span className="text-[10px] text-slate-500 group-hover:text-primary hidden lg:block">Favorite</span>
-              {wishlistCount > 0 && (
+              {mounted && wishlistCount > 0 && (
                 <span className="absolute top-0.5 right-1 bg-accent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center">
                   {wishlistCount}
                 </span>
@@ -169,19 +168,19 @@ export default function Header() {
             >
               <ShoppingCart className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
               <span className="text-[10px] text-slate-500 group-hover:text-primary hidden lg:block">Coș</span>
-              {cartCount > 0 && (
+              {mounted && cartCount > 0 && (
                 <span className="absolute top-0.5 right-1 bg-accent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
             </button>
-            <a
-              href="tel:+37369466585"
+            <Link
+              href="/contact"
               className="hidden md:flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
             >
               <Phone className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
               <span className="text-[10px] text-slate-500 group-hover:text-primary">Contact</span>
-            </a>
+            </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"

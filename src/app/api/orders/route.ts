@@ -265,7 +265,26 @@ export async function POST(request: NextRequest) {
 
     console.log(`[ORDER] ✅ Order ${order.orderNumber} created successfully`);
 
-    return successResponse(order, 201);
+    // Generate IuteCredit redirect URL if credit payment
+    let redirectUrl: string | null = null;
+    if (paymentMethod === 'CREDIT' && process.env.IUTE_CREDIT_PARTNER_ID) {
+      try {
+        const { generateCheckoutUrl } = await import('@/lib/integrations/iuteCredit');
+        const totalAmount = total;
+        const orderItems = items;
+        // Generate checkout URL for the order total
+        redirectUrl = generateCheckoutUrl(
+          order.id, // use order ID as product reference
+          `Comanda ${order.orderNumber}`,
+          totalAmount,
+          12 // default 12 months
+        );
+      } catch (e) {
+        console.warn('[ORDER] IuteCredit URL generation failed:', e);
+      }
+    }
+
+    return successResponse({ ...order, redirectUrl }, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);
     console.error(`[ORDER] ❌ Order creation failed:`, err);

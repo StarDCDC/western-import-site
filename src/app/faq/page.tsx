@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { ChevronDown } from "lucide-react";
+import { useLanguage } from "@/components/ui/LanguageProvider";
 
 interface FAQ {
   id: string;
@@ -17,6 +18,7 @@ export default function FAQPage() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { locale, t } = useLanguage();
 
   useEffect(() => {
     fetch("/api/faq")
@@ -28,20 +30,26 @@ export default function FAQPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const title = locale === 'ru' ? 'Часто задаваемые вопросы' : 'Întrebări frecvente';
+  const subtitle = locale === 'ru'
+    ? 'Найдите ответы на самые распространенные вопросы ниже.'
+    : 'Găsești răspunsuri la cele mai comune întrebări mai jos.';
+  const noFaqs = locale === 'ru' ? 'Пока нет часто задаваемых вопросов.' : 'Momentan nu sunt întrebări frecvente.';
+
   return (
     <>
       <Header />
       <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <div className="max-w-3xl mx-auto px-4 py-8">
-          <Breadcrumb items={[{ label: "FAQ" }]} />
+          <Breadcrumb items={[{ label: locale === 'ru' ? 'FAQ' : 'FAQ' }]} />
 
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-              Întrebări frecvente
+              {title}
             </h1>
             <div className="w-16 h-1 bg-primary rounded-full mb-4" />
             <p className="text-slate-600 dark:text-slate-400">
-              Găsești răspunsuri la cele mai comune întrebări mai jos.
+              {subtitle}
             </p>
           </div>
 
@@ -51,7 +59,7 @@ export default function FAQPage() {
             </div>
           ) : faqs.length === 0 ? (
             <div className="text-center py-16 text-slate-400">
-              <p className="text-lg">Momentan nu sunt întrebări frecvente.</p>
+              <p className="text-lg">{noFaqs}</p>
             </div>
           ) : (
             <div className="space-y-3">

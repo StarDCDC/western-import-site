@@ -56,8 +56,9 @@ export async function GET(request: NextRequest) {
     if (condition) whereClause.condition = condition as any;
     if (isActive !== null) whereClause.isActive = isActive === 'true';
 
+    const sortParam = searchParams.get('sort') || 'createdAt';
     const [products, total] = await Promise.all([
-      prisma.product.findMany({ where: whereClause, include: { category: true, brand: true }, orderBy: { createdAt: 'desc' }, skip, take: limit }),
+      prisma.product.findMany({ where: whereClause, include: { category: true, brand: true }, orderBy: { [sortParam]: 'desc' }, skip, take: limit }),
       prisma.product.count({ where: whereClause }),
     ]);
 
@@ -106,8 +107,14 @@ export async function PUT(request: NextRequest) {
     if (body.condition !== undefined) updateData.condition = body.condition;
     if (body.categoryId !== undefined) updateData.categoryId = body.categoryId;
     if (body.brandId !== undefined) updateData.brandId = body.brandId;
-    if (body.images !== undefined) updateData.images = typeof body.images === 'string' ? body.images : JSON.stringify(body.images);
-    if (body.specs !== undefined) updateData.specs = typeof body.specs === 'string' ? body.specs : JSON.stringify(body.specs);
+    if (body.images !== undefined) {
+      const imgs = typeof body.images === 'string' ? JSON.parse(body.images) : body.images;
+      updateData.images = JSON.stringify(imgs);
+    }
+    if (body.specs !== undefined) {
+      const sp = typeof body.specs === 'string' ? JSON.parse(body.specs) : body.specs;
+      updateData.specs = JSON.stringify(sp);
+    }
     if (body.isActive !== undefined) updateData.isActive = body.isActive;
     if (body.isFeatured !== undefined) updateData.isFeatured = body.isFeatured;
 
@@ -151,14 +158,17 @@ export async function POST(request: NextRequest) {
     }
     const hasSpec = Object.keys(specData).length > 0;
 
+    const imagesRaw = typeof validated.images === 'string' ? validated.images : JSON.stringify(validated.images);
+    const specsRaw = validated.specs ? (typeof validated.specs === 'string' ? validated.specs : JSON.stringify(validated.specs)) : null;
+
     const productData: Record<string, unknown> = {
       name: validated.name, slug: validated.slug,
       descriptionRo: validated.descriptionRo ?? null, descriptionRu: descriptionRu ?? null,
       price: validated.price, oldPrice: validated.oldPrice ?? null,
       stock: validated.stock, sku: validated.sku ?? null,
       condition: validated.condition,
-      images: JSON.stringify(validated.images),
-      specs: validated.specs ? JSON.stringify(validated.specs) : null,
+      images: imagesRaw,
+      specs: specsRaw,
       isActive: validated.isActive, isFeatured: validated.isFeatured,
       categoryId: validated.categoryId, brandId: validated.brandId,
     };

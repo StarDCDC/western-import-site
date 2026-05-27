@@ -9,8 +9,9 @@ import { getProduct, formatPrice, getDiscount, getCreditCalculations, type Credi
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield, ExternalLink, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield, ExternalLink, Loader2 } from 'lucide-react';
 import type { Product } from '@/lib/data';
+import { useLanguage } from '@/components/ui/LanguageProvider';
 import { AVAILABLE_MONTHS } from '@/lib/integrations/iuteCredit';
 import { trackProductView } from '@/components/home/RecentlyViewed';
 
@@ -23,6 +24,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [selectedThumb, setSelectedThumb] = useState(0);
   const [qty, setQty] = useState(1);
+  const { locale, t } = useLanguage();
   const addToCart = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.addItem);
   const isInWishlist = useWishlistStore((s) => s.isInWishlist);
@@ -149,11 +151,22 @@ export default function ProductPage() {
   const isPhone = product.category === 'telefoane';
   const selectedPlan = creditPlans.find(p => p.months === selectedMonths);
 
-  const thumbnails = [
-    { label: 'Față', active: selectedThumb === 0 },
-    { label: 'Spate', active: selectedThumb === 1 },
-    { label: 'Detaliu', active: selectedThumb === 2 },
-  ];
+  // Parse images from string or array
+  const productImages: string[] = (() => {
+    if (Array.isArray(product.images)) return product.images;
+    if (typeof product.images === 'string' && product.images.length > 0) {
+      let s = product.images.trim();
+      if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
+      s = s.replace(/\"/g, '"');
+      if (s.startsWith('[')) {
+        try { return JSON.parse(s); } catch { return []; }
+      }
+      return s.split(',').map((u: string) => u.trim()).filter((u: string) => u.startsWith('http') || u.startsWith('/'));
+    }
+    return [];
+  })();
+  const totalImages = productImages.length;
+  const currentImage = totalImages > 0 ? productImages[selectedThumb] : null;
 
   return (
     <>
@@ -162,9 +175,9 @@ export default function ProductPage() {
         {/* Breadcrumb */}
         <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
           <div className="max-w-[1280px] mx-auto px-5 py-3 flex items-center gap-2 text-sm text-slate-500 flex-wrap">
-            <Link href="/" className="hover:text-primary">Acasă</Link>
+            <Link href="/" className="hover:text-primary">{t('nav.home')}</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <Link href="/catalog" className="hover:text-primary">Catalog</Link>
+            <Link href="/catalog" className="hover:text-primary">{t('nav.catalog')}</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-slate-800 dark:text-white font-medium">{product.name}</span>
           </div>
@@ -174,48 +187,61 @@ export default function ProductPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Gallery */}
             <div>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 flex items-center justify-center min-h-[400px]">
-                <svg
-                  viewBox={isPhone ? '0 0 200 300' : '0 0 400 280'}
-                  fill="none"
-                  className="w-full max-w-sm"
-                >
-                  {isPhone ? (
-                    <>
-                      <rect x="40" y="10" width="120" height="260" rx="20" fill="#e2e8f0" className="dark:fill-slate-600" />
-                      <rect x="50" y="35" width="100" height="200" rx="5" fill="#1a56db" opacity=".08" />
-                      <circle cx="100" cy="252" r="8" fill="#cbd5e1" />
-                      <rect x="70" y="70" width="60" height="40" rx="12" fill="#1a56db" opacity=".12" />
-                      <circle cx="100" cy="140" r="16" fill="#1a56db" opacity=".15" />
-                      <rect x="74" y="170" width="52" height="8" rx="4" fill="#1a56db" opacity=".08" />
-                      <rect x="80" y="185" width="40" height="6" rx="3" fill="#1a56db" opacity=".05" />
-                    </>
-                  ) : (
-                    <>
-                      <rect x="30" y="20" width="340" height="190" rx="12" fill="#e2e8f0" className="dark:fill-slate-600" />
-                      <rect x="50" y="35" width="300" height="155" rx="4" fill="#1a56db" opacity=".06" />
-                      <rect x="120" y="210" width="160" height="10" rx="4" fill="#cbd5e1" />
-                      <rect x="100" y="220" width="200" height="6" rx="3" fill="#e2e8f0" className="dark:fill-slate-600" />
-                      <circle cx="200" cy="26" r="3" fill="#94a3b8" />
-                    </>
-                  )}
-                </svg>
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 flex items-center justify-center min-h-[400px] relative">
+                {currentImage ? (
+                  <img
+                    src={currentImage}
+                    alt={`${product.name} - ${selectedThumb + 1}`}
+                    className="max-h-[360px] w-auto object-contain"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                ) : (
+                  <svg viewBox={isPhone ? '0 0 200 300' : '0 0 400 280'} fill="none" className="w-full max-w-sm">
+                    {isPhone ? (
+                      <>
+                        <rect x="40" y="10" width="120" height="260" rx="20" fill="#e2e8f0" />
+                        <rect x="50" y="35" width="100" height="200" rx="5" fill="#1a56db" opacity=".08" />
+                      </>
+                    ) : (
+                      <>
+                        <rect x="30" y="20" width="340" height="190" rx="12" fill="#e2e8f0" />
+                        <rect x="50" y="35" width="300" height="155" rx="4" fill="#1a56db" opacity=".06" />
+                      </>
+                    )}
+                  </svg>
+                )}
+                {totalImages > 1 && (
+                  <>
+                    <button
+                      onClick={() => setSelectedThumb((prev) => (prev - 1 + totalImages) % totalImages)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-700/80 rounded-full p-2 shadow hover:bg-white dark:hover:bg-slate-700 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                    </button>
+                    <button
+                      onClick={() => setSelectedThumb((prev) => (prev + 1) % totalImages)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-700/80 rounded-full p-2 shadow hover:bg-white dark:hover:bg-slate-700 transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                    </button>
+                  </>
+                )}
               </div>
-              <div className="flex gap-3 mt-4">
-                {thumbnails.map((t, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedThumb(i)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-colors ${
-                      t.active
-                        ? 'bg-primary text-white'
-                        : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
-                    }`}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
+              {totalImages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-3">
+                  {productImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedThumb(i)}
+                      className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                        i === selectedThumb ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'
+                      }`
+                    }
+                    />
+                  ))}
+                  <span className="text-xs text-slate-400 ml-2">{selectedThumb + 1} / {totalImages}</span>
+                </div>
+              )}
             </div>
 
             {/* Details */}
@@ -224,7 +250,7 @@ export default function ProductPage() {
                 <span className={`px-2.5 py-1 rounded-lg text-xs font-bold text-white ${
                   product.condition === 'nou' ? 'bg-success' : 'bg-info'
                 }`}>
-                  {product.condition === 'nou' ? 'Nou' : 'Refurbished'}
+                  {product.condition === 'nou' ? t('product.nou') : t('product.refurbished')}
                 </span>
                 {discount && (
                   <span className="px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-accent">-{discount}%</span>
@@ -250,7 +276,7 @@ export default function ProductPage() {
                 )}
               </div>
 
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">{product.description}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
 
               {/* ─── IuteCredit Section ─────────────────────────────── */}
               <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-5 mb-6 border border-orange-200 dark:border-orange-800">
@@ -333,24 +359,24 @@ export default function ProductPage() {
 
               {/* Specs Table */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
-                <div className="p-4 bg-slate-50 dark:bg-slate-700 font-bold text-sm text-slate-800 dark:text-white">Specificații</div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-700 font-bold text-sm text-slate-800 dark:text-white">{locale === 'ru' ? 'Технические характеристики' : 'Specificații'}</div>
                 {[
-                  ['Producător', product.specs.producator],
-                  ['Tip', product.specs.tip],
-                  ['Model Procesor', product.specs.cpuModel || product.specs.procesor],
-                  ['Serie Procesor', product.specs.cpuSeries],
-                  ['Display', product.specs.display],
-                  ['Rezoluție', product.specs.resolution],
-                  ['Frecvență ecran', product.specs.refreshRate],
-                  ['Memorie RAM', product.specs.ram],
-                  ['Stocare', product.specs.stocare],
-                  ['Tip Stocare', product.specs.storageType],
-                  ['Model Placă Video', product.specs.gpuModel || product.specs.gpu],
-                  ['Serie Placă Video', product.specs.gpuSeries],
-                  ['Tip Placă Video', product.specs.gpuType],
-                  ['Sistem de Operare', product.specs.os],
-                  ['Greutate', product.specs.weight],
-                  ...(product.specs.extra ? [['Extra', product.specs.extra]] : []),
+                  [(locale === 'ru' ? 'Производитель' : 'Producător'), product.spec?.producator],
+                  [(locale === 'ru' ? 'Тип' : 'Tip'), product.spec?.tip],
+                  [(locale === 'ru' ? 'Модель процессора' : 'Model Procesor'), product.spec?.cpuModel || product.specs.procesor],
+                  [(locale === 'ru' ? 'Серия процессора' : 'Serie Procesor'), product.spec?.cpuSeries],
+                  [(locale === 'ru' ? 'Дисплей' : 'Display'), product.spec?.display],
+                  [(locale === 'ru' ? 'Разрешение' : 'Rezoluție'), product.spec?.resolution],
+                  [(locale === 'ru' ? 'Частота экрана' : 'Frecvență ecran'), product.spec?.refreshRate],
+                  [(locale === 'ru' ? 'Оперативная память' : 'Memorie RAM'), product.spec?.ram],
+                  [(locale === 'ru' ? 'Хранилище' : 'Stocare'), product.spec?.storage],
+                  [(locale === 'ru' ? 'Тип хранилища' : 'Tip Stocare'), product.spec?.storageType],
+                  [(locale === 'ru' ? 'Модель видеокарты' : 'Model Placă Video'), product.spec?.gpuModel || product.specs.gpu],
+                  [(locale === 'ru' ? 'Серия видеокарты' : 'Serie Placă Video'), product.spec?.gpuSeries],
+                  [(locale === 'ru' ? 'Тип видеокарты' : 'Tip Placă Video'), product.spec?.gpuType],
+                  [(locale === 'ru' ? 'Операционная система' : 'Sistem de Operare'), product.spec?.os],
+                  [(locale === 'ru' ? 'Вес' : 'Greutate'), product.spec?.weight],
+                  ...(product.spec?.extra ? [[(locale === 'ru' ? 'Дополнительно' : 'Extra'), product.spec?.extra]] : []),
                 ]
                   .filter(([, value]) => value && String(value).trim() !== '')
                   .map(([label, value], i) => (
@@ -361,25 +387,25 @@ export default function ProductPage() {
                   ))}
                 {(() => {
                   const allSpecs = [
-                    ['Producător', product.specs.producator],
-                    ['Tip', product.specs.tip],
-                    ['Model Procesor', product.specs.cpuModel || product.specs.procesor],
-                    ['Serie Procesor', product.specs.cpuSeries],
-                    ['Display', product.specs.display],
-                    ['Rezoluție', product.specs.resolution],
-                    ['Frecvență ecran', product.specs.refreshRate],
-                    ['Memorie RAM', product.specs.ram],
-                    ['Stocare', product.specs.stocare],
-                    ['Tip Stocare', product.specs.storageType],
-                    ['Model Placă Video', product.specs.gpuModel || product.specs.gpu],
-                    ['Serie Placă Video', product.specs.gpuSeries],
-                    ['Tip Placă Video', product.specs.gpuType],
-                    ['Sistem de Operare', product.specs.os],
-                    ['Greutate', product.specs.weight],
-                    ...(product.specs.extra ? [['Extra', product.specs.extra]] : []),
+                    ['Producător', product.spec?.producator],
+                    ['Tip', product.spec?.tip],
+                    ['Model Procesor', product.spec?.cpuModel || product.specs.procesor],
+                    ['Serie Procesor', product.spec?.cpuSeries],
+                    ['Display', product.spec?.display],
+                    ['Rezoluție', product.spec?.resolution],
+                    ['Frecvență ecran', product.spec?.refreshRate],
+                    ['Memorie RAM', product.spec?.ram],
+                    ['Stocare', product.spec?.storage],
+                    ['Tip Stocare', product.spec?.storageType],
+                    ['Model Placă Video', product.spec?.gpuModel || product.specs.gpu],
+                    ['Serie Placă Video', product.spec?.gpuSeries],
+                    ['Tip Placă Video', product.spec?.gpuType],
+                    ['Sistem de Operare', product.spec?.os],
+                    ['Greutate', product.spec?.weight],
+                    ...(product.spec?.extra ? [['Extra', product.spec?.extra]] : []),
                   ].filter(([, v]) => v && String(v).trim() !== '');
                   return allSpecs.length === 0 ? (
-                    <div className="p-4 text-sm text-slate-400 text-center">Nu sunt specificații disponibile</div>
+                    <div className="p-4 text-sm text-slate-400 text-center">{locale === 'ru' ? 'Нет доступных характеристик' : 'Nu sunt specificații disponibile'}</div>
                   ) : null;
                 })()}
               </div>
@@ -389,13 +415,13 @@ export default function ProductPage() {
                 <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                   <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">−</button>
                   <span className="px-4 py-2 text-sm font-semibold border-x border-slate-200 dark:border-slate-700">{qty}</span>
-                  <button onClick={() => setQty(qty + 1)} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
+                  <button onClick={() => setQty(Math.min(product.stock || 99, qty + 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
                 </div>
                 <button
                   onClick={() => { for (let i = 0; i < qty; i++) addToCart(product); }}
                   className="flex-1 bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
                 >
-                  <ShoppingCart className="w-4 h-4" /> Adaugă în coș
+                  <ShoppingCart className="w-4 h-4" /> {locale === 'ru' ? 'В корзину' : 'Adaugă în coș'}
                 </button>
               </div>
 
@@ -415,11 +441,11 @@ export default function ProductPage() {
               <div className="grid grid-cols-3 gap-3">
                 <div className="flex flex-col items-center text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
                   <Truck className="w-5 h-5 text-primary mb-1" />
-                  <span className="text-[11px] text-slate-500">Livrare rapidă</span>
+                  <span className="text-[11px] text-slate-500">{locale === 'ru' ? 'Быстрая доставка' : 'Livrare rapidă'}</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
                   <Shield className="w-5 h-5 text-primary mb-1" />
-                  <span className="text-[11px] text-slate-500">Garanție inclusă</span>
+                  <span className="text-[11px] text-slate-500">{locale === 'ru' ? 'Гарантия включена' : 'Garanție inclusă'}</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
                   <CreditCard className="w-5 h-5 text-primary mb-1" />
@@ -461,22 +487,25 @@ export default function ProductPage() {
           {similar.length > 0 && (
             <div className="mt-12">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-xl font-bold text-slate-800 dark:text-white">Cumpără împreună</h2>
-                <span className="text-xs text-slate-500">Produse recomandate</span>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white">{locale === 'ru' ? 'Купить вместе' : 'Cumpără împreună'}</h2>
+                <span className="text-xs text-slate-500">{locale === 'ru' ? 'Рекомендуемые товары' : 'Produse recomandate'}</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {similar.slice(0, 4).map((sp) => (
                   <div key={sp.id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all relative">
                     {sp.oldPrice && (
-                      <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">REDUCERE</span>
+                      <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
                     )}
                     <Link href={`/product/${sp.id}`}>
                       <div className="flex items-center justify-center h-32 mb-3">
-                        <svg viewBox="0 0 200 130" fill="none" className="max-h-24 w-auto">
-                          <rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" />
-                          <rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" />
-                          <rect x="60" y="105" width="80" height="5" rx="2" fill="#cbd5e1" />
-                        </svg>
+                        {(() => {
+                          const imgUrl = Array.isArray(sp.images) ? sp.images[0] : (typeof sp.images === 'string' && sp.images.length > 0 ? sp.images.split(',')[0] : null);
+                          return imgUrl ? (
+                            <img src={imgUrl} alt={sp.name} className="max-h-28 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          ) : (
+                            <svg viewBox="0 0 200 130" fill="none" className="max-h-24 w-auto"><rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" /><rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" /></svg>
+                          );
+                        })()}
                       </div>
                     </Link>
                     <Link href={`/product/${sp.id}`}>
@@ -491,7 +520,7 @@ export default function ProductPage() {
                       <button
                         onClick={() => addToCart(sp)}
                         className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
-                        title="Adaugă în coș"
+                        title={t('product.addToCart')}
                       >
                         <ShoppingCart className="w-4 h-4" />
                       </button>
@@ -505,16 +534,19 @@ export default function ProductPage() {
           {/* Similar Products */}
           {similar.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5">Produse Similare</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5">{locale === 'ru' ? 'Похожие товары' : 'Produse Similare'}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {similar.map((sp) => (
                   <Link key={sp.id} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all">
                     <div className="flex items-center justify-center h-32 mb-3">
-                      <svg viewBox="0 0 200 130" fill="none" className="max-h-24 w-auto">
-                        <rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" />
-                        <rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" />
-                        <rect x="60" y="105" width="80" height="5" rx="2" fill="#cbd5e1" />
-                      </svg>
+                      {(() => {
+                        const imgUrl = Array.isArray(sp.images) ? sp.images[0] : (typeof sp.images === 'string' && sp.images.length > 0 ? sp.images.split(',')[0] : null);
+                        return imgUrl ? (
+                          <img src={imgUrl} alt={sp.name} className="max-h-28 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                        ) : (
+                          <svg viewBox="0 0 200 130" fill="none" className="max-h-24 w-auto"><rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" /><rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" /></svg>
+                        );
+                      })()}
                     </div>
                     <h4 className="text-sm font-semibold text-slate-800 dark:text-white line-clamp-1">{sp.name}</h4>
                     <p className="text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>

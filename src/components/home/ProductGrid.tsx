@@ -83,7 +83,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         <div className="flex items-center justify-center h-36 mb-3 p-2">
           {hasImages ? (
             <img
-              src={product.images[0]}
+              src={Array.isArray(product.images) ? product.images[0] : (typeof product.images === 'string' ? product.images.split(',')[0] : undefined)}
               alt={product.name}
               className="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform"
               onError={(e) => {

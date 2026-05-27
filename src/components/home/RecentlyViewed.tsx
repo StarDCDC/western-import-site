@@ -108,10 +108,38 @@ export default function RecentlyViewed() {
                   className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <Link href={`/product/${product.id}`}>
-                    <div className="flex items-center justify-center h-24 mb-2">
-                      <div className="w-12 h-12 bg-slate-100 dark:bg-slate-600 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400">
-                        {product.brand?.name?.slice(0, 2).toUpperCase() || '?'}
-                      </div>
+                    <div className="flex items-center justify-center h-24 mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden">
+                      {(() => {
+                        const imgs = typeof product.images === 'string'
+                          ? product.images.split(',').filter(u => { const p = u.trim(); return p.startsWith('http') || p.startsWith('/'); })
+                          : [];
+                        if (imgs.length === 0) {
+                          return (
+                            <div className="w-12 h-12 bg-slate-200 dark:bg-slate-600 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400">
+                              {product.brand?.name?.slice(0, 2).toUpperCase() || '?'}
+                            </div>
+                          );
+                        }
+                        return (
+                          <img
+                            src={imgs[0]}
+                            alt={product.name}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              const imgs = typeof product.images === 'string'
+                                ? product.images.split(',').filter(u => { const p = u.trim(); return p.startsWith('http') || p.startsWith('/'); })
+                                : [];
+                              const next = imgs.indexOf(target.src);
+                              if (next >= 0 && next < imgs.length - 1) {
+                                target.src = imgs[next + 1];
+                              } else {
+                                target.style.display = 'none';
+                              }
+                            }}
+                          />
+                        );
+                      })()}
                     </div>
                   </Link>
                   <Link href={`/product/${product.id}`}>

@@ -15,15 +15,13 @@ import type { ApiCategory } from '@/lib/api';
 import type { Brand } from '@/lib/data';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 
-type SortOption = 'popular' | 'price_asc' | 'price_desc' | 'newest' | 'name_asc' | 'name_desc';
+type SortOption = 'popular' | 'price_asc' | 'price_desc' | 'newest';
 
 const SORT_OPTIONS: { val: SortOption; labelKey: string }[] = [
   { val: 'popular', labelKey: 'catalog.popular' },
   { val: 'price_asc', labelKey: 'catalog.priceAsc' },
   { val: 'price_desc', labelKey: 'catalog.priceDesc' },
   { val: 'newest', labelKey: 'catalog.newest' },
-  { val: 'name_asc', labelKey: 'catalog.nameAsc' },
-  { val: 'name_desc', labelKey: 'catalog.nameDesc' },
 ];
 
 // Spec filter fields for tech products
@@ -310,7 +308,7 @@ function CatalogContent() {
       <div>
         <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-3">{t('catalog.condition')}</h3>
         <div className="space-y-2">
-          {[{ val: 'nou', labelKey: 'catalog.new' }, { val: 'refurbished', labelKey: 'catalog.refurbished' }].map((c) => (
+          {[{ val: 'nou', labelKey: 'catalog.new' }, { val: 'refurbished', labelKey: 'catalog.refurbished' }, { val: 'folosit', labelKey: 'catalog.used' }].map((c) => (
             <label key={c.val} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
               <input type="checkbox" checked={selectedConditions.includes(c.val)} onChange={() => toggleArray(selectedConditions, setSelectedConditions, c.val)} className="rounded border-slate-300 text-primary focus:ring-primary" />
               {t(c.labelKey)}
@@ -387,21 +385,48 @@ function CatalogContent() {
         </span>
         <Link href={`/product/${product.id}`}>
           <div className="flex items-center justify-center h-36 mb-3">
-            <svg viewBox={isPhone ? '0 0 120 160' : '0 0 200 130'} fill="none" className="max-h-28 w-auto">
-              {isPhone ? (
-                <>
-                  <rect x="25" y="8" width="70" height="130" rx="12" fill="#e2e8f0" />
-                  <rect x="30" y="20" width="60" height="98" rx="3" fill="#1a56db" opacity=".08" />
-                  <circle cx="60" cy="128" r="4" fill="#cbd5e1" />
-                </>
+            {(() => {
+              const rawImg = product.images;
+              let imgUrl: string | null = null;
+              if (Array.isArray(rawImg)) {
+                imgUrl = rawImg[0] || null;
+              } else if (typeof rawImg === 'string') {
+                let s = rawImg.trim();
+                if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
+                s = s.replace(/\"/g, '"');
+                if (s.startsWith('[')) {
+                  try { const a = JSON.parse(s); imgUrl = a[0] || null; } catch { imgUrl = null; }
+                } else if (s.startsWith('http')) {
+                  imgUrl = s;
+                } else if (s.includes(',')) {
+                  const parts = s.split(',');
+                  imgUrl = parts.find(p => p.trim().startsWith('http') || p.trim().startsWith('/')) || parts[0].trim() || null;
+                } else if (s.startsWith('/')) {
+                  imgUrl = s;
+                } else {
+                  imgUrl = s || null;
+                }
+              }
+              return imgUrl ? (
+                <img src={imgUrl} alt={product.name} className="max-h-32 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               ) : (
-                <>
-                  <rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" />
-                  <rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" />
-                  <rect x="60" y="105" width="80" height="5" rx="2" fill="#cbd5e1" />
-                </>
-              )}
-            </svg>
+                <svg viewBox={isPhone ? '0 0 120 160' : '0 0 200 130'} fill="none" className="max-h-28 w-auto">
+                  {isPhone ? (
+                    <>
+                      <rect x="25" y="8" width="70" height="130" rx="12" fill="#e2e8f0" />
+                      <rect x="30" y="20" width="60" height="98" rx="3" fill="#1a56db" opacity=".08" />
+                      <circle cx="60" cy="128" r="4" fill="#cbd5e1" />
+                    </>
+                  ) : (
+                    <>
+                      <rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" />
+                      <rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" />
+                      <rect x="60" y="105" width="80" height="5" rx="2" fill="#cbd5e1" />
+                    </>
+                  )}
+                </svg>
+              );
+            })()}
           </div>
         </Link>
         <Link href={`/product/${product.id}`}>

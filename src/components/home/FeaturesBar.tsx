@@ -1,4 +1,5 @@
-"use client";
+// src/components/home/FeaturesBar.tsx
+'use client';
 
 import { Truck, ShieldCheck, Zap, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
@@ -28,8 +29,8 @@ const FEATURES: Feature[] = [
   },
   {
     icon: <Headphones size={24} />,
-    titleKey: "features.support247",
-    descriptionKey: "features.support247Desc",
+    titleKey: "features.supportSchedule",
+    descriptionKey: "features.supportScheduleDesc",
   },
 ];
 

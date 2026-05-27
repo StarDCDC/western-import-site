@@ -99,11 +99,9 @@ export default function CategorySlider() {
                   <h4 className="text-sm font-semibold text-slate-800 dark:text-white text-center leading-snug">
                     {name}
                   </h4>
-                  {cat.count > 0 && (
-                    <span className="text-xs text-primary font-semibold">
-                      {cat.count} {locale === 'ru' ? 'товаров' : 'produse'} →
-                    </span>
-                  )}
+                  <span className="text-xs text-primary font-semibold">
+                    {cat.count} {locale === 'ru' ? (cat.count === 1 ? 'товар' : cat.count < 5 ? 'товара' : 'товаров') : (cat.count === 1 ? 'produs' : cat.count < 5 || cat.count === 0 ? 'produse' : 'produse')} →
+                  </span>
                 </Link>
               </motion.div>
             );

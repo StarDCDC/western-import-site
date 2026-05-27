@@ -435,7 +435,7 @@ export default function EditProductPage() {
             <div className="flex flex-wrap gap-2 mb-2">
               {images.map((url, i) => (
                 <div key={i} className="relative group">
-                  <img src={url} alt="" className="w-16 h-16 object-cover rounded-lg border border-slate-300" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  <img src={url} alt="" className="w-24 h-24 object-cover rounded-xl border border-slate-300 cursor-pointer hover:ring-2 hover:ring-amber-400 transition" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   <button type="button" onClick={() => removeImage(i)} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">✕</button>
                 </div>
               ))}

@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Calendar, ArrowRight, User } from "lucide-react";
+import { Calendar, ArrowRight } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { useLanguage } from "@/components/ui/LanguageProvider";
 
 interface BlogPost {
   id: string;
@@ -21,6 +22,7 @@ interface BlogPost {
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const { locale } = useLanguage();
 
   useEffect(() => {
     fetch("/api/blog?limit=20")
@@ -32,6 +34,16 @@ export default function BlogPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const title = locale === 'ru' ? 'Блог' : 'Blog';
+  const subtitle = locale === 'ru'
+    ? 'Гиды, советы и новости из мира технологий.'
+    : 'Ghiduri, sfaturi și noutăți din lumea tehnologiei.';
+  const noPosts = locale === 'ru'
+    ? 'Пока нет опубликованных статей.'
+    : 'Momentan nu sunt articole publicate.';
+  const noPostsSub = locale === 'ru' ? 'Возвращайтесь скоро!' : 'Reveniți curând!';
+  const readMore = locale === 'ru' ? 'Читать' : 'Citește';
+
   const categoryEmoji = (index: number) => {
     const emojis = ["💻", "📱", "🏆", "🎯", "💡", "📊"];
     return emojis[index % emojis.length];
@@ -42,13 +54,13 @@ export default function BlogPage() {
       <Header />
       <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <Breadcrumb items={[{ label: "Blog" }]} />
+          <Breadcrumb items={[{ label: locale === 'ru' ? 'Блог' : 'Blog' }]} />
 
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Blog</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h1>
             <div className="w-16 h-1 bg-primary rounded-full mb-4" />
             <p className="text-slate-600 dark:text-slate-400">
-              Ghiduri, sfaturi și noutăți din lumea tehnologiei.
+              {subtitle}
             </p>
           </div>
 
@@ -58,8 +70,8 @@ export default function BlogPage() {
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-16 text-slate-400">
-              <p className="text-lg">Momentan nu sunt articole publicate.</p>
-              <p className="text-sm mt-2">Reveniți curând!</p>
+              <p className="text-lg">{noPosts}</p>
+              <p className="text-sm mt-2">{noPostsSub}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -79,7 +91,7 @@ export default function BlogPage() {
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <Calendar size={12} /> {new Date(article.createdAt).toLocaleDateString("ro-RO")}
+                        <Calendar size={12} /> {new Date(article.createdAt).toLocaleDateString(locale === 'ru' ? 'ru-RU' : 'ro-RO')}
                       </span>
                     </div>
 
@@ -95,7 +107,7 @@ export default function BlogPage() {
                       href={`/blog/${article.slug}`}
                       className="text-sm text-primary hover:underline flex items-center gap-1 font-medium"
                     >
-                      Citește <ArrowRight size={14} />
+                      {readMore} <ArrowRight size={14} />
                     </Link>
                   </div>
                 </article>

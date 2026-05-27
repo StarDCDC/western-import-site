@@ -38,6 +38,7 @@ export default function AdminProductsPage() {
       const params = new URLSearchParams({
         page: String(page),
         limit: "20",
+        sort,
         ...(search && { search }),
         ...(catFilter && { category: catFilter }),
       });
@@ -53,7 +54,7 @@ export default function AdminProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search, catFilter]);
+  }, [page, search, catFilter, sort]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 

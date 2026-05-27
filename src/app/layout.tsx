@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
@@ -82,9 +83,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ro" suppressHydrationWarning className="h-full" data-scroll-behavior="smooth">
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()` }} />
-      </head>
       <body
         className={`${inter.variable} min-h-full flex flex-col font-sans antialiased bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 transition-colors`}
       >
@@ -95,7 +93,9 @@ export default function RootLayout({
             </AuthProvider>
           </ThemeProvider>
         </LanguageProvider>
-        <AnalyticsScripts />
+        <Script id="theme-init" strategy="afterInteractive">
+          {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`}
+        </Script>
         <AnalyticsScripts />
         <RecaptchaScripts />
         <WhatsAppButton />

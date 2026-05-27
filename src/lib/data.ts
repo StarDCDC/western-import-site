@@ -32,10 +32,12 @@ export interface Product {
     gpuType?: string;
   };
   description: string;
+  descriptionRu?: string;
   images: string[];
   reviews: Review[];
   rating: number;
   inStock: boolean;
+  stock?: number; // available stock for validation
 }
 
 export interface Review {

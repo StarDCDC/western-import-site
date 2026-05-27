@@ -48,7 +48,7 @@ export default function CheckoutPage() {
     customerName: '',
     phone: '',
     email: '',
-    city: 'Chișinău',
+    city: '',
     raion: '',
     localitate: '',
     strada: '',
@@ -98,7 +98,6 @@ export default function CheckoutPage() {
     else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email.trim())) e.email = 'Email invalid';
 
     if (form.deliveryMethod !== 'PICKUP') {
-      if (!form.city.trim()) e.city = 'Orașul este obligatoriu';
       if (!form.raion.trim()) e.raion = 'Raionul este obligatoriu';
       if (!form.strada.trim()) e.strada = 'Strada este obligatorie';
       if (!form.codPostal.trim()) e.codPostal = 'Codul poștal este obligatoriu';
@@ -197,6 +196,16 @@ export default function CheckoutPage() {
       if (data.success) {
         setOrderNumber(data.data.orderNumber);
         clearCart();
+
+        // Redirect to IuteCredit checkout if credit was selected
+        if (form.paymentMethod === 'CREDIT') {
+          const redirectUrl = data.data.redirectUrl;
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+            return;
+          }
+        }
+
         setStep('success');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
@@ -363,12 +372,13 @@ export default function CheckoutPage() {
                     <h3 className="font-bold text-slate-800 dark:text-white mb-4">Adresa de Livrare</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div data-error={errors.city ? 'true' : undefined}>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Oraș *</label>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">Oraș</label>
                         <select
                           value={form.city}
                           onChange={(e) => updateField('city', e.target.value)}
-                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.city ? 'border-red-400' : 'border-slate-200 dark:border-slate-600'} bg-white dark:bg-slate-700 text-sm`}
+                          className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
                         >
+                          <option value="">Selectează orașul</option>
                           <option>Chișinău</option>
                           <option>Bălți</option>
                           <option>Orhei</option>
@@ -376,7 +386,6 @@ export default function CheckoutPage() {
                           <option>Ungheni</option>
                           <option>Cahul</option>
                           <option>Comrat</option>
-                          <option>Soroca</option>
                           <option>Edineț</option>
                           <option>Altul</option>
                         </select>
@@ -436,7 +445,6 @@ export default function CheckoutPage() {
                   <div className="space-y-3">
                     {[
                       { id: 'CASH' as const, label: 'Cash la livrare', desc: 'Plătești la primirea comenzii', icon: '💵' },
-                      { id: 'CARD' as const, label: 'Card online', desc: 'Plată securizată cu cardul', icon: '💳' },
                       { id: 'CREDIT' as const, label: 'Credit IuteCredit', desc: 'Rate fără dobândă până la 12 luni', icon: '🏦' },
                     ].map((m) => (
                       <button
