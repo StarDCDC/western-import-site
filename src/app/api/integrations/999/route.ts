@@ -39,7 +39,7 @@ function toLocalProduct(p: typeof mockProducts[0]): LocalProduct {
     price: p.price,
     oldPrice: p.oldPrice,
     description: p.description,
-    images: p.images,
+    images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []),
     specs: p.specs,
     inStock: p.inStock,
   };

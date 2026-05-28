@@ -391,7 +391,7 @@ function CatalogContent() {
               if (Array.isArray(rawImg)) {
                 imgUrl = rawImg[0] || null;
               } else if (typeof rawImg === 'string') {
-                let s = rawImg.trim();
+                let s: string = (rawImg as string).trim();
                 if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
                 s = s.replace(/\"/g, '"');
                 if (s.startsWith('[')) {

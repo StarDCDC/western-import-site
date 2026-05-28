@@ -48,6 +48,23 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
     : 'bg-blue-500';
 
   const hasImages = product.images && product.images.length > 0;
+  
+  // Parse images - could be JSON string, comma-separated string, or array
+  const getImageUrl = (): string | undefined => {
+    if (Array.isArray(product.images)) return product.images[0];
+    if (typeof product.images === 'string') {
+      const s = product.images.trim();
+      if (s.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(s);
+          return Array.isArray(parsed) ? parsed[0] : undefined;
+        } catch { return undefined; }
+      }
+      return s.split(',')[0]?.trim();
+    }
+    return undefined;
+  };
+  const imageUrl = getImageUrl();
   const isPhone = product.category === 'telefoane';
 
   return (
@@ -83,7 +100,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         <div className="flex items-center justify-center h-36 mb-3 p-2">
           {hasImages ? (
             <img
-              src={Array.isArray(product.images) ? product.images[0] : (typeof product.images === 'string' ? product.images.split(',')[0] : undefined)}
+              src={imageUrl}
               alt={product.name}
               className="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform"
               onError={(e) => {
@@ -190,7 +207,7 @@ export default function ProductGrid() {
   useEffect(() => {
     async function load() {
       try {
-        const result = await getProducts({ featured: true, limit: 6 });
+        const result = await getProducts({ sort: 'newest', limit: 6 });
         setProductList(result.products.slice(0, 6));
       } catch {
         // fallback to empty

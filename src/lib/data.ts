@@ -15,6 +15,7 @@ export interface Product {
     display: string;
     ram: string;
     stocare: string;
+    storage?: string;
     gpu?: string;
     os?: string;
     tip?: string;
@@ -33,7 +34,7 @@ export interface Product {
   };
   description: string;
   descriptionRu?: string;
-  images: string[];
+  images: string[] | string;
   reviews: Review[];
   rating: number;
   inStock: boolean;

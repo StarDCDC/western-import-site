@@ -96,32 +96,23 @@ export async function GET(request: NextRequest) {
     const plans: CreditPlan[] = getAllCreditPlans(product.price);
     const bestPlan = plans[plans.length - 1];
 
-    const response: Record<string, unknown> = {
-      success: true,
-      data: {
-        productId: product.id,
-        productName: product.name,
-        price: product.price,
-        currency: 'MDL',
-        plans,
-        bestPlan,
-      },
+    const responseData: Record<string, unknown> = {
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      currency: 'MDL',
+      plans,
+      bestPlan,
     };
 
     // Generate checkout URL if configured
     if (isIuteCreditConfigured()) {
-      response.data = {
-        ...response.data,
-        creditLink: generateCheckoutUrl(product.id, product.name, product.price),
-      };
+      responseData.creditLink = generateCheckoutUrl(product.id, product.name, product.price);
     } else {
-      response.data = {
-        ...response.data,
-        creditLink: generateCreditLink(productId, product.price),
-      };
+      responseData.creditLink = generateCreditLink(productId, product.price);
     }
 
-    return Response.json(response);
+    return Response.json({ success: true, data: responseData });
   } catch (error) {
     console.error('[IuteCredit] GET error:', error);
     return Response.json(

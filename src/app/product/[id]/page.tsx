@@ -153,9 +153,10 @@ export default function ProductPage() {
 
   // Parse images from string or array
   const productImages: string[] = (() => {
-    if (Array.isArray(product.images)) return product.images;
-    if (typeof product.images === 'string' && product.images.length > 0) {
-      let s = product.images.trim();
+    const rawImages = product.images as string | string[];
+    if (Array.isArray(rawImages)) return rawImages;
+    if (typeof rawImages === 'string' && rawImages.length > 0) {
+      let s = rawImages.trim();
       if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
       s = s.replace(/\"/g, '"');
       if (s.startsWith('[')) {
@@ -361,22 +362,22 @@ export default function ProductPage() {
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
                 <div className="p-4 bg-slate-50 dark:bg-slate-700 font-bold text-sm text-slate-800 dark:text-white">{locale === 'ru' ? 'Технические характеристики' : 'Specificații'}</div>
                 {[
-                  [(locale === 'ru' ? 'Производитель' : 'Producător'), product.spec?.producator],
-                  [(locale === 'ru' ? 'Тип' : 'Tip'), product.spec?.tip],
-                  [(locale === 'ru' ? 'Модель процессора' : 'Model Procesor'), product.spec?.cpuModel || product.specs.procesor],
-                  [(locale === 'ru' ? 'Серия процессора' : 'Serie Procesor'), product.spec?.cpuSeries],
-                  [(locale === 'ru' ? 'Дисплей' : 'Display'), product.spec?.display],
-                  [(locale === 'ru' ? 'Разрешение' : 'Rezoluție'), product.spec?.resolution],
-                  [(locale === 'ru' ? 'Частота экрана' : 'Frecvență ecran'), product.spec?.refreshRate],
-                  [(locale === 'ru' ? 'Оперативная память' : 'Memorie RAM'), product.spec?.ram],
-                  [(locale === 'ru' ? 'Хранилище' : 'Stocare'), product.spec?.storage],
-                  [(locale === 'ru' ? 'Тип хранилища' : 'Tip Stocare'), product.spec?.storageType],
-                  [(locale === 'ru' ? 'Модель видеокарты' : 'Model Placă Video'), product.spec?.gpuModel || product.specs.gpu],
-                  [(locale === 'ru' ? 'Серия видеокарты' : 'Serie Placă Video'), product.spec?.gpuSeries],
-                  [(locale === 'ru' ? 'Тип видеокарты' : 'Tip Placă Video'), product.spec?.gpuType],
-                  [(locale === 'ru' ? 'Операционная система' : 'Sistem de Operare'), product.spec?.os],
-                  [(locale === 'ru' ? 'Вес' : 'Greutate'), product.spec?.weight],
-                  ...(product.spec?.extra ? [[(locale === 'ru' ? 'Дополнительно' : 'Extra'), product.spec?.extra]] : []),
+                  [(locale === 'ru' ? 'Производитель' : 'Producător'), product.specs?.producator],
+                  [(locale === 'ru' ? 'Тип' : 'Tip'), product.specs?.tip],
+                  [(locale === 'ru' ? 'Модель процессора' : 'Model Procesor'), product.specs?.cpuModel || product.specs.procesor],
+                  [(locale === 'ru' ? 'Серия процессора' : 'Serie Procesor'), product.specs?.cpuSeries],
+                  [(locale === 'ru' ? 'Дисплей' : 'Display'), product.specs?.display],
+                  [(locale === 'ru' ? 'Разрешение' : 'Rezoluție'), product.specs?.resolution],
+                  [(locale === 'ru' ? 'Частота экрана' : 'Frecvență ecran'), product.specs?.refreshRate],
+                  [(locale === 'ru' ? 'Оперативная память' : 'Memorie RAM'), product.specs?.ram],
+                  [(locale === 'ru' ? 'Хранилище' : 'Stocare'), product.specs?.storage],
+                  [(locale === 'ru' ? 'Тип хранилища' : 'Tip Stocare'), product.specs?.storageType],
+                  [(locale === 'ru' ? 'Модель видеокарты' : 'Model Placă Video'), product.specs?.gpuModel || product.specs.gpu],
+                  [(locale === 'ru' ? 'Серия видеокарты' : 'Serie Placă Video'), product.specs?.gpuSeries],
+                  [(locale === 'ru' ? 'Тип видеокарты' : 'Tip Placă Video'), product.specs?.gpuType],
+                  [(locale === 'ru' ? 'Операционная система' : 'Sistem de Operare'), product.specs?.os],
+                  [(locale === 'ru' ? 'Вес' : 'Greutate'), product.specs?.weight],
+                  ...(product.specs?.extra ? [[(locale === 'ru' ? 'Дополнительно' : 'Extra'), product.specs?.extra]] : []),
                 ]
                   .filter(([, value]) => value && String(value).trim() !== '')
                   .map(([label, value], i) => (
@@ -387,22 +388,22 @@ export default function ProductPage() {
                   ))}
                 {(() => {
                   const allSpecs = [
-                    ['Producător', product.spec?.producator],
-                    ['Tip', product.spec?.tip],
-                    ['Model Procesor', product.spec?.cpuModel || product.specs.procesor],
-                    ['Serie Procesor', product.spec?.cpuSeries],
-                    ['Display', product.spec?.display],
-                    ['Rezoluție', product.spec?.resolution],
-                    ['Frecvență ecran', product.spec?.refreshRate],
-                    ['Memorie RAM', product.spec?.ram],
-                    ['Stocare', product.spec?.storage],
-                    ['Tip Stocare', product.spec?.storageType],
-                    ['Model Placă Video', product.spec?.gpuModel || product.specs.gpu],
-                    ['Serie Placă Video', product.spec?.gpuSeries],
-                    ['Tip Placă Video', product.spec?.gpuType],
-                    ['Sistem de Operare', product.spec?.os],
-                    ['Greutate', product.spec?.weight],
-                    ...(product.spec?.extra ? [['Extra', product.spec?.extra]] : []),
+                    ['Producător', product.specs?.producator],
+                    ['Tip', product.specs?.tip],
+                    ['Model Procesor', product.specs?.cpuModel || product.specs.procesor],
+                    ['Serie Procesor', product.specs?.cpuSeries],
+                    ['Display', product.specs?.display],
+                    ['Rezoluție', product.specs?.resolution],
+                    ['Frecvență ecran', product.specs?.refreshRate],
+                    ['Memorie RAM', product.specs?.ram],
+                    ['Stocare', product.specs?.storage],
+                    ['Tip Stocare', product.specs?.storageType],
+                    ['Model Placă Video', product.specs?.gpuModel || product.specs.gpu],
+                    ['Serie Placă Video', product.specs?.gpuSeries],
+                    ['Tip Placă Video', product.specs?.gpuType],
+                    ['Sistem de Operare', product.specs?.os],
+                    ['Greutate', product.specs?.weight],
+                    ...(product.specs?.extra ? [['Extra', product.specs?.extra]] : []),
                   ].filter(([, v]) => v && String(v).trim() !== '');
                   return allSpecs.length === 0 ? (
                     <div className="p-4 text-sm text-slate-400 text-center">{locale === 'ru' ? 'Нет доступных характеристик' : 'Nu sunt specificații disponibile'}</div>
@@ -499,7 +500,7 @@ export default function ProductPage() {
                     <Link href={`/product/${sp.id}`}>
                       <div className="flex items-center justify-center h-32 mb-3">
                         {(() => {
-                          const imgUrl = Array.isArray(sp.images) ? sp.images[0] : (typeof sp.images === 'string' && sp.images.length > 0 ? sp.images.split(',')[0] : null);
+                          const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
                           return imgUrl ? (
                             <img src={imgUrl} alt={sp.name} className="max-h-28 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                           ) : (
@@ -540,7 +541,7 @@ export default function ProductPage() {
                   <Link key={sp.id} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all">
                     <div className="flex items-center justify-center h-32 mb-3">
                       {(() => {
-                        const imgUrl = Array.isArray(sp.images) ? sp.images[0] : (typeof sp.images === 'string' && sp.images.length > 0 ? sp.images.split(',')[0] : null);
+                        const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
                         return imgUrl ? (
                           <img src={imgUrl} alt={sp.name} className="max-h-28 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         ) : (

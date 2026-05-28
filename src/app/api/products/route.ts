@@ -117,7 +117,14 @@ export async function GET(request: NextRequest) {
         ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
         : 0;
       const { reviews, ...rest } = p;
-      return { ...rest, avgRating: Math.round(avgRating * 10) / 10, reviewCount: p._count.reviews };
+      // Parse images from JSON string to array
+      let parsedImages: string[] = [];
+      if (typeof rest.images === 'string' && rest.images.length > 0) {
+        try { parsedImages = JSON.parse(rest.images); } catch { parsedImages = []; }
+      } else if (Array.isArray(rest.images)) {
+        parsedImages = rest.images as unknown as string[];
+      }
+      return { ...rest, images: parsedImages, avgRating: Math.round(avgRating * 10) / 10, reviewCount: p._count.reviews };
     });
 
     return paginatedResponse(productsWithRating, total, page, limit);
@@ -209,7 +216,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return successResponse(transformProduct(product), 201);
+    return successResponse(product, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);
     return serverErrorResponse();

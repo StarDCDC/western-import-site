@@ -48,10 +48,17 @@ export async function GET(
       },
     });
 
-    // Parse specs JSON string to object
+    // Parse specs and images JSON strings
     const productData = {
       ...product,
       specs: typeof product.specs === 'string' ? JSON.parse(product.specs) : product.specs,
+      images: (() => {
+        if (Array.isArray(product.images)) return product.images;
+        if (typeof product.images === 'string' && product.images.length > 0) {
+          try { return JSON.parse(product.images); } catch { return []; }
+        }
+        return [];
+      })(),
     };
 
     return successResponse({
@@ -62,6 +69,13 @@ export async function GET(
       similar: similar.map((p) => ({
         ...p,
         specs: typeof p.specs === 'string' ? JSON.parse(p.specs) : p.specs,
+        images: (() => {
+          if (Array.isArray(p.images)) return p.images;
+          if (typeof p.images === 'string' && p.images.length > 0) {
+            try { return JSON.parse(p.images); } catch { return []; }
+          }
+          return [];
+        })(),
         avgRating: p.reviews.length > 0
           ? Math.round((p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length) * 10) / 10
           : 0,
