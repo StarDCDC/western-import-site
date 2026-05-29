@@ -454,13 +454,15 @@ model WorkSchedule {
 // ─── FAQ ───────────────────────────────────────────────────────────
 
 model FAQ {
-  id       String   @id @default(cuid())
-  question String
-  answer   String
-  order    Int      @default(0)
-  isActive Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  question   String
+  answer     String
+  questionRu String?
+  answerRu   String?
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("faqs")
 }

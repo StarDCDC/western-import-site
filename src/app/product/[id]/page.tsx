@@ -188,12 +188,12 @@ export default function ProductPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Gallery */}
             <div>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 flex items-center justify-center min-h-[400px] relative">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-8 flex items-center justify-center min-h-[250px] sm:min-h-[400px] relative">
                 {currentImage ? (
                   <img
                     src={currentImage}
                     alt={`${product.name} - ${selectedThumb + 1}`}
-                    className="max-h-[360px] w-auto object-contain"
+                    className="max-h-[220px] sm:max-h-[360px] w-auto object-contain"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                 ) : (
@@ -258,7 +258,7 @@ export default function ProductPage() {
                 )}
               </div>
 
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">{product.name}</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">{product.name}</h1>
 
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center gap-1">
@@ -271,16 +271,16 @@ export default function ProductPage() {
               </div>
 
               <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-3xl font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
                 {product.oldPrice && (
-                  <span className="text-lg text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
+                  <span className="text-base sm:text-lg text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
                 )}
               </div>
 
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
 
               {/* ─── IuteCredit Section ─────────────────────────────── */}
-              <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-5 mb-6 border border-orange-200 dark:border-orange-800">
+              <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-3 sm:p-5 mb-6 border border-orange-200 dark:border-orange-800">
                 <div className="flex items-center gap-2 mb-3">
                   <CreditCard className="w-5 h-5 text-orange-600" />
                   <h3 className="font-bold text-sm text-orange-800 dark:text-orange-300">Cumpără în rate — IuteCredit</h3>
@@ -396,8 +396,8 @@ export default function ProductPage() {
                   .filter(([, value]) => value && String(value).trim() !== '')
                   .map(([label, value], i) => (
                     <div key={i} className={`flex text-sm ${i % 2 === 0 ? 'bg-slate-50/50 dark:bg-slate-800/50' : ''}`}>
-                      <div className="w-40 shrink-0 py-2.5 px-4 font-medium text-slate-500 dark:text-slate-400">{label}</div>
-                      <div className="py-2.5 px-4 text-slate-800 dark:text-white">{value}</div>
+                      <div className="w-32 sm:w-40 shrink-0 py-2.5 px-3 sm:px-4 font-medium text-slate-500 dark:text-slate-400">{label}</div>
+                      <div className="py-2.5 px-3 sm:px-4 text-slate-800 dark:text-white">{value}</div>
                     </div>
                   ))}
                 {(() => {
@@ -453,26 +453,26 @@ export default function ProductPage() {
               </div>
 
               {/* Benefits */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="flex flex-col items-center text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <Truck className="w-5 h-5 text-primary mb-1" />
-                  <span className="text-[11px] text-slate-500">{locale === 'ru' ? 'Быстрая доставка' : 'Livrare rapidă'}</span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-1" />
+                  <span className="text-[10px] sm:text-[11px] text-slate-500">{locale === 'ru' ? 'Быстрая доставка' : 'Livrare rapidă'}</span>
                 </div>
-                <div className="flex flex-col items-center text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <Shield className="w-5 h-5 text-primary mb-1" />
-                  <span className="text-[11px] text-slate-500">{locale === 'ru' ? 'Гарантия включена' : 'Garanție inclusă'}</span>
+                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-1" />
+                  <span className="text-[10px] sm:text-[11px] text-slate-500">{locale === 'ru' ? 'Гарантия включена' : 'Garanție inclusă'}</span>
                 </div>
-                <div className="flex flex-col items-center text-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <CreditCard className="w-5 h-5 text-primary mb-1" />
-                  <span className="text-[11px] text-slate-500">Credit 0%</span>
+                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-1" />
+                  <span className="text-[10px] sm:text-[11px] text-slate-500">Credit 0%</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Reviews */}
-          <div className="mt-12">
-            <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5">Review-uri</h2>
+          <div className="mt-8 sm:mt-12">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-5">Review-uri</h2>
             <div className="space-y-4">
               {product.reviews.map((review) => (
                 <div key={review.id} className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">

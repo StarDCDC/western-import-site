@@ -6,6 +6,8 @@ interface FAQ {
   id: string;
   question: string;
   answer: string;
+  questionRu: string;
+  answerRu: string;
   order: number;
   isActive: boolean;
 }
@@ -15,7 +17,7 @@ export default function AdminFAQPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<FAQ | null>(null);
-  const [form, setForm] = useState({ question: "", answer: "", order: 0, isActive: true });
+  const [form, setForm] = useState({ question: "", answer: "", questionRu: "", answerRu: "", order: 0, isActive: true });
 
   const fetchFaqs = useCallback(async () => {
     try {
@@ -32,14 +34,14 @@ export default function AdminFAQPage() {
   useEffect(() => { fetchFaqs(); }, [fetchFaqs]);
 
   const resetForm = () => {
-    setForm({ question: "", answer: "", order: 0, isActive: true });
+    setForm({ question: "", answer: "", questionRu: "", answerRu: "", order: 0, isActive: true });
     setEditing(null);
     setShowForm(false);
   };
 
   const handleEdit = (faq: FAQ) => {
     setEditing(faq);
-    setForm({ question: faq.question, answer: faq.answer, order: faq.order, isActive: faq.isActive });
+    setForm({ question: faq.question, answer: faq.answer, questionRu: faq.questionRu || "", answerRu: faq.answerRu || "", order: faq.order, isActive: faq.isActive });
     setShowForm(true);
   };
 
@@ -109,6 +111,29 @@ export default function AdminFAQPage() {
                 rows={5}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
                 required
+              />
+            </div>
+            <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-2">
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-3">🇷🇺 Перевод на русский</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Вопрос (RU)</label>
+              <input
+                type="text"
+                value={form.questionRu}
+                onChange={(e) => setForm({ ...form, questionRu: e.target.value })}
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Вопрос на русском языке"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Ответ (RU)</label>
+              <textarea
+                value={form.answerRu}
+                onChange={(e) => setForm({ ...form, answerRu: e.target.value })}
+                rows={5}
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Ответ на русском языке"
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

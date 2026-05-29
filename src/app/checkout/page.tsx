@@ -277,7 +277,7 @@ export default function CheckoutPage() {
       <Header />
       <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
         <div className="max-w-[1280px] mx-auto px-5 py-8">
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Finalizare Comandă</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6">Finalizare Comandă</h1>
 
           {step === 'error' && errorMessage && (
             <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-2xl p-4 flex items-start gap-3">
@@ -290,7 +290,7 @@ export default function CheckoutPage() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
               <div className="space-y-6">
                 {/* Customer Info */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">

@@ -25,12 +25,12 @@ export async function POST(request: NextRequest) {
     if (error === 'forbidden') return errorResponse('Acces interzis', 403);
 
     const body = await request.json();
-    const { question, answer, order, isActive } = body;
+    const { question, answer, questionRu, answerRu, order, isActive } = body;
 
     if (!question || !answer) return errorResponse('Întrebare și răspuns sunt obligatorii');
 
     const faq = await prisma.fAQ.create({
-      data: { question, answer, order: order ?? 0, isActive: isActive ?? true },
+      data: { question, answer, questionRu: questionRu || null, answerRu: answerRu || null, order: order ?? 0, isActive: isActive ?? true },
     });
 
     return successResponse(faq, 201);
@@ -47,7 +47,7 @@ export async function PUT(request: NextRequest) {
     if (error === 'forbidden') return errorResponse('Acces interzis', 403);
 
     const body = await request.json();
-    const { id, question, answer, order, isActive } = body;
+    const { id, question, answer, questionRu, answerRu, order, isActive } = body;
 
     if (!id) return errorResponse('ID lipsă');
 
@@ -56,6 +56,8 @@ export async function PUT(request: NextRequest) {
       data: {
         ...(question !== undefined && { question }),
         ...(answer !== undefined && { answer }),
+        ...(questionRu !== undefined && { questionRu: questionRu || null }),
+        ...(answerRu !== undefined && { answerRu: answerRu || null }),
         ...(order !== undefined && { order }),
         ...(isActive !== undefined && { isActive }),
       },

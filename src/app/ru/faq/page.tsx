@@ -10,6 +10,8 @@ interface FAQ {
   id: string;
   question: string;
   answer: string;
+  questionRu: string | null;
+  answerRu: string | null;
   order: number;
 }
 
@@ -64,7 +66,7 @@ export default function FAQRuPage() {
                     onClick={() => setOpenIndex(openIndex === i ? null : i)}
                     className="w-full flex items-center justify-between p-5 text-left"
                   >
-                    <span className="font-medium text-slate-900 dark:text-white pr-4">{faq.question}</span>
+                    <span className="font-medium text-slate-900 dark:text-white pr-4">{faq.questionRu || faq.question}</span>
                     <ChevronDown
                       size={20}
                       className={`text-slate-400 flex-shrink-0 transition-transform ${openIndex === i ? "rotate-180" : ""}`}
@@ -72,7 +74,7 @@ export default function FAQRuPage() {
                   </button>
                   {openIndex === i && (
                     <div className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
-                      {faq.answer}
+                      {faq.answerRu || faq.answer}
                     </div>
                   )}
                 </div>
