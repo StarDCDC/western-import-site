@@ -245,6 +245,12 @@ export default function ProductPage() {
               )}
             </div>
 
+            {/* Description under images */}
+            <div className="mt-4">
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{locale === 'ru' ? 'Описание' : 'Descriere'}</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
+            </div>
+
             {/* Details */}
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -276,8 +282,6 @@ export default function ProductPage() {
                   <span className="text-base sm:text-lg text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
                 )}
               </div>
-
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
 
               {/* ─── IuteCredit Section ─────────────────────────────── */}
               <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-3 sm:p-5 mb-6 border border-orange-200 dark:border-orange-800">
