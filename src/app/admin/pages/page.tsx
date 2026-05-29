@@ -6,7 +6,9 @@ interface Page {
   id: string;
   slug: string;
   titleRo: string;
+  titleRu: string;
   contentRo: string | null;
+  contentRu: string | null;
   metaTitle: string | null;
   metaDescription: string | null;
   isPublished: boolean;
@@ -22,6 +24,9 @@ export default function AdminPagesPage() {
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editContent, setEditContent] = useState("");
+  const [editModeRu, setEditModeRu] = useState(false);
+  const [editContentRu, setEditContentRu] = useState("");
+  const [activeTab, setActiveTab] = useState<"ro" | "ru">("ro");
 
   const fetchPages = useCallback(async () => {
     try {
@@ -63,7 +68,9 @@ export default function AdminPagesPage() {
         body: JSON.stringify({
           id: form.id,
           titleRo: form.titleRo,
+          titleRu: form.titleRu,
           contentRo: editMode ? editContent : form.contentRo,
+          contentRu: editModeRu ? editContentRu : form.contentRu,
           metaTitle: form.metaTitle,
           metaDescription: form.metaDescription,
           isPublished: form.isPublished,
@@ -188,9 +195,43 @@ export default function AdminPagesPage() {
               </label>
             </div>
             <div className="flex gap-2">
-              {!editMode ? (
+              {!(activeTab === "ro" ? editMode : editModeRu) ? (
                 <button
-                  onClick={startEdit}
+                  onClick={() => {
+                    if (activeTab === "ro") {
+                      if (!form) return;
+                      const div = document.createElement("div");
+                      div.innerHTML = form.contentRo || "";
+                      const sections: string[] = [];
+                      div.querySelectorAll("h2, h3, p, li").forEach((el) => {
+                        const tag = el.tagName.toLowerCase();
+                        const text = el.textContent?.trim() || "";
+                        if (!text) return;
+                        if (tag === "h2") sections.push(`## ${text}`);
+                        else if (tag === "h3") sections.push(`### ${text}`);
+                        else if (tag === "li") sections.push(`- ${text}`);
+                        else sections.push(text);
+                      });
+                      setEditContent(sections.join("\n\n"));
+                      setEditMode(true);
+                    } else {
+                      if (!form) return;
+                      const div = document.createElement("div");
+                      div.innerHTML = form.contentRu || "";
+                      const sections: string[] = [];
+                      div.querySelectorAll("h2, h3, p, li").forEach((el) => {
+                        const tag = el.tagName.toLowerCase();
+                        const text = el.textContent?.trim() || "";
+                        if (!text) return;
+                        if (tag === "h2") sections.push(`## ${text}`);
+                        else if (tag === "h3") sections.push(`### ${text}`);
+                        else if (tag === "li") sections.push(`- ${text}`);
+                        else sections.push(text);
+                      });
+                      setEditContentRu(sections.join("\n\n"));
+                      setEditModeRu(true);
+                    }
+                  }}
                   className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition"
                 >
                   ✏️ Editează
@@ -198,13 +239,31 @@ export default function AdminPagesPage() {
               ) : (
                 <>
                   <button
-                    onClick={() => setEditMode(false)}
+                    onClick={() => { activeTab === "ro" ? setEditMode(false) : setEditModeRu(false); }}
                     className="px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                   >
                     Anulează
                   </button>
                   <button
-                    onClick={saveEdit}
+                    onClick={() => {
+                      const html = (activeTab === "ro" ? editContent : editContentRu)
+                        .split("\n\n")
+                        .map((block) => {
+                          const trimmed = block.trim();
+                          if (!trimmed) return "";
+                          if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
+                          if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
+                          if (trimmed.startsWith("- ")) return trimmed.split("\n").map((l) => `<li>${l.slice(2)}</li>`).join("");
+                          return `<p>${trimmed}</p>`;
+                        }).join("\n");
+                      if (activeTab === "ro") {
+                        setForm({ ...form!, contentRo: html });
+                        setEditMode(false);
+                      } else {
+                        setForm({ ...form!, contentRu: html });
+                        setEditModeRu(false);
+                      }
+                    }}
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition"
                   >
                     ✓ Aplică modificările
@@ -214,36 +273,92 @@ export default function AdminPagesPage() {
             </div>
           </div>
 
-          {/* Titlu */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Titlu pagină</label>
-            <input
-              value={form.titleRo || ""}
-              onChange={(e) => setForm({ ...form, titleRo: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-            />
+          {/* Tab RO / RU */}
+          <div className="flex gap-2 border-b border-slate-200 dark:border-slate-700 pb-3">
+            <button
+              onClick={() => setActiveTab("ro")}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition ${activeTab === "ro" ? "bg-amber-500 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"}`}
+            >
+              🇷🇴 Română
+            </button>
+            <button
+              onClick={() => setActiveTab("ru")}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition ${activeTab === "ru" ? "bg-amber-500 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"}`}
+            >
+              🇷🇺 Русская
+            </button>
           </div>
 
-          {/* Preview or Editor */}
-          {editMode ? (
+          {/* Titlu RO */}
+          {activeTab === "ro" && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Editează conținutul (Markdown)</label>
-              <textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                rows={20}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono"
-                placeholder="## Titlu&#10;&#10;Paragraf text&#10;&#10;- List item&#10;- List item"
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Titlu pagină (RO)</label>
+              <input
+                value={form.titleRo || ""}
+                onChange={(e) => setForm({ ...form, titleRo: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
-          ) : (
+          )}
+
+          {/* Titlu RU */}
+          {activeTab === "ru" && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preview</label>
-              <div
-                className="prose prose-slate dark:prose-invert max-w-none border border-slate-200 dark:border-slate-700 rounded-lg p-6 min-h-[300px]"
-                dangerouslySetInnerHTML={{ __html: form.contentRo || "<p class='text-slate-400'>Pagină fără conținut</p>" }}
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Titlu pagină (RU)</label>
+              <input
+                value={form.titleRu || ""}
+                onChange={(e) => setForm({ ...form, titleRu: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
+          )}
+
+          {/* Preview or Editor RO */}
+          {activeTab === "ro" && (
+            editMode ? (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Editează conținutul RO (Markdown)</label>
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  rows={20}
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono"
+                  placeholder="## Titlu\n\nParagraf text\n\n- List item"
+                />
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preview RO</label>
+                <div
+                  className="prose prose-slate dark:prose-invert max-w-none border border-slate-200 dark:border-slate-700 rounded-lg p-6 min-h-[300px]"
+                  dangerouslySetInnerHTML={{ __html: form.contentRo || "<p class='text-slate-400'>Pagină fără conținut</p>" }}
+                />
+              </div>
+            )
+          )}
+
+          {/* Preview or Editor RU */}
+          {activeTab === "ru" && (
+            editModeRu ? (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Editează conținutul RU (Markdown)</label>
+                <textarea
+                  value={editContentRu}
+                  onChange={(e) => setEditContentRu(e.target.value)}
+                  rows={20}
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono"
+                  placeholder="## Заголовок\n\nТекст параграфа\n\n- Пункт списка"
+                />
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preview RU</label>
+                <div
+                  className="prose prose-slate dark:prose-invert max-w-none border border-slate-200 dark:border-slate-700 rounded-lg p-6 min-h-[300px]"
+                  dangerouslySetInnerHTML={{ __html: form.contentRu || "<p class='text-slate-400'>Нет контента на русском</p>" }}
+                />
+              </div>
+            )
           )}
 
           {/* SEO */}

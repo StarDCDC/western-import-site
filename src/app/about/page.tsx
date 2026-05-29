@@ -43,7 +43,7 @@ export default async function AboutPage() {
                   prose-strong:text-slate-800 dark:prose-strong:text-slate-200
                   prose-li:text-slate-600 dark:prose-li:text-slate-400
                   prose-ul:my-2 prose-ol:my-2"
-                dangerouslySetInnerHTML={{ __html: content }}
+                dangerouslySetInnerHTML={{ __html: content || '' }}
               />
             </div>
           </div>
