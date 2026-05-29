@@ -1,7 +1,7 @@
 FROM node:22-slim
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 COPY . .
 RUN npx prisma generate
 RUN npm run build
