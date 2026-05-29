@@ -23,9 +23,9 @@ import prisma from '@/lib/prisma';
 function loadConfig() {
   configureIuteCredit({
     apiKey: process.env.IUTE_CREDIT_API_KEY || '',
-    partnerId: process.env.IUTE_CREDIT_PARTNER_ID || '',
-    siteId: process.env.IUTE_CREDIT_SITE_ID || '',
-    endpoint: process.env.IUTE_CREDIT_ENDPOINT || 'https://api.iutecredit.md/v1',
+    partnerId: process.env.IUTE_CREDIT_API_KEY || '',  // Use API key as partnerId
+    siteId: process.env.IUTE_CREDIT_API_KEY || '',      // Use API key as siteId
+    endpoint: process.env.IUTE_CREDIT_ENDPOINT || 'https://ecom.iutecredit.md/api/v1/eshop',
     checkoutUrl: process.env.IUTE_CREDIT_CHECKOUT_URL || 'https://checkout.iutecredit.md',
   });
 }
@@ -74,8 +74,8 @@ export async function GET(request: NextRequest) {
         success: true,
         configured: isIuteCreditConfigured(),
         hasApiKey: !!(process.env.IUTE_CREDIT_API_KEY),
-        hasPartnerId: !!(process.env.IUTE_CREDIT_PARTNER_ID),
-        hasSiteId: !!(process.env.IUTE_CREDIT_SITE_ID),
+        hasAdminKey: !!(process.env.IUTE_CREDIT_ADMIN_API_KEY),
+        endpoint: process.env.IUTE_CREDIT_ENDPOINT || 'not set',
       });
     }
 
