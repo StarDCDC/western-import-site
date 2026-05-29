@@ -2,13 +2,16 @@ FROM node:22-slim
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json ./
+# Install OpenSSL for Prisma
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+# Copy everything first so postinstall (prisma generate) works
+COPY . .
+
+# Install dependencies (postinstall runs prisma generate)
 RUN npm install
 
-# Copy source and build
-COPY . .
-RUN npx prisma generate
+# Build Next.js
 RUN npm run build
 
 # Expose and start
