@@ -18,6 +18,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon.ico',
+  },
   title: {
     default: "Western Import — Laptopuri, Telefoane, PC & Monitoare | Chișinău",
     template: "%s | Western Import",

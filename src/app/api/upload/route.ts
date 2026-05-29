@@ -1,8 +1,11 @@
 import { NextRequest } from 'next/server';
+import { createHash } from 'crypto';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
+import { randomUUID } from 'crypto';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
 
-// POST /api/upload — image upload to Cloudinary (free 25GB)
 export async function POST(request: NextRequest) {
   try {
     const { error } = await requireAdmin(request);
@@ -11,53 +14,47 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-
     if (!file) return errorResponse('Fișierul lipsește');
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return errorResponse('Tip fișier invalid. Acceptate: JPEG, PNG, GIF, WebP');
     }
-
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) return errorResponse('Fișier prea mare. Maxim 5MB');
+    if (file.size > 5 * 1024 * 1024) return errorResponse('Fișier prea mare. Maxim 5MB');
 
     const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
     const API_KEY = process.env.CLOUDINARY_API_KEY;
     const API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
-    // If Cloudinary is configured, upload there
     if (CLOUD_NAME && API_KEY && API_SECRET) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const base64 = buffer.toString('base64');
       const dataUri = `data:${file.type};base64,${base64}`;
-
       const timestamp = Math.floor(Date.now() / 1000).toString();
 
-      // Generate signature
-      const crypto = await import('crypto');
-      const signatureStr = `folder=western-import&timestamp=${timestamp}${API_SECRET}`;
-      const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
+      const sigString = `folder=western-import&timestamp=${timestamp}${API_SECRET}`;
+      const signature = createHash('sha1').update(sigString).digest('hex');
 
-      const cloudFormData = new FormData();
-      cloudFormData.append('file', dataUri);
-      cloudFormData.append('folder', 'western-import');
-      cloudFormData.append('timestamp', timestamp);
-      cloudFormData.append('api_key', API_KEY);
-      cloudFormData.append('signature', signature);
+      const body = new FormData();
+      body.append('file', dataUri);
+      body.append('folder', 'western-import');
+      body.append('timestamp', timestamp);
+      body.append('api_key', API_KEY);
+      body.append('signature', signature);
 
       const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
         method: 'POST',
-        body: cloudFormData,
+        body,
       });
 
       if (!res.ok) {
-        const err = await res.text();
-        console.error('[UPLOAD] Cloudinary error:', err);
-        return errorResponse('Upload eșuat la Cloudinary');
+        const errText = await res.text();
+        console.error('[UPLOAD] Cloudinary error:', errText);
+        return errorResponse('Upload eșuat la Cloudinary: ' + res.status);
       }
 
       const data = await res.json();
+      console.log('[UPLOAD] Cloudinary OK:', data.secure_url);
       return successResponse({
         url: data.secure_url,
         filename: data.public_id,
@@ -66,19 +63,13 @@ export async function POST(request: NextRequest) {
       }, 201);
     }
 
-    // Fallback: local filesystem (for dev only)
-    const { writeFile, mkdir } = await import('fs/promises');
-    const path = await import('path');
-    const { randomUUID } = await import('crypto');
-
+    // Fallback: local filesystem (dev only)
     const bytes = await file.arrayBuffer();
-    const bufferLocal = Buffer.from(bytes);
     const ext = file.name.split('.').pop() || 'jpg';
     const filename = `${randomUUID()}.${ext}`;
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+    const uploadDir = join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadDir, { recursive: true });
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, bufferLocal);
+    await writeFile(join(uploadDir, filename), Buffer.from(bytes));
 
     return successResponse({
       url: `/uploads/${filename}`,
