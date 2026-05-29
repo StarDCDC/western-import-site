@@ -267,21 +267,12 @@ export async function POST(request: NextRequest) {
 
     // Generate IuteCredit redirect URL if credit payment
     let redirectUrl: string | null = null;
-    if (paymentMethod === 'CREDIT' && process.env.IUTE_CREDIT_PARTNER_ID) {
-      try {
-        const { generateCheckoutUrl } = await import('@/lib/integrations/iuteCredit');
-        const totalAmount = total;
-        const orderItems = items;
-        // Generate checkout URL for the order total
-        redirectUrl = generateCheckoutUrl(
-          order.id, // use order ID as product reference
-          `Comanda ${order.orderNumber}`,
-          totalAmount,
-          12 // default 12 months
-        );
-      } catch (e) {
-        console.warn('[ORDER] IuteCredit URL generation failed:', e);
-      }
+    if (paymentMethod === 'CREDIT') {
+      // Redirect to IuteCredit website for credit application
+      // When we get the real Site ID from IuteCredit, we'll switch to API integration
+      const totalAmount = total;
+      const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://exquisite-spontaneity-production-183c.up.railway.app';
+      redirectUrl = `https://iutecredit.md/apply?amount=${totalAmount}&source=western-import&return_url=${encodeURIComponent(returnUrl + '/checkout/success')}`;
     }
 
     return successResponse({ ...order, redirectUrl }, 201);
