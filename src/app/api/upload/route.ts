@@ -32,13 +32,19 @@ export async function POST(request: NextRequest) {
       const base64 = buffer.toString('base64');
       const dataUri = `data:${file.type};base64,${base64}`;
 
-      const timestamp = Math.floor(Date.now() / 1000);
+      const timestamp = Math.floor(Date.now() / 1000).toString();
 
-      // Upload to Cloudinary
+      // Generate signature
+      const crypto = await import('crypto');
+      const signatureStr = `folder=western-import&timestamp=${timestamp}${API_SECRET}`;
+      const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
+
       const cloudFormData = new FormData();
       cloudFormData.append('file', dataUri);
-      cloudFormData.append('upload_preset', 'western_import');
       cloudFormData.append('folder', 'western-import');
+      cloudFormData.append('timestamp', timestamp);
+      cloudFormData.append('api_key', API_KEY);
+      cloudFormData.append('signature', signature);
 
       const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
         method: 'POST',
