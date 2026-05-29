@@ -91,9 +91,16 @@ export default function Header() {
       >
         <div className="max-w-[1280px] mx-auto px-3 sm:px-5 flex items-center gap-2 sm:gap-5 py-2.5 sm:py-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <img src="/logo.jpg" alt="Logo" className="h-[36px] sm:h-[42px] w-auto rounded-lg dark:hidden" />
-            <img src="/logo-dark.jpg" alt="Logo" className="h-[36px] sm:h-[42px] w-auto rounded-lg hidden dark:block" />
+          {/* Desktop/Tablet Logo */}
+          <Link href="/" className="hidden sm:flex items-center gap-2 shrink-0">
+            <img src="/logo.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg dark:hidden" />
+            <img src="/logo-dark.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg hidden dark:block" />
+          </Link>
+
+          {/* Mobile circular logo */}
+          <Link href="/" className="sm:hidden shrink-0">
+            <img src="/logo-mobile-light.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover dark:hidden" />
+            <img src="/logo-mobile-dark.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
           </Link>
 
           {/* Search Bar - hidden on mobile, shown in expanded header */}
@@ -101,8 +108,8 @@ export default function Header() {
             <SearchBar />
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
+          {/* Desktop Actions (sm+) */}
+          <div className="hidden sm:flex items-center gap-1 ml-auto">
             {session?.user ? (
               <div className="relative">
                 <button
@@ -144,9 +151,9 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
+              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
                 <User className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-                <span className="text-[10px] text-slate-500 group-hover:text-primary hidden sm:block">Cont</span>
+                <span className="text-[10px] text-slate-500 group-hover:text-primary">Cont</span>
               </Link>
             )}
             <Link
@@ -180,7 +187,28 @@ export default function Header() {
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="hidden lg:block p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+
+          {/* Mobile Actions (sm and below) - only logo circle + hamburger with badges */}
+          <div className="flex sm:hidden items-center gap-2 ml-auto">
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              <ShoppingCart className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+              {mounted && cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -218,8 +246,20 @@ export default function Header() {
             >
               <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
                 {/* Mobile Search */}
-                <div className="mb-3 sm:hidden">
+                <div className="mb-3">
                   <SearchBar />
+                </div>
+                {/* Mobile Quick Actions */}
+                <div className="flex gap-2 mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                  <Link href="/login" className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition text-sm">
+                    <User className="w-4 h-4" /> Cont
+                  </Link>
+                  <Link href="/wishlist" className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition text-sm relative">
+                    <Heart className="w-4 h-4" /> Favorite
+                    {mounted && wishlistCount > 0 && (
+                      <span className="bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">{wishlistCount}</span>
+                    )}
+                  </Link>
                 </div>
                 {navItems.map((item) => (
                   <Link
