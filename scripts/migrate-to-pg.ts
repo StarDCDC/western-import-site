@@ -35,7 +35,7 @@ async function migrate() {
         image: (c.image as string) || null,
         parentId: (c.parentId as string) || null,
         order: Number(c.order) || 0,
-        isActive: c.isActive === 1 || c.isActive === '1' || c.isActive === true,
+        isActive: Boolean(c.isActive),
       },
     });
   }
@@ -77,8 +77,8 @@ async function migrate() {
         condition: (p.condition as string) || 'NEW',
         images: p.images as string,
         specs: (p.specs as string) || null,
-        isActive: p.isActive === 1 || p.isActive === '1' || p.isActive === true,
-        isFeatured: p.isFeatured === 1 || p.isFeatured === '1' || p.isFeatured === true,
+        isActive: Boolean(p.isActive),
+        isFeatured: Boolean(p.isFeatured),
         categoryId: p.categoryId as string,
         brandId: p.brandId as string,
         createdAt: p.createdAt ? new Date(p.createdAt as string) : new Date(),
@@ -166,7 +166,7 @@ async function migrate() {
         buttonText: (b.buttonText as string) || null,
         position: (b.position as string) || 'HERO',
         order: Number(b.order) || 0,
-        isActive: b.isActive === 1 || b.isActive === '1' || b.isActive === true,
+        isActive: Boolean(b.isActive),
         startDate: b.startDate ? new Date(b.startDate as string) : null,
         endDate: b.endDate ? new Date(b.endDate as string) : null,
       },
@@ -185,7 +185,7 @@ async function migrate() {
         question: f.question as string,
         answer: f.answer as string,
         order: Number(f.order) || 0,
-        isActive: f.isActive === 1 || f.isActive === '1' || f.isActive === true,
+        isActive: Boolean(f.isActive),
       },
     });
   }
@@ -202,12 +202,12 @@ async function migrate() {
         dayOfWeek: ws.dayOfWeek as string,
         dayNameRo: ws.dayNameRo as string,
         dayNameRu: ws.dayNameRu as string,
-        isOpen: ws.isOpen === 1 || ws.isOpen === '1' || ws.isOpen === true,
+        isOpen: Boolean(ws.isOpen),
         startTime: (ws.startTime as string) || null,
         endTime: (ws.endTime as string) || null,
         specialHours: (ws.specialHours as string) || null,
         order: Number(ws.order) || 0,
-        isActive: ws.isActive === 1 || ws.isActive === '1' || ws.isActive === true,
+        isActive: Boolean(ws.isActive),
       },
     });
   }
