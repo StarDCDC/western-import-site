@@ -341,14 +341,28 @@ export default function ProductPage() {
                       </div>
                     )}
 
-                    <a
-                      href={`/api/integrations/iute?productId=${product.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch('/api/integrations/iute', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'checkout', productId: product.id, months: selectedMonths }),
+                          });
+                          const json = await res.json();
+                          if (json.success && json.data?.checkoutUrl) {
+                            window.open(json.data.checkoutUrl, '_blank');
+                          } else if (json.success && json.data?.redirectUrl) {
+                            window.open(json.data.redirectUrl, '_blank');
+                          }
+                        } catch {
+                          window.open(`/api/integrations/iute?productId=${product.id}`, '_blank');
+                        }
+                      }}
                       className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
                     >
                       <ExternalLink className="w-4 h-4" /> Aplică pentru credit
-                    </a>
+                    </button>
                     <p className="text-[10px] text-slate-500 mt-1.5 text-center">Credit oferit de IuteCredit Moldova. Termeni și condiții aplicabile.</p>
                   </>
                 ) : creditLoading ? (
@@ -492,8 +506,8 @@ export default function ProductPage() {
                 <span className="text-xs text-slate-500">{locale === 'ru' ? 'Рекомендуемые товары' : 'Produse recomandate'}</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {similar.slice(0, 4).map((sp) => (
-                  <div key={sp.id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all relative">
+                {similar.slice(0, 4).map((sp, i) => (
+                  <div key={`similar-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all relative">
                     {sp.oldPrice && (
                       <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
                     )}
@@ -537,8 +551,8 @@ export default function ProductPage() {
             <div className="mt-12">
               <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5">{locale === 'ru' ? 'Похожие товары' : 'Produse Similare'}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {similar.map((sp) => (
-                  <Link key={sp.id} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all">
+                {similar.map((sp, i) => (
+                  <Link key={`similar-${sp.id}-${i}`} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all">
                     <div className="flex items-center justify-center h-32 mb-3">
                       {(() => {
                         const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);

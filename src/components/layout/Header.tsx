@@ -92,11 +92,8 @@ export default function Header() {
         <div className="max-w-[1280px] mx-auto px-5 flex items-center gap-5 py-3">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/logo.jpg" alt="Western Import" className="h-[42px] w-auto rounded-lg" />
-            <div>
-              <div className="text-lg font-extrabold text-[#0c3a8f] dark:text-white leading-tight">Western Import</div>
-
-            </div>
+            <img src="/logo.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg dark:hidden" />
+            <img src="/logo-dark.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg hidden dark:block" />
           </Link>
 
           {/* Search Bar */}

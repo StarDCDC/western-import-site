@@ -15,8 +15,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-4">
-              <img src="/logo.jpg" alt="Western Import" className="h-[36px] w-auto rounded-md" />
-              <span className="text-white text-base font-bold">Western Import</span>
+              <img src="/logo.jpg" alt="Logo" className="h-[36px] w-auto rounded-md" />
             </div>
             <p className="text-sm leading-relaxed mb-4">
               {t('footer.description')}

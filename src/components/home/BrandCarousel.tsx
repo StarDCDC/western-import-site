@@ -2,18 +2,18 @@
 'use client';
 
 const BRANDS = [
-  { name: 'DELL', color: '#007DB8', slug: 'dell' },
-  { name: 'Lenovo', color: '#E2231A', slug: 'lenovo' },
-  { name: 'HP', color: '#0096D6', slug: 'hp' },
-  { name: 'Apple', color: '#A2AAAD', slug: 'apple' },
-  { name: 'ASUS', color: '#000000', slug: 'asus' },
-  { name: 'Acer', color: '#83B81A', slug: 'acer' },
-  { name: 'Samsung', color: '#1428A0', slug: 'samsung' },
-  { name: 'MSI', color: '#FF0000', slug: 'msi' },
-  { name: 'Microsoft', color: '#00A4EF', slug: 'microsoft' },
-  { name: 'Google', color: '#4285F4', slug: 'google' },
-  { name: 'Amazon', color: '#FF9900', slug: 'amazon' },
-  { name: 'Motorola', color: '#5C2D91', slug: 'motorola' },
+  { name: 'DELL', slug: 'dell' },
+  { name: 'Lenovo', slug: 'lenovo' },
+  { name: 'HP', slug: 'hp' },
+  { name: 'Apple', slug: 'apple' },
+  { name: 'ASUS', slug: 'asus' },
+  { name: 'Acer', slug: 'acer' },
+  { name: 'Samsung', slug: 'samsung' },
+  { name: 'MSI', slug: 'msi' },
+  { name: 'Microsoft', slug: 'microsoft' },
+  { name: 'Google', slug: 'google' },
+  { name: 'Amazon', slug: 'amazon' },
+  { name: 'Motorola', slug: 'motorola' },
 ];
 
 export default function BrandCarousel() {
@@ -32,8 +32,8 @@ export default function BrandCarousel() {
               className="flex items-center justify-center min-w-[160px] px-6 py-4"
             >
               <span
-                className="text-xl font-extrabold tracking-wider transition-all cursor-pointer hover:scale-110"
-                style={{ color: brand.color, fontFamily: 'system-ui, sans-serif' }}
+                className="text-xl font-extrabold tracking-wider text-slate-400 dark:text-slate-500 transition-all cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 hover:scale-110"
+                style={{ fontFamily: 'system-ui, sans-serif' }}
               >
                 {brand.name}
               </span>

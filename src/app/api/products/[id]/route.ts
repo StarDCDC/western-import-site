@@ -17,6 +17,7 @@ export async function GET(
       include: {
         category: { include: { children: true } },
         brand: true,
+        spec: true,
         attributes: true,
         reviews: {
           include: { user: { select: { id: true, name: true } } },

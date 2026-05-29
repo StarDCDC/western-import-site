@@ -106,10 +106,19 @@ export async function GET(request: NextRequest) {
     };
 
     // Generate checkout URL if configured
+    let checkoutLink: string;
     if (isIuteCreditConfigured()) {
-      responseData.creditLink = generateCheckoutUrl(product.id, product.name, product.price);
+      checkoutLink = generateCheckoutUrl(product.id, product.name, product.price);
+      responseData.creditLink = checkoutLink;
     } else {
-      responseData.creditLink = generateCreditLink(productId, product.price);
+      checkoutLink = generateCreditLink(productId, product.price);
+      responseData.creditLink = checkoutLink;
+    }
+
+    // If accessed directly from browser (Accept: text/html), redirect to checkout
+    const accept = request.headers.get('accept') || '';
+    if (accept.includes('text/html')) {
+      return Response.redirect(checkoutLink);
     }
 
     return Response.json({ success: true, data: responseData });

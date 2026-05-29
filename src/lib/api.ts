@@ -446,8 +446,8 @@ export interface CreditCalculation {
 }
 
 export async function getCreditCalculations(productId: string): Promise<CreditCalculation[] | null> {
-  const result = await apiFetch<CreditCalculation[]>(`/api/integrations/iute?productId=${productId}`);
-  return result?.data ?? null;
+  const result = await apiFetch<{ plans: CreditCalculation[] }>(`/api/integrations/iute?productId=${productId}`);
+  return result?.data?.plans ?? null;
 }
 
 export async function applyForCredit(productId: string, months: number, customerData: { name: string; phone: string; email: string }): Promise<{ applicationId: string; redirectUrl: string } | null> {

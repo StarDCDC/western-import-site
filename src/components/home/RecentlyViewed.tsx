@@ -110,9 +110,15 @@ export default function RecentlyViewed() {
                   <Link href={`/product/${product.id}`}>
                     <div className="flex items-center justify-center h-24 mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden">
                       {(() => {
-                        const imgs = typeof product.images === 'string'
-                          ? product.images.split(',').filter(u => { const p = u.trim(); return p.startsWith('http') || p.startsWith('/'); })
-                          : [];
+                        let imgs: string[] = [];
+                        if (typeof product.images === 'string') {
+                          try {
+                            const parsed = JSON.parse(product.images);
+                            if (Array.isArray(parsed)) imgs = parsed;
+                          } catch {
+                            imgs = product.images.split(',').map(u => u.trim()).filter(u => u.startsWith('http') || u.startsWith('/'));
+                          }
+                        }
                         if (imgs.length === 0) {
                           return (
                             <div className="w-12 h-12 bg-slate-200 dark:bg-slate-600 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400">
@@ -126,16 +132,7 @@ export default function RecentlyViewed() {
                             alt={product.name}
                             className="w-full h-full object-contain"
                             onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              const imgs = typeof product.images === 'string'
-                                ? product.images.split(',').filter(u => { const p = u.trim(); return p.startsWith('http') || p.startsWith('/'); })
-                                : [];
-                              const next = imgs.indexOf(target.src);
-                              if (next >= 0 && next < imgs.length - 1) {
-                                target.src = imgs[next + 1];
-                              } else {
-                                target.style.display = 'none';
-                              }
+                              (e.target as HTMLImageElement).style.display = 'none';
                             }}
                           />
                         );

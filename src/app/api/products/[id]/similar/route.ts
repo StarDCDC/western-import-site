@@ -35,6 +35,7 @@ export async function GET(
       include: {
         category: { select: { id: true, nameRo: true, nameRu: true, slug: true } },
         brand: { select: { id: true, name: true, slug: true } },
+        spec: true,
         reviews: { select: { rating: true } },
       },
     });
