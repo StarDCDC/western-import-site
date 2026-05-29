@@ -89,18 +89,20 @@ export default function Header() {
           scrolled ? 'shadow-md' : ''
         }`}
       >
-        <div className="max-w-[1280px] mx-auto px-5 flex items-center gap-5 py-3">
+        <div className="max-w-[1280px] mx-auto px-3 sm:px-5 flex items-center gap-2 sm:gap-5 py-2.5 sm:py-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/logo.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg dark:hidden" />
-            <img src="/logo-dark.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg hidden dark:block" />
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <img src="/logo.jpg" alt="Logo" className="h-[36px] sm:h-[42px] w-auto rounded-lg dark:hidden" />
+            <img src="/logo-dark.jpg" alt="Logo" className="h-[36px] sm:h-[42px] w-auto rounded-lg hidden dark:block" />
           </Link>
 
-          {/* Search Bar */}
-          <SearchBar />
+          {/* Search Bar - hidden on mobile, shown in expanded header */}
+          <div className="hidden sm:block flex-1 max-w-xl">
+            <SearchBar />
+          </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
             {session?.user ? (
               <div className="relative">
                 <button
@@ -142,31 +144,29 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
+              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
                 <User className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-                <span className="text-[10px] text-slate-500 group-hover:text-primary hidden lg:block">Cont</span>
+                <span className="text-[10px] text-slate-500 group-hover:text-primary hidden sm:block">Cont</span>
               </Link>
             )}
             <Link
               href="/wishlist"
-              className="relative flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+              className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
             >
               <Heart className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-              <span className="text-[10px] text-slate-500 group-hover:text-primary hidden lg:block">Favorite</span>
               {mounted && wishlistCount > 0 && (
-                <span className="absolute top-0.5 right-1 bg-accent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">
                   {wishlistCount}
                 </span>
               )}
             </Link>
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+              className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
             >
               <ShoppingCart className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-              <span className="text-[10px] text-slate-500 group-hover:text-primary hidden lg:block">Coș</span>
               {mounted && cartCount > 0 && (
-                <span className="absolute top-0.5 right-1 bg-accent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -216,7 +216,11 @@ export default function Header() {
               exit={{ height: 0, opacity: 0 }}
               className="lg:hidden overflow-hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
             >
-              <div className="px-5 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+              <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+                {/* Mobile Search */}
+                <div className="mb-3 sm:hidden">
+                  <SearchBar />
+                </div>
                 {navItems.map((item) => (
                   <Link
                     key={item.label}
