@@ -92,9 +92,12 @@ export default function Header() {
         <div className="max-w-[1280px] mx-auto px-3 sm:px-5 flex items-center gap-2 sm:gap-5 py-2.5 sm:py-3">
           {/* Logo */}
           {/* Desktop/Tablet Logo */}
-          <Link href="/" className="hidden sm:flex items-center gap-2 shrink-0">
-            <img src="/logo.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg dark:hidden" />
-            <img src="/logo-dark.jpg" alt="Logo" className="h-[42px] w-auto rounded-lg hidden dark:block" />
+          <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
+            <img src="/logo-mobile-light.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover dark:hidden" />
+            <img src="/logo-mobile-dark.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" />
+            <span className="text-lg font-bold tracking-tight text-slate-800 dark:text-white">
+              Western <span className="text-primary">Import</span>
+            </span>
           </Link>
 
           {/* Mobile circular logo */}
