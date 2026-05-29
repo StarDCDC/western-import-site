@@ -105,10 +105,9 @@ function CatalogContent() {
     if (params.search) sp.set('search', String(params.search));
 
     const qs = sp.toString();
-    if (urlUpdateTimer.current) clearTimeout(urlUpdateTimer.current);
-    urlUpdateTimer.current = setTimeout(() => {
-      router.replace(`/catalog${qs ? '?' + qs : ''}`, { scroll: false });
-    }, 600);
+    const url = `/catalog${qs ? '?' + qs : ''}`;
+    // Use replaceState to avoid page remount — keeps React state intact
+    window.history.replaceState(null, '', url);
   }, []);
 
   useEffect(() => {
@@ -212,13 +211,12 @@ function CatalogContent() {
 
   const handleSearchChange = (q: string) => {
     setSearchQuery(q);
-    // Debounced URL write — does NOT touch searchQuery state
     if (searchDebounce.current) clearTimeout(searchDebounce.current);
     searchDebounce.current = setTimeout(() => {
       const sp = new URLSearchParams(window.location.search);
-      sp.set('search', q);
+      if (q) sp.set('search', q); else sp.delete('search');
       const qs = sp.toString();
-      router.replace(`/catalog${qs ? '?' + qs : ''}`, { scroll: false });
+      window.history.replaceState(null, '', `/catalog${qs ? '?' + qs : ''}`);
     }, 500);
   };
 
@@ -408,7 +406,7 @@ function CatalogContent() {
                 }
               }
               return imgUrl ? (
-                <img src={imgUrl} alt={product.name} className="max-h-32 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <img src={imgUrl} alt={product.name} loading="lazy" className="max-h-32 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               ) : (
                 <svg viewBox={isPhone ? '0 0 120 160' : '0 0 200 130'} fill="none" className="max-h-28 w-auto">
                   {isPhone ? (
