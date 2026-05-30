@@ -203,7 +203,7 @@ export default function AdminBannersPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
                       <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
-                        {b.image.startsWith("http") ? <img src={b.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : b.image}
+                        {b.image ? <img src={b.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : "🖼️"}
                       </div>
                       <div>
                         <h3 className="font-semibold text-slate-900 dark:text-white">{b.title}</h3>
