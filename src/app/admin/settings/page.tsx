@@ -13,6 +13,7 @@ interface Settings {
   gaId: string;
   facebook: string;
   instagram: string;
+  tiktok: string;
   telegram: string;
   smtpHost: string;
   smtpPort: string;
@@ -47,6 +48,7 @@ const defaultSettings: Settings = {
   gaId: "G-XXXXXXXXXX",
   facebook: "https://facebook.com/westernimport",
   instagram: "https://instagram.com/westernimport",
+  tiktok: "https://tiktok.com/@westernimport",
   telegram: "https://t.me/westernimport",
   smtpHost: "smtp.gmail.com",
   smtpPort: "587",
@@ -193,6 +195,7 @@ export default function AdminSettingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div><label className={labelCls}>Facebook</label><input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} className={inputCls} /></div>
           <div><label className={labelCls}>Instagram</label><input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} className={inputCls} /></div>
+          <div><label className={labelCls}>TikTok</label><input value={form.tiktok || ''} onChange={(e) => set("tiktok", e.target.value)} className={inputCls} placeholder="https://tiktok.com/@..." /></div>
           <div><label className={labelCls}>Telegram</label><input value={form.telegram} onChange={(e) => set("telegram", e.target.value)} className={inputCls} /></div>
         </div>
       </div>
