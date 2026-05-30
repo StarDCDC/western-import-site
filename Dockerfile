@@ -19,4 +19,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-CMD npx prisma db push --accept-data-loss && npm start
+CMD npx prisma db push --accept-data-loss && npx prisma db seed && npm start
