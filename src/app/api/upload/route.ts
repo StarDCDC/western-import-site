@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { createHash } from 'crypto';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
 
@@ -21,51 +20,37 @@ export async function POST(request: NextRequest) {
     }
     if (file.size > MAX_SIZE) return errorResponse('Fișier prea mare. Maxim 10MB');
 
-    const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
-    const API_KEY = process.env.CLOUDINARY_API_KEY;
-    const API_SECRET = process.env.CLOUDINARY_API_SECRET;
-
-    if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
-      console.error('[UPLOAD] Missing Cloudinary env vars');
-      return errorResponse('Upload indisponibil — configurare incompletă');
-    }
-
-    // Convert to base64
+    // Upload to catbox.moe — free, no API key, permanent
     const buffer = Buffer.from(await file.arrayBuffer());
-    const base64 = buffer.toString('base64');
-    const dataUri = `data:${file.type};base64,${base64}`;
+    const blob = new Blob([buffer], { type: file.type });
 
-    // Generate signature
-    const timestamp = Math.floor(Date.now() / 1000).toString();
-    const sigString = `folder=western-import&timestamp=${timestamp}${API_SECRET}`;
-    const signature = createHash('sha1').update(sigString).digest('hex');
+    const uploadForm = new FormData();
+    uploadForm.append('reqtype', 'fileupload');
+    uploadForm.append('fileToUpload', blob, file.name || 'image.jpg');
 
-    // Upload to Cloudinary
-    const body = new FormData();
-    body.append('file', dataUri);
-    body.append('folder', 'western-import');
-    body.append('timestamp', timestamp);
-    body.append('api_key', API_KEY);
-    body.append('signature', signature);
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    const res = await fetch('https://catbox.moe/user/api.php', {
       method: 'POST',
-      body,
+      body: uploadForm,
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error('[UPLOAD] Cloudinary error:', errText);
-      return errorResponse('Upload eșuat la Cloudinary');
+      console.error('[UPLOAD] Catbox error:', errText);
+      return errorResponse('Upload eșuat — încearcă din nou');
     }
 
-    const data = await res.json();
-    console.log('[UPLOAD] Cloudinary OK:', data.secure_url);
+    const url = (await res.text()).trim();
+    if (!url.startsWith('https://')) {
+      console.error('[UPLOAD] Invalid response:', url);
+      return errorResponse('Upload eșuat — răspuns invalid');
+    }
+
+    console.log('[UPLOAD] Catbox OK:', url);
 
     return successResponse({
-      url: data.secure_url,
-      filename: data.public_id,
-      size: data.bytes,
+      url,
+      filename: file.name,
+      size: file.size,
       type: file.type,
     }, 201);
   } catch (e) {
