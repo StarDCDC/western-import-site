@@ -22,6 +22,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   turbopack: {
     root: __dirname,
   },
@@ -33,6 +34,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "western.md" },
       { protocol: "https", hostname: "**.cloudinary.com" },
+      { protocol: "https", hostname: "files.catbox.moe" },
+      { protocol: "https", hostname: "catbox.moe" },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
