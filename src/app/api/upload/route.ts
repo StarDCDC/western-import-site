@@ -20,32 +20,33 @@ export async function POST(request: NextRequest) {
     }
     if (file.size > MAX_SIZE) return errorResponse('Fișier prea mare. Maxim 10MB');
 
-    // Upload to catbox.moe — free, no API key, permanent
+    // Upload to picrd.com — free, no API key, permanent, works from servers
     const buffer = Buffer.from(await file.arrayBuffer());
     const blob = new Blob([buffer], { type: file.type });
 
     const uploadForm = new FormData();
-    uploadForm.append('reqtype', 'fileupload');
-    uploadForm.append('fileToUpload', blob, file.name || 'image.jpg');
+    uploadForm.append('file', blob, file.name || 'image.jpg');
 
-    const res = await fetch('https://catbox.moe/user/api.php', {
+    const res = await fetch('https://picrd.com/api/upload', {
       method: 'POST',
       body: uploadForm,
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error('[UPLOAD] Catbox error:', errText);
+      console.error('[UPLOAD] Picrd error:', errText);
       return errorResponse('Upload eșuat — încearcă din nou');
     }
 
-    const url = (await res.text()).trim();
-    if (!url.startsWith('https://')) {
-      console.error('[UPLOAD] Invalid response:', url);
+    const data = await res.json();
+    const url = data.image_url as string;
+
+    if (!url) {
+      console.error('[UPLOAD] No image_url in response:', JSON.stringify(data));
       return errorResponse('Upload eșuat — răspuns invalid');
     }
 
-    console.log('[UPLOAD] Catbox OK:', url);
+    console.log('[UPLOAD] Picrd OK:', url);
 
     return successResponse({
       url,
