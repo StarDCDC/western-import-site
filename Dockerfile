@@ -10,8 +10,9 @@ RUN npm install --production=false
 COPY . .
 RUN npx prisma generate
 RUN npm run build
+RUN chmod +x entrypoint.sh
 
 EXPOSE 3000
 ENV PORT=3000
 
-CMD npx prisma db push --accept-data-loss && npm start
+CMD ["./entrypoint.sh"]
