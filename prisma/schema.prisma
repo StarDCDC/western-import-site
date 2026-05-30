@@ -360,9 +360,12 @@ model Page {
 model BlogPost {
   id          String   @id @default(cuid())
   title       String
+  titleRu     String?
   slug        String   @unique
   content     String
+  contentRu   String?
   excerpt     String?
+  excerptRu   String?
   image       String?
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())

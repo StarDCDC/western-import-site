@@ -11,9 +11,12 @@ import { useLanguage } from "@/components/ui/LanguageProvider";
 interface BlogPost {
   id: string;
   title: string;
+  titleRu: string | null;
   slug: string;
   content: string;
+  contentRu: string | null;
   excerpt: string | null;
+  excerptRu: string | null;
   image: string | null;
   isPublished: boolean;
   createdAt: string;
@@ -100,7 +103,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
           </Link>
 
           <article>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">{post.title}</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">{(locale === 'ru' && post.titleRu) || post.title}</h1>
 
             <div className="flex items-center gap-3 mb-6 text-sm text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-1">
@@ -116,14 +119,14 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
             {post.image && (
               <img
                 src={post.image}
-                alt={post.title}
+                alt={(locale === 'ru' && post.titleRu) || post.title}
                 className="w-full rounded-xl mb-8 max-h-96 object-cover"
               />
             )}
 
             <div
               className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{ __html: (locale === 'ru' && post.contentRu) || post.content }}
             />
           </article>
         </div>

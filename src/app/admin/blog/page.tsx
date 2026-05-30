@@ -5,9 +5,12 @@ import { useState, useEffect, useCallback } from "react";
 interface BlogPost {
   id: string;
   title: string;
+  titleRu: string | null;
   slug: string;
   content: string;
+  contentRu: string | null;
   excerpt: string | null;
+  excerptRu: string | null;
   image: string | null;
   isPublished: boolean;
   createdAt: string;
@@ -19,7 +22,7 @@ export default function AdminBlogPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", slug: "", content: "", excerpt: "", image: "", isPublished: false });
+  const [form, setForm] = useState({ title: "", titleRu: "", slug: "", content: "", contentRu: "", excerpt: "", excerptRu: "", image: "", isPublished: false });
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -36,7 +39,7 @@ export default function AdminBlogPage() {
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
   const resetForm = () => {
-    setForm({ title: "", slug: "", content: "", excerpt: "", image: "", isPublished: false });
+    setForm({ title: "", titleRu: "", slug: "", content: "", contentRu: "", excerpt: "", excerptRu: "", image: "", isPublished: false });
     setEditing(null);
     setShowForm(false);
   };
@@ -45,9 +48,12 @@ export default function AdminBlogPage() {
     setEditing(post);
     setForm({
       title: post.title,
+      titleRu: post.titleRu || "",
       slug: post.slug,
       content: post.content,
+      contentRu: post.contentRu || "",
       excerpt: post.excerpt || "",
+      excerptRu: post.excerptRu || "",
       image: post.image || "",
       isPublished: post.isPublished,
     });
@@ -149,6 +155,39 @@ export default function AdminBlogPage() {
                 value={form.excerpt}
                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+            <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-2">
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-3">🇷🇺 Перевод на русский</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Заголовок (RU)</label>
+              <input
+                type="text"
+                value={form.titleRu}
+                onChange={(e) => setForm({ ...form, titleRu: e.target.value })}
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Заголовок на русском"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Краткое описание (RU)</label>
+              <input
+                type="text"
+                value={form.excerptRu}
+                onChange={(e) => setForm({ ...form, excerptRu: e.target.value })}
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Краткое описание на русском"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Содержание RU (Markdown)</label>
+              <textarea
+                value={form.contentRu}
+                onChange={(e) => setForm({ ...form, contentRu: e.target.value })}
+                rows={8}
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono"
+                placeholder="Содержание на русском языке"
               />
             </div>
             <div>

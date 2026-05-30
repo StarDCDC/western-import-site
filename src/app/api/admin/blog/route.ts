@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (error === 'forbidden') return errorResponse('Acces interzis', 403);
 
     const body = await request.json();
-    const { title, slug, content, excerpt, image, isPublished } = body;
+    const { title, titleRu, slug, content, contentRu, excerpt, excerptRu, image, isPublished } = body;
 
     if (!title || !content) return errorResponse('Titlu și conținut sunt obligatorii');
 
@@ -47,9 +47,12 @@ export async function POST(request: NextRequest) {
     const post = await prisma.blogPost.create({
       data: {
         title,
+        titleRu: titleRu || null,
         slug: slugToUse,
         content,
+        contentRu: contentRu || null,
         excerpt: excerpt || null,
+        excerptRu: excerptRu || null,
         image: image || null,
         isPublished: isPublished ?? false,
       },
@@ -69,7 +72,7 @@ export async function PUT(request: NextRequest) {
     if (error === 'forbidden') return errorResponse('Acces interzis', 403);
 
     const body = await request.json();
-    const { id, title, slug, content, excerpt, image, isPublished } = body;
+    const { id, title, titleRu, slug, content, contentRu, excerpt, excerptRu, image, isPublished } = body;
 
     if (!id) return errorResponse('ID lipsă');
 
@@ -80,10 +83,13 @@ export async function PUT(request: NextRequest) {
       where: { id },
       data: {
         ...(title !== undefined && { title }),
+        ...(titleRu !== undefined && { titleRu: titleRu || null }),
         ...(slug !== undefined && { slug }),
         ...(content !== undefined && { content }),
-        ...(excerpt !== undefined && { excerpt }),
-        ...(image !== undefined && { image }),
+        ...(contentRu !== undefined && { contentRu: contentRu || null }),
+        ...(excerpt !== undefined && { excerpt: excerpt || null }),
+        ...(excerptRu !== undefined && { excerptRu: excerptRu || null }),
+        ...(image !== undefined && { image: image || null }),
         ...(isPublished !== undefined && { isPublished }),
       },
     });

@@ -11,12 +11,15 @@ import { useLanguage } from "@/components/ui/LanguageProvider";
 interface BlogPost {
   id: string;
   title: string;
+  titleRu: string | null;
   slug: string;
   excerpt: string | null;
+  excerptRu: string | null;
   image: string | null;
   isPublished: boolean;
   createdAt: string;
   content: string;
+  contentRu: string | null;
 }
 
 export default function BlogPage() {
@@ -96,11 +99,11 @@ export default function BlogPage() {
                     </div>
 
                     <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
-                      {article.title}
+                      {(locale === 'ru' && article.titleRu) || article.title}
                     </h2>
 
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">
-                      {article.excerpt || article.content.slice(0, 150) + "..."}
+                      {(locale === 'ru' && article.excerptRu) || article.excerpt || (locale === 'ru' && article.contentRu ? article.contentRu.slice(0, 150) + '...' : article.content.slice(0, 150) + '...')}
                     </p>
 
                     <Link

@@ -44,14 +44,14 @@ export default function Footer() {
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.navigation')}</h4>
             <ul className="space-y-2">
-              <li><Link href="/catalog?category=laptopuri" className="text-sm hover:text-white transition-colors">💻 Laptopuri</Link></li>
-              <li><Link href="/catalog?category=telefoane" className="text-sm hover:text-white transition-colors">📱 Telefoane</Link></li>
-              <li><Link href="/catalog?category=tablete" className="text-sm hover:text-white transition-colors">📋 Tablete</Link></li>
-              <li><Link href="/catalog?category=mini-pc" className="text-sm hover:text-white transition-colors">🖥️ Mini PC</Link></li>
-              <li><Link href="/catalog?promo=true" className="text-sm hover:text-white transition-colors">🔥 Promoții</Link></li>
-              <li><Link href="/catalog?discount=true" className="text-sm hover:text-white transition-colors">🏷️ Reduceri</Link></li>
-              <li><Link href="/shipping" className="text-sm hover:text-white transition-colors">🚚 Livrare</Link></li>
-              <li><Link href="/about" className="text-sm hover:text-white transition-colors">ℹ️ Despre</Link></li>
+              <li><Link href={lp("/catalog?category=laptopuri")} className="text-sm hover:text-white transition-colors">💻 {t('nav.laptopuri')}</Link></li>
+              <li><Link href={lp("/catalog?category=telefoane")} className="text-sm hover:text-white transition-colors">📱 {t('nav.telefoane')}</Link></li>
+              <li><Link href={lp("/catalog?category=tablete")} className="text-sm hover:text-white transition-colors">📋 {t('nav.tablete')}</Link></li>
+              <li><Link href={lp("/catalog?category=mini-pc")} className="text-sm hover:text-white transition-colors">🖥️ {t('nav.miniPc')}</Link></li>
+              <li><Link href={lp("/catalog?promo=true")} className="text-sm hover:text-white transition-colors">🔥 {t('nav.promotions')}</Link></li>
+              <li><Link href={lp("/catalog?discount=true")} className="text-sm hover:text-white transition-colors">🏷️ {t('nav.reduceri')}</Link></li>
+              <li><Link href={lp("/shipping")} className="text-sm hover:text-white transition-colors">🚚 {t('nav.livrare')}</Link></li>
+              <li><Link href={lp("/about")} className="text-sm hover:text-white transition-colors">ℹ️ {t('nav.about')}</Link></li>
             </ul>
           </div>
 
