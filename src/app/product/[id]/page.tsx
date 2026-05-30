@@ -243,10 +243,10 @@ export default function ProductPage() {
                   <span className="text-xs text-slate-400 ml-2">{selectedThumb + 1} / {totalImages}</span>
                 </div>
               )}
-            </div>
 
-            {/* Description text under image */}
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-3 px-1">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
+              {/* Description text under image */}
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-3 px-1">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
+            </div>
 
             {/* Details */}
             <div>
@@ -279,8 +279,6 @@ export default function ProductPage() {
                   <span className="text-base sm:text-lg text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
                 )}
               </div>
-
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
 
               {/* ─── IuteCredit Section ─────────────────────────────── */}
               <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-3 sm:p-5 mb-6 border border-orange-200 dark:border-orange-800">
