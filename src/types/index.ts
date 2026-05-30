@@ -5,7 +5,6 @@ export interface Product {
   description: string;
   price: number;
   oldPrice?: number;
-  stock: number;
   sku: string;
   condition: "NEW" | "REFURBISHED" | "USED";
   images: string[];

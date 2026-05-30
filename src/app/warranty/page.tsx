@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { getPageContent, getLocalizedContent } from "@/lib/pages";
 import { ShieldCheck, Clock, Wrench, Phone, AlertTriangle, CheckCircle } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -17,7 +18,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default function WarrantyPage() {
+export default async function WarrantyPage() {
+  const pageData = await getPageContent("warranty");
+
+  if (pageData?.contentRo) {
+    const { title, content } = getLocalizedContent(pageData, 'ro');
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <Breadcrumb items={[{ label: title }]} />
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h1>
+              <div className="w-16 h-1 bg-primary rounded-full mb-8" />
+              <div
+                className="prose prose-slate dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: content || '' }}
+              />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
   return (
     <>
       <Header />

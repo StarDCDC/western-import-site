@@ -49,6 +49,33 @@ const nextConfig: NextConfig = {
       headers: securityHeaders,
     },
     {
+      source: "/api/settings",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      ],
+    },
+    {
+      source: "/api/products",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      ],
+    },
+    {
+      source: "/:path*.{jpg,jpeg,png,webp,svg,ico,woff,woff2,ttf,eot}",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=31536000, immutable",
+        },
+      ],
+    },
+    {
       source: "/sitemap.xml",
       headers: [
         {

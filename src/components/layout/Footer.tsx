@@ -1,12 +1,40 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 
+interface SiteSettings {
+  site_phone?: string;
+  site_email?: string;
+  site_address?: string;
+}
+
 export default function Footer() {
   const { t, locale } = useLanguage();
   const lp = (path: string) => locale === 'ru' ? `/ru${path}` : path;
+  const [settings, setSettings] = useState<SiteSettings>({});
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(json => {
+        if (json.success && json.data?.settings) {
+          setSettings({
+            site_phone: json.data.settings.site_phone || '',
+            site_email: json.data.settings.site_email || '',
+            site_address: json.data.settings.site_address || '',
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const phone = settings.site_phone || '+373 69 466 585';
+  const email = settings.site_email || 'info@westernimport.md';
+  const address = settings.site_address || 'Chișinău, Moldova';
+  const phoneClean = phone.replace(/[\s-]/g, '');
 
   return (
     <footer className="bg-[#091f4a] text-slate-400 mt-10">
@@ -15,7 +43,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-4">
-              <img src="/logo.jpg" alt="Logo" className="h-[36px] w-auto rounded-md" />
+              <img src="/logo-new.jpg" alt="Western Import" className="h-10 w-10 rounded-full object-cover" />
+              <span className="text-lg font-bold tracking-tight text-white">
+                Western <span className="text-primary">Import</span>
+              </span>
             </div>
             <p className="text-sm leading-relaxed mb-4">
               {t('footer.description')}
@@ -84,11 +115,10 @@ export default function Footer() {
               <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Transfer</span>
               <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Credit</span>
             </div>
-            <h4 className="text-white text-sm font-bold mb-3">{t('footer.contact')}</h4>
             <div className="space-y-2 text-sm">
-              <a href="tel:+37369466585" className="flex items-center gap-2 hover:text-white transition-colors"><Phone className="w-4 h-4 text-sky-400" /> +373 69 466 585</a>
-              <a href="mailto:info@westernimport.md" className="flex items-center gap-2 hover:text-white transition-colors"><Mail className="w-4 h-4 text-sky-400" /> info@westernimport.md</a>
-              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sky-400" /> Chișinău, Moldova</span>
+              <a href={`tel:${phoneClean}`} className="flex items-center gap-2 hover:text-white transition-colors"><Phone className="w-4 h-4 text-sky-400" /> {phone}</a>
+              <a href={`mailto:${email}`} className="flex items-center gap-2 hover:text-white transition-colors"><Mail className="w-4 h-4 text-sky-400" /> {email}</a>
+              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sky-400" /> {address}</span>
             </div>
           </div>
 

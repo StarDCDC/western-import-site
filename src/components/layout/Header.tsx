@@ -15,7 +15,6 @@ const navItems = [
   { label: 'nav.telefoane', icon: '📱', href: '/catalog?category=telefoane' },
   { label: 'nav.tablete', icon: '📋', href: '/catalog?category=tablete' },
   { label: 'nav.miniPc', icon: '🖥️', href: '/catalog?category=mini-pc' },
-  { label: 'nav.promotions', icon: '🔥', href: '/catalog?promo=true', highlight: true },
   { label: 'nav.reduceri', icon: '🏷️', href: '/catalog?discount=true' },
 
   { label: 'nav.livrare', icon: '🚚', href: '/shipping' },
@@ -93,8 +92,10 @@ export default function Header() {
           {/* Logo */}
           {/* Desktop/Tablet Logo */}
           <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
-            <img src="/logo-mobile-light.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover dark:hidden" />
-            <img src="/logo-mobile-dark.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" />
+            <div className="h-[36px] w-[36px] rounded-full overflow-hidden dark:overflow-visible">
+              <img src="/logo-mobile-light.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover scale-110 dark:hidden" />
+              <img src="/logo-mobile-dark.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" />
+            </div>
             <span className="text-lg font-bold tracking-tight text-slate-800 dark:text-white">
               Western <span className="text-primary">Import</span>
             </span>
@@ -102,8 +103,10 @@ export default function Header() {
 
           {/* Mobile circular logo */}
           <Link href="/" className="sm:hidden shrink-0">
-            <img src="/logo-mobile-light.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover dark:hidden" />
-            <img src="/logo-mobile-dark.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
+            <div className="h-[32px] w-[32px] rounded-full overflow-hidden dark:overflow-visible">
+              <img src="/logo-mobile-light.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover scale-110 dark:hidden" />
+              <img src="/logo-mobile-dark.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
+            </div>
           </Link>
 
           {/* Search Bar - hidden on mobile, shown in expanded header */}
@@ -188,12 +191,7 @@ export default function Header() {
               <Phone className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
               <span className="text-[10px] text-slate-500 group-hover:text-primary">Contact</span>
             </Link>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="hidden lg:block p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+
           </div>
 
           {/* Mobile Actions (sm and below) - only logo circle + hamburger with badges */}

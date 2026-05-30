@@ -145,9 +145,6 @@ export default function FlashSaleCountdown() {
                     <span className="text-lg font-bold text-red-600 dark:text-red-400">{discountedPrice.toFixed(0)} MDL</span>
                     <span className="text-sm text-slate-400 line-through">{sale.product.price.toFixed(0)} MDL</span>
                   </div>
-                  {sale.product.stock <= 5 && sale.product.stock > 0 && (
-                    <p className="text-xs text-orange-500 font-medium mt-1">⚠️ Doar {sale.product.stock} rămase!</p>
-                  )}
                 </div>
               </Link>
             );

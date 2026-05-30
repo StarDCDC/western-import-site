@@ -167,7 +167,6 @@ function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
     reviews: [],
     rating: (p.avgRating as number) || 0,
     inStock: (p.stock as number) > 0,
-    stock: p.stock as number,
   };
 }
 
@@ -177,7 +176,15 @@ export async function getProducts(filters?: ProductsFilters): Promise<ProductsRe
   else if (filters?.category) params.set('categoryId', filters.category);
   if (filters?.brandId) params.set('brandId', filters.brandId);
   else if (filters?.brand) params.set('brandId', filters.brand);
-  if (filters?.condition) params.set('condition', filters.condition === 'nou' ? 'NEW' : 'REFURBISHED');
+  if (filters?.condition) {
+    // Support comma-separated conditions or single condition
+    const cond = filters.condition;
+    if (cond.includes(',')) {
+      params.set('condition', cond);
+    } else {
+      params.set('condition', cond === 'nou' ? 'NEW' : 'REFURBISHED');
+    }
+  }
   if (filters?.minPrice !== undefined) params.set('minPrice', String(filters.minPrice));
   if (filters?.maxPrice !== undefined) params.set('maxPrice', String(filters.maxPrice));
   if (filters?.sort) {

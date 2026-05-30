@@ -55,27 +55,50 @@ export async function GET(request: NextRequest) {
     }
 
     if (categoryId) {
-      // Try to find category by ID first, then by slug
-      const catById = await prisma.category.findUnique({ where: { id: categoryId } });
-      if (catById) {
+      // Support comma-separated category IDs for multi-select
+      const catIds = categoryId.split(',');
+      const resolvedIds: string[] = [];
+      for (const cid of catIds) {
+        const catById = await prisma.category.findUnique({ where: { id: cid } });
+        if (catById) {
+          resolvedIds.push(cid);
+        } else {
+          const catBySlug = await prisma.category.findFirst({ where: { slug: cid } });
+          if (catBySlug) resolvedIds.push(catBySlug.id);
+        }
+      }
+      if (resolvedIds.length > 0) {
+        where.categoryId = { in: resolvedIds };
+      } else if (catIds.length > 0) {
+        // Could not resolve any — still try direct match
         where.categoryId = categoryId;
-      } else {
-        const catBySlug = await prisma.category.findFirst({ where: { slug: categoryId } });
-        if (catBySlug) where.categoryId = catBySlug.id;
-        else return errorResponse('Categorie negăsită', 404);
       }
     }
     if (brandId) {
-      // Try to find brand by ID first, then by slug
-      const brandById = await prisma.brand.findUnique({ where: { id: brandId } });
-      if (brandById) {
-        where.brandId = brandId;
-      } else {
-        const brandBySlug = await prisma.brand.findFirst({ where: { slug: brandId } });
-        if (brandBySlug) where.brandId = brandBySlug.id;
+      // Support comma-separated brand IDs for multi-select
+      const brandIds = brandId.split(',');
+      const resolvedIds: string[] = [];
+      for (const bid of brandIds) {
+        const brandById = await prisma.brand.findUnique({ where: { id: bid } });
+        if (brandById) {
+          resolvedIds.push(bid);
+        } else {
+          const brandBySlug = await prisma.brand.findFirst({ where: { slug: bid } });
+          if (brandBySlug) resolvedIds.push(brandBySlug.id);
+        }
+      }
+      if (resolvedIds.length > 0) {
+        where.brandId = { in: resolvedIds };
       }
     }
-    if (condition) where.condition = condition;
+    if (condition) {
+      // Support comma-separated conditions for multi-select
+      if (condition.includes(',')) {
+        where.condition = { in: condition.split(',') };
+      } else {
+        where.condition = condition;
+      }
+    }
     if (isFeatured === 'true') where.isFeatured = true;
 
     if (minPrice || maxPrice) {

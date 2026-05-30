@@ -90,13 +90,13 @@ function CatalogContent() {
     const sp = new URLSearchParams();
 
     if (params.category && Array.isArray(params.category) && params.category.length > 0) {
-      sp.set('category', params.category[0]);
+      sp.set('category', params.category.join(','));
     }
     if (params.brand && Array.isArray(params.brand) && params.brand.length > 0) {
-      sp.set('brand', params.brand[0]);
+      sp.set('brand', params.brand.join(','));
     }
     if (params.condition && Array.isArray(params.condition) && params.condition.length > 0) {
-      sp.set('condition', params.condition[0]);
+      sp.set('condition', params.condition.join(','));
     }
     if (params.minPrice && Number(params.minPrice) > 0) sp.set('minPrice', String(params.minPrice));
     if (params.maxPrice && Number(params.maxPrice) < 50000) sp.set('maxPrice', String(params.maxPrice));
@@ -154,9 +154,9 @@ function CatalogContent() {
       setLoadingSpecFilters(true);
       try {
         const params = new URLSearchParams();
-        if (selectedCategories.length === 1) params.set('categoryId', selectedCategories[0]);
-        if (selectedBrands.length === 1) params.set('brandId', selectedBrands[0]);
-        if (selectedConditions.length === 1) params.set('condition', selectedConditions[0]);
+        if (selectedCategories.length > 0) params.set('categoryId', selectedCategories.join(','));
+        if (selectedBrands.length > 0) params.set('brandId', selectedBrands.join(','));
+        if (selectedConditions.length > 0) params.set('condition', selectedConditions.join(','));
         if (priceMin > 0) params.set('minPrice', String(priceMin));
         if (priceMax < 50000) params.set('maxPrice', String(priceMax));
         if (searchQuery) params.set('search', searchQuery);
@@ -175,9 +175,9 @@ function CatalogContent() {
       setLoading(true);
       try {
         const result = await getProducts({
-          category: selectedCategories.length === 1 ? selectedCategories[0] : undefined,
-          brand: selectedBrands.length === 1 ? selectedBrands[0] : undefined,
-          condition: selectedConditions.length === 1 ? selectedConditions[0] : undefined,
+          category: selectedCategories.length > 0 ? selectedCategories.join(',') : undefined,
+          brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
+          condition: selectedConditions.length > 0 ? selectedConditions.join(',') : undefined,
           minPrice: priceMin > 0 ? priceMin : undefined,
           maxPrice: priceMax < 50000 ? priceMax : undefined,
           sort,

@@ -431,7 +431,7 @@ export default function ProductPage() {
                 <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                   <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">−</button>
                   <span className="px-4 py-2 text-sm font-semibold border-x border-slate-200 dark:border-slate-700">{qty}</span>
-                  <button onClick={() => setQty(Math.min(product.stock || 99, qty + 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
+                  <button onClick={() => setQty(Math.min(99, qty + 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
                 </div>
                 <button
                   onClick={() => { for (let i = 0; i < qty; i++) addToCart(product); }}

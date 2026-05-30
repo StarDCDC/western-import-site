@@ -3,15 +3,23 @@ import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
 
-// GET /api/settings — get all settings
+// Cache settings for 60 seconds
+let settingsCache: { data: Record<string, unknown>; ts: number } | null = null;
+const CACHE_TTL = 60_000;
+
+// GET /api/settings — get all settings (public, cached)
 export async function GET() {
   try {
+    const now = Date.now();
+    if (settingsCache && now - settingsCache.ts < CACHE_TTL) {
+      return successResponse({ settings: settingsCache.data });
+    }
     const settings = await prisma.setting.findMany();
     const settingsObj: Record<string, unknown> = {};
     settings.forEach((s) => {
       settingsObj[s.key] = s.value;
     });
-
+    settingsCache = { data: settingsObj, ts: now };
     return successResponse({ settings: settingsObj });
   } catch {
     return serverErrorResponse();
@@ -35,6 +43,9 @@ export async function PUT(request: NextRequest) {
         create: { key: setting.key, value: setting.value },
       });
     }
+
+    // Invalidate cache
+    settingsCache = null;
 
     await prisma.auditLog.create({
       data: {

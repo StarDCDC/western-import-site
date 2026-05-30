@@ -38,7 +38,6 @@ export interface Product {
   reviews: Review[];
   rating: number;
   inStock: boolean;
-  stock?: number; // available stock for validation
 }
 
 export interface Review {

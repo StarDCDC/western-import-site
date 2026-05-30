@@ -57,7 +57,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     { href: "/admin/banners", label: "Bannere", icon: "🖼️" },
     { href: "/admin/pages", label: "Pagini", icon: "📄" },
     { href: "/admin/coupons", label: "Cupoane", icon: "🎫" },
-    { href: "/admin/flash-sales", label: "Flash Sales", icon: "⚡" },
     { href: "/admin/users", label: "Utilizatori", icon: "👥" },
     { href: "/admin/settings", label: "Setări", icon: "⚙️" },
   ];

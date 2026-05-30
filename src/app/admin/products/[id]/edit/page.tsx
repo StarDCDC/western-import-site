@@ -51,7 +51,6 @@ export default function EditProductPage() {
     descriptionRu: "",
     price: "",
     oldPrice: "",
-    stock: "",
     sku: "",
     condition: "NEW",
     categoryId: "",
@@ -160,7 +159,6 @@ export default function EditProductPage() {
           descriptionRu: p.descriptionRu || "",
           price: String(p.price || ""),
           oldPrice: p.oldPrice ? String(p.oldPrice) : "",
-          stock: String(p.stock || ""),
           sku: p.sku || "",
           condition: p.condition || "NEW",
           categoryId: p.categoryId || "",
@@ -250,7 +248,7 @@ export default function EditProductPage() {
         descriptionRu: form.descriptionRu,
         price: parseFloat(form.price),
         oldPrice: form.oldPrice ? parseFloat(form.oldPrice) : undefined,
-        stock: parseInt(form.stock) || 0,
+        stock: 0,
         sku: form.sku || undefined,
         condition: form.condition,
         categoryId: form.categoryId,
@@ -362,10 +360,10 @@ export default function EditProductPage() {
         </div>
 
         <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">
-          Preț și stoc
+          Preț
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div>
             <label className={labelClass}>Preț (MDL) *</label>
             <input type="number" value={form.price} onChange={(e) => set("price", e.target.value)} className={inputClass} placeholder="0" min="0" />
@@ -373,10 +371,6 @@ export default function EditProductPage() {
           <div>
             <label className={labelClass}>Preț vechi (MDL)</label>
             <input type="number" value={form.oldPrice} onChange={(e) => set("oldPrice", e.target.value)} className={inputClass} placeholder="0" min="0" />
-          </div>
-          <div>
-            <label className={labelClass}>Stoc</label>
-            <input type="number" value={form.stock} onChange={(e) => set("stock", e.target.value)} className={inputClass} placeholder="0" min="0" />
           </div>
           <div>
             <label className={labelClass}>Cod SKU</label>

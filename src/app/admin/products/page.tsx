@@ -9,7 +9,6 @@ interface Product {
   slug: string;
   price: number;
   oldPrice: number | null;
-  stock: number;
   sku: string | null;
   condition: string;
   images: string;
@@ -77,9 +76,9 @@ export default function AdminProductsPage() {
   };
 
   const exportCSV = () => {
-    const header = "Nume,SKU,Categorie,Preț,Preț vechi,Stoc,Activ\n";
+    const header = "Nume,SKU,Categorie,Preț,Preț vechi,Activ\n";
     const rows = filtered.map((p) =>
-      `"${p.name}",${p.sku || ""},${p.category?.nameRo || ""},${p.price},${p.oldPrice || ""},${p.stock},${p.isActive ? "Da" : "Nu"}`
+      `"${p.name}",${p.sku || ""},${p.category?.nameRo || ""},${p.price},${p.oldPrice || ""},${p.isActive ? "Da" : "Nu"}`
     ).join("\n");
     const blob = new Blob([header + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -169,7 +168,6 @@ export default function AdminProductsPage() {
             <option value="createdAt">Sort: Cel mai nou</option>
             <option value="name">Sort: Nume</option>
             <option value="price">Sort: Preț</option>
-            <option value="stock">Sort: Stoc</option>
           </select>
         </div>
       </div>
@@ -185,14 +183,13 @@ export default function AdminProductsPage() {
                 <th className="px-4 py-3 font-medium">Categorie</th>
                 <th className="px-4 py-3 font-medium">Brand</th>
                 <th className="px-4 py-3 font-medium">Preț</th>
-                <th className="px-4 py-3 font-medium">Stoc</th>
                 <th className="px-4 py-3 font-medium">Stare</th>
                 <th className="px-4 py-3 font-medium">Acțiuni</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} className="py-8 text-center text-slate-400">Se încarcă...</td></tr>
+                <tr><td colSpan={7} className="py-8 text-center text-slate-400">Se încarcă...</td></tr>
               ) : filtered.map((p, i) => {
                 const img = getImage(p.images);
                 return (
@@ -217,9 +214,6 @@ export default function AdminProductsPage() {
                       {p.oldPrice && <p className="text-xs text-slate-400 line-through">{p.oldPrice.toLocaleString()} MDL</p>}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`font-medium ${p.stock === 0 ? "text-red-500" : p.stock < 5 ? "text-yellow-500" : "text-slate-900 dark:text-white"}`}>{p.stock}</span>
-                    </td>
-                    <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
                         {p.isActive && <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs">Activ</span>}
                         {p.isFeatured && <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full text-xs">Recomandat</span>}
@@ -242,7 +236,7 @@ export default function AdminProductsPage() {
                 );
               })}
               {!loading && filtered.length === 0 && (
-                <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-400">Niciun produs găsit</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-400">Niciun produs găsit</td></tr>
               )}
             </tbody>
           </table>

@@ -10,7 +10,6 @@ import CategorySlider from '@/components/home/CategorySlider';
 import ProductGrid from '@/components/home/ProductGrid';
 import BrandCarousel from '@/components/home/BrandCarousel';
 import RecentlyViewed from '@/components/home/RecentlyViewed';
-import FlashSaleCountdown from '@/components/home/FlashSaleCountdown';
 
 export default function HomePage() {
   const router = useRouter();
@@ -30,7 +29,6 @@ export default function HomePage() {
         <HeroSection />
         <CategorySlider />
         <ProductGrid />
-        <FlashSaleCountdown />
         <RecentlyViewed />
         <BrandCarousel />
       </main>

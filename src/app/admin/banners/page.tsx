@@ -21,7 +21,7 @@ export default function AdminBannersPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ title: "", subtitle: "", image: "", link: "", buttonText: "", position: "HERO", startDate: "", endDate: "", isActive: true });
+  const [form, setForm] = useState({ title: "", subtitle: "", image: "", link: "", buttonText: "", position: "HERO", order: 0, startDate: "", endDate: "", isActive: true });
   const [saving, setSaving] = useState(false);
 
   // Image upload handler
@@ -52,7 +52,7 @@ export default function AdminBannersPage() {
 
   useEffect(() => { fetchBanners(); }, [fetchBanners]);
 
-  const resetForm = () => setForm({ title: "", subtitle: "", image: "", link: "", buttonText: "", position: "HERO", startDate: "", endDate: "", isActive: true });
+  const resetForm = () => setForm({ title: "", subtitle: "", image: "", link: "", buttonText: "", position: "HERO", order: 0, startDate: "", endDate: "", isActive: true });
   const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleAdd = async () => {
@@ -86,6 +86,7 @@ export default function AdminBannersPage() {
       link: b.link || "",
       buttonText: b.buttonText || "",
       position: b.position,
+      order: b.order ?? 0,
       startDate: b.startDate ? b.startDate.slice(0, 16) : "",
       endDate: b.endDate ? b.endDate.slice(0, 16) : "",
       isActive: b.isActive,
@@ -160,6 +161,7 @@ export default function AdminBannersPage() {
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Link</label><input value={form.link} onChange={(e) => set("link", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Buton CTA</label><input value={form.buttonText} onChange={(e) => set("buttonText", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Poziție</label><select value={form.position} onChange={(e) => set("position", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"><option value="HERO">Hero</option><option value="MIDDLE">Middle</option><option value="SIDEBAR">Sidebar</option><option value="FOOTER">Footer</option></select></div>
+            <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Ordine</label><input type="number" value={form.order} onChange={(e) => set("order", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Dată start</label><input type="datetime-local" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Dată sfârșit</label><input type="datetime-local" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
           </div>
@@ -189,6 +191,7 @@ export default function AdminBannersPage() {
                     <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Link</label><input value={form.link} onChange={(e) => set("link", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                     <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">CTA</label><input value={form.buttonText} onChange={(e) => set("buttonText", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                     <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Poziție</label><select value={form.position} onChange={(e) => set("position", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"><option value="HERO">Hero</option><option value="MIDDLE">Middle</option><option value="SIDEBAR">Sidebar</option><option value="FOOTER">Footer</option></select></div>
+                    <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Ordine</label><input type="number" value={form.order} onChange={(e) => set("order", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                     <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Start</label><input type="datetime-local" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                     <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">End</label><input type="datetime-local" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
                   </div>
