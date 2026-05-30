@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { createHash } from 'crypto';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
@@ -26,21 +25,17 @@ export async function POST(request: NextRequest) {
     const API_KEY = process.env.CLOUDINARY_API_KEY;
     const API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
-    if (CLOUD_NAME && API_KEY && API_SECRET) {
+    const UPLOAD_PRESET = process.env.CLOUDINARY_UPLOAD_PRESET;
+
+    if (CLOUD_NAME && UPLOAD_PRESET) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const base64 = buffer.toString('base64');
       const dataUri = `data:${file.type};base64,${base64}`;
-      const timestamp = Math.floor(Date.now() / 1000).toString();
-
-      const sigString = `folder=western-import&timestamp=${timestamp}${API_SECRET}`;
-      const signature = createHash('sha1').update(sigString).digest('hex');
 
       const body = new FormData();
       body.append('file', dataUri);
+      body.append('upload_preset', UPLOAD_PRESET);
       body.append('folder', 'western-import');
-      body.append('timestamp', timestamp);
-      body.append('api_key', API_KEY);
-      body.append('signature', signature);
 
       const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
         method: 'POST',

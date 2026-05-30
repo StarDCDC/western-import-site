@@ -248,6 +248,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     'catalog.popular': 'По популярности',
     'catalog.priceAsc': 'Цена по возрастанию',
     'catalog.priceDesc': 'Цена по убыванию',
+    'catalog.newest': 'Самые новые',
+    'catalog.nameAsc': 'Имя: А → Я',
+    'catalog.nameDesc': 'Имя: Я → А',
     'catalog.new': 'Новый',
     'catalog.refurbished': 'Восстановленный',
     'catalog.used': 'Б/У',
@@ -290,6 +293,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'footer.returns': 'Возврат',
     'footer.faq': 'Частые вопросы',
     'footer.careers': 'Вакансии',
+    'footer.navigation': 'Навигация',
 
     // Cart
     'cart.yourCart': 'Ваша корзина',
