@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { formatPrice } from '@/lib/api';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, Loader2, Gift, Truck } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, Loader2, Truck } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store';
@@ -30,15 +30,7 @@ export default function CartPage() {
   // Coupon discount
   const couponDiscount = coupon?.discount || 0;
 
-  // Bulk discount
-  let bulkDiscount = 0;
-  if (subtotal >= 20000) {
-    bulkDiscount = Math.round(subtotal * 0.05);
-  } else if (subtotal >= 10000) {
-    bulkDiscount = Math.round(subtotal * 0.03);
-  }
-
-  const totalDiscount = couponDiscount + bulkDiscount;
+  const totalDiscount = couponDiscount;
   const total = subtotal - totalDiscount + shipping;
 
   // Free shipping remaining
@@ -63,21 +55,10 @@ export default function CartPage() {
         setPromoApplied(true);
       } else {
         setPromoError(data.error || 'Cod invalid');
-        // Fallback for hardcoded promo
-        if (promoCode.toLowerCase() === 'western5') {
-          setCoupon({ code: 'WESTERN5', type: 'PERCENTAGE', value: 5, discount: Math.round(subtotal * 0.05) });
-          setPromoApplied(true);
-          setPromoError('');
-        }
+
       }
     } catch {
-      // Fallback
-      if (promoCode.toLowerCase() === 'western5') {
-        setCoupon({ code: 'WESTERN5', type: 'PERCENTAGE', value: 5, discount: Math.round(subtotal * 0.05) });
-        setPromoApplied(true);
-      } else {
-        setPromoError('Eroare la validare');
-      }
+      setPromoError('Eroare la validare');
     } finally {
       setPromoLoading(false);
     }
@@ -181,15 +162,7 @@ export default function CartPage() {
                   </div>
                 )}
 
-                {/* Bulk discount teaser */}
-                {subtotal >= 5000 && subtotal < 10000 && (
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-2xl p-4 border border-green-200 dark:border-green-800 flex items-center gap-3">
-                    <Gift className="w-6 h-6 text-green-600 shrink-0" />
-                    <p className="text-sm font-semibold text-green-800 dark:text-green-300">
-                      Mai adaugă {formatPrice(10000 - subtotal)} pentru 3% reducere bulk!
-                    </p>
-                  </div>
-                )}
+
               </div>
 
               {/* Summary */}
@@ -202,13 +175,6 @@ export default function CartPage() {
                       <span>Subtotal ({getItemCount()} produse)</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
-
-                    {bulkDiscount > 0 && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Reducere bulk ({subtotal >= 20000 ? '5%' : '3%'})</span>
-                        <span>-{formatPrice(bulkDiscount)}</span>
-                      </div>
-                    )}
 
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-green-600">

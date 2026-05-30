@@ -70,15 +70,7 @@ export default function CheckoutPage() {
   // Coupon discount
   const couponDiscount = coupon?.discount || 0;
 
-  // Bulk discount
-  let bulkDiscount = 0;
-  if (subtotal >= 20000) {
-    bulkDiscount = Math.round(subtotal * 0.05);
-  } else if (subtotal >= 10000) {
-    bulkDiscount = Math.round(subtotal * 0.03);
-  }
-
-  const totalDiscount = couponDiscount + bulkDiscount;
+  const totalDiscount = couponDiscount;
   const total = subtotal - totalDiscount + shippingCost;
 
   // Free shipping threshold — always free now
@@ -508,13 +500,6 @@ export default function CheckoutPage() {
                       <span>Subtotal</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
-
-                    {bulkDiscount > 0 && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Reducere bulk ({subtotal >= 20000 ? '5%' : '3%'})</span>
-                        <span>-{formatPrice(bulkDiscount)}</span>
-                      </div>
-                    )}
 
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-green-600">
