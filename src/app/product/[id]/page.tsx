@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { getProduct, formatPrice, getDiscount, getCreditCalculations, type CreditCalculation } from '@/lib/api';
+import { getProduct, formatPrice, getDiscount, type CreditCalculation } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -57,27 +57,8 @@ export default function ProductPage() {
   }, [productId]);
 
   // Load credit calculations
-  useEffect(() => {
-    async function loadCredit() {
-      setCreditLoading(true);
-      try {
-        const plans = await getCreditCalculations(productId);
-        if (plans && plans.length > 0) {
-          setCreditPlans(plans);
-          // Default to longest 0% plan, or 12 months
-          const zeroPlan = plans.filter(p => p.interestRate === 0);
-          if (zeroPlan.length > 0) {
-            setSelectedMonths(zeroPlan[zeroPlan.length - 1].months);
-          }
-        }
-      } catch {
-        // Credit calculations not available — use local fallback
-      } finally {
-        setCreditLoading(false);
-      }
-    }
-    if (productId) loadCredit();
-  }, [productId]);
+  // Credit calculations — skip API call, use local fallback for instant load
+  // Remote IuteCredit call removed to prevent slow page loads
 
   // Local credit calculation fallback
   useEffect(() => {

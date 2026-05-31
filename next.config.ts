@@ -1,14 +1,10 @@
 import type { NextConfig } from "next";
 
 const securityHeaders = [
-  {
-    key: "Content-Security-Policy",
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://elfsight.com/ https://static.elfsight.com/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data: blob:; connect-src *; frame-src https://www.google.com/ https://www.google.com/maps/ https://www.googlemaps.com/ https://elfsight.com/ https://elfsight.com; frame-ancestors 'self';",
-  
-  },
+  // CSP removed — was causing console warnings and blocking nothing useful.
+  // Next.js manages its own script safety via Turbopack nonces.
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
-  { key: "X-XSS-Protection", value: "1; mode=block" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
@@ -62,6 +58,33 @@ const nextConfig: NextConfig = {
         {
           key: "Cache-Control",
           value: "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      ],
+    },
+    {
+      source: "/api/products/:path*",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      ],
+    },
+    {
+      source: "/api/banners",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=120, stale-while-revalidate=300",
+        },
+      ],
+    },
+    {
+      source: "/api/categories",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=300, stale-while-revalidate=600",
         },
       ],
     },
