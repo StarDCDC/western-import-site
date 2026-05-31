@@ -17,19 +17,23 @@ export async function GET(request: NextRequest) {
       return successResponse({ products: [], total: 0 });
     }
 
+    // Case-insensitive match (Postgres `contains` is case-sensitive by default).
+    const ci = { contains: q, mode: 'insensitive' as const };
+    const searchOR = [
+      { name: ci },
+      { descriptionRo: ci },
+      { descriptionRu: ci },
+      { sku: ci },
+      { brand: { name: ci } },
+      { category: { nameRo: ci } },
+      { category: { nameRu: ci } },
+    ];
+
     // Search in product name, description, brand name, category name, SKU
     const products = await prisma.product.findMany({
       where: {
         isActive: true,
-        OR: [
-          { name: { contains: q } },
-          { descriptionRo: { contains: q } },
-          { descriptionRu: { contains: q } },
-          { sku: { contains: q } },
-          { brand: { name: { contains: q } } },
-          { category: { nameRo: { contains: q } } },
-          { category: { nameRu: { contains: q } } },
-        ],
+        OR: searchOR,
       },
       take: 10,
       orderBy: { createdAt: 'desc' },
@@ -51,15 +55,7 @@ export async function GET(request: NextRequest) {
     const total = await prisma.product.count({
       where: {
         isActive: true,
-        OR: [
-          { name: { contains: q } },
-          { descriptionRo: { contains: q } },
-          { descriptionRu: { contains: q } },
-          { sku: { contains: q } },
-          { brand: { name: { contains: q } } },
-          { category: { nameRo: { contains: q } } },
-          { category: { nameRu: { contains: q } } },
-        ],
+        OR: searchOR,
       },
     });
 

@@ -1,22 +1,26 @@
-// src/app/page.tsx
-'use client';
-
-import dynamic from 'next/dynamic';
+// src/app/page.tsx — Server Component: fetches homepage products on the server
+// so the HTML ships with content (no client fetch waterfall).
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import CategorySlider from '@/components/home/CategorySlider';
 import ProductGrid from '@/components/home/ProductGrid';
 import FeaturesBar from '@/components/home/FeaturesBar';
+import BrandCarousel from '@/components/home/BrandCarousel';
+import RecentlyViewed from '@/components/home/RecentlyViewed';
+import { getProductsData } from '@/lib/queries';
 
-// Lazy load below-fold components
-const BrandCarousel = dynamic(() => import('@/components/home/BrandCarousel'));
-const RecentlyViewed = dynamic(() => import('@/components/home/RecentlyViewed'));
+// Render per-request so admin changes appear immediately (no stale cache).
+export const dynamic = 'force-dynamic';
 
-import { useLanguage } from '@/components/ui/LanguageProvider';
-
-export default function HomePage() {
-  const { t } = useLanguage();
+export default async function HomePage() {
+  let initialProducts;
+  try {
+    const result = await getProductsData({ sort: 'newest', limit: 6 });
+    initialProducts = result.products.slice(0, 6);
+  } catch {
+    initialProducts = undefined; // client will fetch as fallback
+  }
 
   return (
     <>
@@ -25,7 +29,7 @@ export default function HomePage() {
         <HeroSection />
         <CategorySlider />
         <FeaturesBar />
-        <ProductGrid />
+        <ProductGrid initialProducts={initialProducts} />
         <RecentlyViewed />
         <BrandCarousel />
       </main>

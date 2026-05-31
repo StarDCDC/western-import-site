@@ -75,7 +75,8 @@ const nextConfig: NextConfig = {
       headers: [
         {
           key: "Cache-Control",
-          value: "public, s-maxage=120, stale-while-revalidate=300",
+          // Banners change rarely — let the browser cache them too (not just a CDN).
+          value: "public, max-age=120, s-maxage=120, stale-while-revalidate=300",
         },
       ],
     },
@@ -84,7 +85,8 @@ const nextConfig: NextConfig = {
       headers: [
         {
           key: "Cache-Control",
-          value: "public, s-maxage=300, stale-while-revalidate=600",
+          // Categories change rarely — browser-cacheable for snappy filter loads.
+          value: "public, max-age=120, s-maxage=300, stale-while-revalidate=600",
         },
       ],
     },

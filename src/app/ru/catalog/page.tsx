@@ -1,17 +1,19 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useLanguage } from '@/components/ui/LanguageProvider';
-
-// Re-export catalog page with RU locale forced
+// src/app/ru/catalog/page.tsx — Russian catalog route. Server Component that
+// reuses the (server-rendered) RO catalog page and forces the 'ru' locale.
 import CatalogPage from '@/app/catalog/page';
+import LocaleSetter from '@/components/ui/LocaleSetter';
 
-export default function CatalogRuPage() {
-  const { locale, setLocale } = useLanguage();
+export const dynamic = 'force-dynamic';
 
-  useEffect(() => {
-    if (locale !== 'ru') setLocale('ru');
-  }, [locale, setLocale]);
-
-  return <CatalogPage />;
+export default async function CatalogRuPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  return (
+    <>
+      <LocaleSetter locale="ru" />
+      <CatalogPage searchParams={searchParams} />
+    </>
+  );
 }

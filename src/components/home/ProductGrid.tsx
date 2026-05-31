@@ -1,7 +1,7 @@
 // src/components/home/ProductGrid.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
 import Link from 'next/link';
@@ -66,7 +66,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06 }}
+      transition={{ duration: 0.25, delay: Math.min(index, 3) * 0.04 }}
       /* Mobile: horizontal card (image left, text right) */
       className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-lg hover:border-transparent dark:hover:border-transparent transition-all relative overflow-hidden
         flex flex-row sm:flex-col gap-2 sm:gap-0"
@@ -184,12 +184,15 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   );
 }
 
-export default function ProductGrid() {
+export default function ProductGrid({ initialProducts }: { initialProducts?: Product[] }) {
   const { t } = useLanguage();
-  const [productList, setProductList] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [productList, setProductList] = useState<Product[]>(initialProducts ?? []);
+  // When the server already provided products (SSR), skip the initial client fetch.
+  const [loading, setLoading] = useState(!initialProducts);
+  const hasInitial = useRef(Boolean(initialProducts && initialProducts.length > 0));
 
   useEffect(() => {
+    if (hasInitial.current) return;
     async function load() {
       try {
         const result = await getProducts({ sort: 'newest', limit: 6 });

@@ -1,15 +1,15 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useLanguage } from '@/components/ui/LanguageProvider';
+// src/app/ru/product/[id]/page.tsx — Russian product route. Server Component that
+// reuses the (server-rendered) RO product page and forces the 'ru' locale.
 import ProductPage from '@/app/product/[id]/page';
+import LocaleSetter from '@/components/ui/LocaleSetter';
 
-export default function ProductRuPage() {
-  const { locale, setLocale } = useLanguage();
+export const dynamic = 'force-dynamic';
 
-  useEffect(() => {
-    if (locale !== 'ru') setLocale('ru');
-  }, [locale, setLocale]);
-
-  return <ProductPage />;
+export default async function ProductRuPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <>
+      <LocaleSetter locale="ru" />
+      <ProductPage params={params} />
+    </>
+  );
 }

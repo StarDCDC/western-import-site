@@ -4,6 +4,8 @@ import { requireAdmin } from '@/lib/auth';
 import { sanitizeInput, validateRequired, hasSQLInjection } from '@/lib/validators';
 import { successResponse, errorResponse, paginatedResponse, getPaginationParams, parseSort, getClientIp, rateLimitResponse, serverErrorResponse } from '@/lib/utils';
 import { rateLimit } from '@/lib/rateLimit';
+import { resolveProductWhere } from '@/lib/queries';
+import type { ProductsFilters } from '@/lib/api';
 
 // Spec field names
 const SPEC_FIELDS = ['display', 'storage', 'weight', 'refreshRate', 'ram', 'gpuModel', 'cpuModel', 'resolution', 'gpuSeries', 'cpuSeries', 'os', 'storageType', 'gpuType'] as const;
@@ -38,85 +40,20 @@ export async function GET(request: NextRequest) {
     const allowedSortFields = ['price', 'createdAt', 'name', 'stock'];
     const { field, order } = parseSort(sort, allowedSortFields);
 
-    const where: Record<string, unknown> = { isActive: true };
+    if (search && hasSQLInjection(search)) return errorResponse('Căutare invalidă');
 
-    if (search) {
-      if (hasSQLInjection(search)) return errorResponse('Căutare invalidă');
-      const q = search.toLowerCase();
-      where.OR = [
-        { name: { contains: q } },
-        { sku: { contains: q } },
-        { brand: { name: { contains: q } } },
-        { category: { nameRo: { contains: q } } },
-        { category: { nameRu: { contains: q } } },
-        { descriptionRo: { contains: q } },
-        { descriptionRu: { contains: q } },
-      ];
-    }
-
-    if (categoryId) {
-      // Support comma-separated category IDs for multi-select
-      const catIds = categoryId.split(',');
-      const resolvedIds: string[] = [];
-      for (const cid of catIds) {
-        const catById = await prisma.category.findUnique({ where: { id: cid } });
-        if (catById) {
-          resolvedIds.push(cid);
-        } else {
-          const catBySlug = await prisma.category.findFirst({ where: { slug: cid } });
-          if (catBySlug) resolvedIds.push(catBySlug.id);
-        }
-      }
-      if (resolvedIds.length > 0) {
-        where.categoryId = { in: resolvedIds };
-      } else if (catIds.length > 0) {
-        // Could not resolve any — still try direct match
-        where.categoryId = categoryId;
-      }
-    }
-    if (brandId) {
-      // Support comma-separated brand IDs for multi-select
-      const brandIds = brandId.split(',');
-      const resolvedIds: string[] = [];
-      for (const bid of brandIds) {
-        const brandById = await prisma.brand.findUnique({ where: { id: bid } });
-        if (brandById) {
-          resolvedIds.push(bid);
-        } else {
-          const brandBySlug = await prisma.brand.findFirst({ where: { slug: bid } });
-          if (brandBySlug) resolvedIds.push(brandBySlug.id);
-        }
-      }
-      if (resolvedIds.length > 0) {
-        where.brandId = { in: resolvedIds };
-      }
-    }
-    if (condition) {
-      // Support comma-separated conditions for multi-select
-      if (condition.includes(',')) {
-        where.condition = { in: condition.split(',') };
-      } else {
-        where.condition = condition;
-      }
-    }
-    if (isFeatured === 'true') where.isFeatured = true;
-
-    if (minPrice || maxPrice) {
-      where.price = {
-        ...(minPrice ? { gte: parseFloat(minPrice) } : {}),
-        ...(maxPrice ? { lte: parseFloat(maxPrice) } : {}),
-      };
-    }
-
-    // Apply spec filters via relation
-    if (Object.keys(specFilters).length > 0) {
-      where.spec = {
-        AND: Object.entries(specFilters).map(([field, value]) => ({
-          // @ts-ignore - dynamic field access
-          [field]: { equals: value },
-        })),
-      };
-    }
+    // Build the where clause via the shared resolver (also used for SSR).
+    const filters: ProductsFilters = {
+      search: search || undefined,
+      categoryId: categoryId || undefined,
+      brandId: brandId || undefined,
+      condition: condition || undefined,
+      featured: isFeatured === 'true' || undefined,
+      minPrice: minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      ...specFilters,
+    };
+    const where = await resolveProductWhere(filters);
 
     const [products, total] = await Promise.all([
       prisma.product.findMany({

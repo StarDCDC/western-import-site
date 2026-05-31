@@ -45,10 +45,11 @@ export async function GET(request: NextRequest) {
       };
     }
     if (search) {
-      const q = search.toLowerCase();
+      // Case-insensitive (Postgres `contains` is case-sensitive by default).
+      const ci = { contains: search.trim(), mode: 'insensitive' as const };
       baseWhere.OR = [
-        { name: { contains: q } },
-        { sku: { contains: q } },
+        { name: ci },
+        { sku: ci },
       ];
     }
 

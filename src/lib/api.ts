@@ -70,7 +70,7 @@ export interface ProductsResponse {
 }
 
 /** Maps a DB product row back to the frontend MockProduct shape */
-function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
+export function mapDbProductToMock(p: Record<string, unknown>): MockProduct {
   // Support both old JSON specs column and new ProductSpec relation
   // Parse specs from JSON string if needed
   const rawSpecs = p.specs;
