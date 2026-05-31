@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
     if (existing) return NextResponse.json({ success: false, error: 'Brandul există deja' }, { status: 400 });
 
     const brand = await prisma.brand.create({ data: { name, slug: brandSlug, logo: logo || null, description: description || null } });
+    revalidate('brands');
     return NextResponse.json({ success: true, data: brand }, { status: 201 });
   } catch (error) {
     console.error('Brands POST error:', error);
@@ -61,6 +62,7 @@ export async function PUT(request: NextRequest) {
     if (body.description !== undefined) updateData.description = body.description;
 
     const brand = await prisma.brand.update({ where: { id }, data: updateData });
+    revalidate('brands');
     return NextResponse.json({ success: true, data: brand });
   } catch (error) {
     console.error('Brands PUT error:', error);

@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { sanitizeInput } from '@/lib/validators';
 import { successResponse, errorResponse, notFoundResponse, serverErrorResponse } from '@/lib/utils';
+import { revalidate } from '@/lib/revalidate';
 
 // GET /api/products/[id] — single product with reviews and similar
 export async function GET(
@@ -137,6 +138,7 @@ export async function PUT(
       },
     });
 
+    revalidate('products', 'categories');
     return successResponse(product);
   } catch {
     return serverErrorResponse();
@@ -174,6 +176,7 @@ export async function DELETE(
       },
     });
 
+    revalidate('products', 'categories');
     return successResponse({ message: 'Produs șters cu succes' });
   } catch {
     return serverErrorResponse();

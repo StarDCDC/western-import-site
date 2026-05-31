@@ -169,6 +169,7 @@ export async function POST(request: NextRequest) {
       imported++;
     }
 
+    revalidate('products', 'categories', 'brands');
     return successResponse({ imported, skipped, total: rows.length });
   } catch (err) {
     console.error('Import error:', err);

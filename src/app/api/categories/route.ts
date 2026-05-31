@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/auth';
 import { sanitizeInput, validateRequired, slugify } from '@/lib/validators';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
 import { translateToRu } from '@/lib/translate';
+import { revalidate } from '@/lib/revalidate';
 
 // GET /api/categories — tree structure (public)
 // GET /api/categories?flat=true — flat list for admin dropdowns
@@ -90,6 +91,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    revalidate('categories');
     return successResponse(category, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);
@@ -128,6 +130,7 @@ export async function PUT(request: NextRequest) {
       data: updateData,
     });
 
+    revalidate('categories');
     return successResponse(category);
   } catch {
     return serverErrorResponse();
@@ -150,6 +153,7 @@ export async function DELETE(request: NextRequest) {
     if (count > 0) return errorResponse(`Categoria are ${count} produse. Ștergeți produsele mai întâi.`);
 
     await prisma.category.delete({ where: { id } });
+    revalidate('categories');
     return successResponse({ message: 'Categoria a fost ștearsă' });
   } catch {
     return serverErrorResponse();

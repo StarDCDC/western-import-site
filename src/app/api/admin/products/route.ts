@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { translateToRu } from '@/lib/translate';
 import { requireAdmin } from '@/lib/auth';
+import { revalidate } from '@/lib/revalidate';
 
 const productSchema = z.object({
   name: z.string().min(2, 'Nume este obligatoriu'),
@@ -79,6 +80,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) return NextResponse.json({ success: false, error: 'ID lipsă' }, { status: 400 });
 
     await prisma.product.delete({ where: { id } });
+    revalidate('products', 'categories');
     return NextResponse.json({ success: true, message: 'Produs șters' });
   } catch (error) {
     console.error('Admin products DELETE error:', error);
@@ -131,6 +133,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const product = await prisma.product.update({ where: { id }, data: updateData, include: { category: true, brand: true, spec: true } });
+    revalidate('products', 'categories');
     return NextResponse.json({ success: true, data: product });
   } catch (error) {
     console.error('Admin products PUT error:', error);
@@ -175,6 +178,7 @@ export async function POST(request: NextRequest) {
     if (hasSpec) productData.spec = { create: specData };
 
     const product = await prisma.product.create({ data: productData as Parameters<typeof prisma.product.create>[0]['data'], include: { category: true, brand: true, spec: true } });
+    revalidate('products', 'categories');
     return NextResponse.json({ success: true, data: product, message: 'Produs creat cu succes' });
   } catch (error) {
     console.error('Admin products POST error:', error);

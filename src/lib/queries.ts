@@ -3,6 +3,7 @@
 // frontend shape. They are used by Server Components for SSR (no client fetch
 // waterfall) and mirror the logic of the matching /api route handlers so the
 // shape stays identical. Never import this from a Client Component (it pulls in Prisma).
+import { unstable_cache } from 'next/cache';
 import prisma from './prisma';
 import { parseSort } from './utils';
 import {
@@ -13,6 +14,14 @@ import {
   type Banner,
   type ProductDetail,
 } from './api';
+
+// Cache tags — bumped (invalidated) by admin writes via revalidateTag (see lib/revalidate.ts).
+export const CACHE_TAGS = {
+  products: 'products',
+  categories: 'categories',
+  banners: 'banners',
+  brands: 'brands',
+} as const;
 
 const SPEC_FIELDS = ['display', 'storage', 'weight', 'refreshRate', 'ram', 'gpuModel', 'cpuModel', 'resolution', 'gpuSeries', 'cpuSeries', 'os', 'storageType', 'gpuType'] as const;
 
@@ -123,7 +132,7 @@ const SORT_MAP: Record<string, string> = {
 };
 
 /** Server-side product list, mapped to the frontend shape. Mirrors GET /api/products. */
-export async function getProductsData(filters: ProductsFilters = {}): Promise<ProductsResponse> {
+async function getProductsDataUncached(filters: ProductsFilters = {}): Promise<ProductsResponse> {
   const page = Math.max(1, filters.page || 1);
   const limit = Math.min(100, Math.max(1, filters.limit || 20));
   const skip = (page - 1) * limit;
@@ -141,7 +150,7 @@ export async function getProductsData(filters: ProductsFilters = {}): Promise<Pr
 }
 
 /** Server-side single product + similar, mapped to the frontend shape. Mirrors GET /api/products/[id]. */
-export async function getProductData(id: string): Promise<ProductDetail | null> {
+async function getProductDataUncached(id: string): Promise<ProductDetail | null> {
   const product = await prisma.product.findUnique({
     where: { id },
     include: {
@@ -186,7 +195,7 @@ export async function getProductData(id: string): Promise<ProductDetail | null> 
 }
 
 /** Server-side category tree mapped to the frontend ApiCategory shape. Mirrors GET /api/categories. */
-export async function getCategoriesData(): Promise<ApiCategory[]> {
+async function getCategoriesDataUncached(): Promise<ApiCategory[]> {
   const tree = await prisma.category.findMany({
     where: { isActive: true, parentId: null },
     include: { _count: { select: { products: { where: { isActive: true } } } } },
@@ -203,7 +212,7 @@ export async function getCategoriesData(): Promise<ApiCategory[]> {
 }
 
 /** Server-side brands list (id, name, slug). Mirrors the brands used by the catalog filters. */
-export async function getBrandsData() {
+async function getBrandsDataUncached() {
   const brands = await prisma.brand.findMany({
     select: { id: true, name: true, slug: true, logo: true, description: true },
     orderBy: { name: 'asc' },
@@ -218,7 +227,7 @@ export async function getBrandsData() {
 }
 
 /** Server-side active banners. Mirrors GET /api/banners. */
-export async function getBannersData(): Promise<Banner[]> {
+async function getBannersDataUncached(): Promise<Banner[]> {
   const now = new Date();
   const banners = await prisma.banner.findMany({
     where: {
@@ -243,4 +252,55 @@ export async function getBannersData(): Promise<Banner[]> {
     order: b.order,
     isActive: b.isActive,
   }));
+}
+
+// ─── Cached public wrappers ──────────────────────────────────────────
+// Reads are cached and tagged so they're instant after the first hit, even on a
+// slow DB. Admin writes call revalidateTag(...) (see lib/revalidate.ts) to drop
+// the relevant cache so changes appear immediately. `revalidate: 30` is a safety
+// net (max staleness if a tag is ever missed).
+
+/** Cached product list. Cache key includes the filters. Tag: products. */
+export function getProductsData(filters: ProductsFilters = {}): Promise<ProductsResponse> {
+  return unstable_cache(
+    () => getProductsDataUncached(filters),
+    ['products-list', JSON.stringify(filters)],
+    { tags: [CACHE_TAGS.products], revalidate: 30 },
+  )();
+}
+
+/** Cached single product + similar. Tag: products. */
+export function getProductData(id: string): Promise<ProductDetail | null> {
+  return unstable_cache(
+    () => getProductDataUncached(id),
+    ['product', id],
+    { tags: [CACHE_TAGS.products], revalidate: 30 },
+  )();
+}
+
+/** Cached category tree. Tag: categories (+ products, since counts depend on products). */
+export function getCategoriesData(): Promise<ApiCategory[]> {
+  return unstable_cache(
+    () => getCategoriesDataUncached(),
+    ['categories-tree'],
+    { tags: [CACHE_TAGS.categories, CACHE_TAGS.products], revalidate: 60 },
+  )();
+}
+
+/** Cached brands. Tag: brands. */
+export function getBrandsData(): ReturnType<typeof getBrandsDataUncached> {
+  return unstable_cache(
+    () => getBrandsDataUncached(),
+    ['brands-list'],
+    { tags: [CACHE_TAGS.brands], revalidate: 60 },
+  )();
+}
+
+/** Cached active banners. Tag: banners. revalidate short because of time-window banners. */
+export function getBannersData(): Promise<Banner[]> {
+  return unstable_cache(
+    () => getBannersDataUncached(),
+    ['banners-active'],
+    { tags: [CACHE_TAGS.banners], revalidate: 60 },
+  )();
 }

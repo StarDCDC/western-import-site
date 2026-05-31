@@ -5,6 +5,7 @@ import { sanitizeInput, validateRequired, hasSQLInjection } from '@/lib/validato
 import { successResponse, errorResponse, paginatedResponse, getPaginationParams, parseSort, getClientIp, rateLimitResponse, serverErrorResponse } from '@/lib/utils';
 import { rateLimit } from '@/lib/rateLimit';
 import { resolveProductWhere } from '@/lib/queries';
+import { revalidate } from '@/lib/revalidate';
 import type { ProductsFilters } from '@/lib/api';
 
 // Spec field names
@@ -176,6 +177,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    revalidate('products', 'categories');
     return successResponse(product, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);

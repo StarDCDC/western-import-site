@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, notFoundResponse, serverErrorResponse } from '@/lib/utils';
+import { revalidate } from '@/lib/revalidate';
 
 // PUT /api/admin/banners/[id] — update banner
 export async function PUT(
@@ -46,6 +47,7 @@ export async function PUT(
       },
     });
 
+    revalidate('banners');
     return successResponse(banner);
   } catch {
     return serverErrorResponse();
@@ -79,6 +81,7 @@ export async function DELETE(
       },
     });
 
+    revalidate('banners');
     return successResponse({ message: 'Banner șters cu succes' });
   } catch {
     return serverErrorResponse();
