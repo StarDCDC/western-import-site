@@ -1,35 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { useLanguage } from '@/components/ui/LanguageProvider';
-
-interface SiteSettings {
-  site_phone?: string;
-  site_email?: string;
-  site_address?: string;
-}
+import { useSettings } from '@/lib/useSettings';
 
 export default function Footer() {
   const { t, locale } = useLanguage();
   const lp = (path: string) => locale === 'ru' ? `/ru${path}` : path;
-  const [settings, setSettings] = useState<SiteSettings>({});
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(r => r.json())
-      .then(json => {
-        if (json.success && json.data?.settings) {
-          setSettings({
-            site_phone: json.data.settings.site_phone || '',
-            site_email: json.data.settings.site_email || '',
-            site_address: json.data.settings.site_address || '',
-          });
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const settings = useSettings();
 
   const phone = settings.site_phone || '+373 69 466 585';
   const email = settings.site_email || 'info@westernimport.md';
@@ -122,10 +101,10 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Map */}
-          <div>
+          {/* Map — lazy loaded */}
+          <div className="lg:col-span-1">
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.location')}</h4>
-            <div className="rounded-2xl overflow-hidden h-[160px]">
+            <div className="rounded-2xl overflow-hidden h-[160px] bg-slate-800">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2727.5!2d28.85!3d47.02!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c33b9e0f8e7%3A0x0!2sStrada%20Podgorenilor%2017%2C%20Chi%C8%99in%C4%83u%2C%20Moldova!5e0!3m2!1sro!2s!4v1700000000000!5m2!1sro!2s"
                 width="100%"

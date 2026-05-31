@@ -93,7 +93,7 @@ export default function Header() {
           {/* Desktop/Tablet Logo */}
           <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
             <div className="h-[36px] w-[36px] rounded-full overflow-hidden dark:overflow-visible">
-              <img src="/logo-mobile-light.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover scale-110 dark:hidden" />
+              <img src="/logo-mobile-light.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover scale-125 dark:hidden" />
               <img src="/logo-mobile-dark.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" />
             </div>
             <span className="text-lg font-bold tracking-tight text-slate-800 dark:text-white">
@@ -104,7 +104,7 @@ export default function Header() {
           {/* Mobile circular logo */}
           <Link href="/" className="sm:hidden shrink-0">
             <div className="h-[32px] w-[32px] rounded-full overflow-hidden dark:overflow-visible">
-              <img src="/logo-mobile-light.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover scale-110 dark:hidden" />
+              <img src="/logo-mobile-light.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover scale-125 dark:hidden" />
               <img src="/logo-mobile-dark.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
             </div>
           </Link>
