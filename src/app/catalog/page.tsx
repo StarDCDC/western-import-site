@@ -371,77 +371,83 @@ function CatalogContent() {
     const badgeClass = product.condition === 'nou' ? 'bg-emerald-600' : discount ? 'bg-accent' : 'bg-indigo-500';
     const isPhone = product.category === 'telefoane';
 
+    // Parse product image
+    const getImageUrl = (): string | null => {
+      const rawImg = product.images;
+      if (Array.isArray(rawImg)) return rawImg[0] || null;
+      if (typeof rawImg === 'string') {
+        let s = rawImg.trim();
+        if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
+        s = s.replace(/\"/g, '"');
+        if (s.startsWith('[')) { try { const a = JSON.parse(s); return a[0] || null; } catch { return null; } }
+        if (s.startsWith('http')) return s;
+        if (s.includes(',')) { const p = s.split(','); return p.find(x => x.trim().startsWith('http') || x.trim().startsWith('/')) || p[0].trim() || null; }
+        if (s.startsWith('/')) return s;
+        return s || null;
+      }
+      return null;
+    };
+    const imgUrl = getImageUrl();
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.03 }}
-        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all relative"
+        /* Mobile: horizontal (image left | text right), Desktop: vertical card */
+        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0"
       >
-        <span className={`absolute top-3 left-3 px-2 py-0.5 rounded-lg text-[11px] font-bold text-white ${badgeClass}`}>
+        {/* Badge */}
+        <span className={`absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-2 rounded text-[9px] sm:text-[11px] font-bold text-white z-10 ${badgeClass}`}>
           {discount ? `${t('catalog.discount')} -${discount}%` : badgeText}
         </span>
-        <Link href={`/product/${product.id}`}>
-          <div className="flex items-center justify-center h-36 mb-3">
-            {(() => {
-              const rawImg = product.images;
-              let imgUrl: string | null = null;
-              if (Array.isArray(rawImg)) {
-                imgUrl = rawImg[0] || null;
-              } else if (typeof rawImg === 'string') {
-                let s: string = (rawImg as string).trim();
-                if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
-                s = s.replace(/\"/g, '"');
-                if (s.startsWith('[')) {
-                  try { const a = JSON.parse(s); imgUrl = a[0] || null; } catch { imgUrl = null; }
-                } else if (s.startsWith('http')) {
-                  imgUrl = s;
-                } else if (s.includes(',')) {
-                  const parts = s.split(',');
-                  imgUrl = parts.find(p => p.trim().startsWith('http') || p.trim().startsWith('/')) || parts[0].trim() || null;
-                } else if (s.startsWith('/')) {
-                  imgUrl = s;
-                } else {
-                  imgUrl = s || null;
-                }
-              }
-              return imgUrl ? (
-                <img src={imgUrl} alt={product.name} loading="lazy" className="max-h-32 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-              ) : (
-                <svg viewBox={isPhone ? '0 0 120 160' : '0 0 200 130'} fill="none" className="max-h-28 w-auto">
-                  {isPhone ? (
-                    <>
-                      <rect x="25" y="8" width="70" height="130" rx="12" fill="#e2e8f0" />
-                      <rect x="30" y="20" width="60" height="98" rx="3" fill="#1a56db" opacity=".08" />
-                      <circle cx="60" cy="128" r="4" fill="#cbd5e1" />
-                    </>
-                  ) : (
-                    <>
-                      <rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" />
-                      <rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" />
-                      <rect x="60" y="105" width="80" height="5" rx="2" fill="#cbd5e1" />
-                    </>
-                  )}
-                </svg>
-              );
-            })()}
+
+        {/* Image — fixed size square on mobile, full width on desktop */}
+        <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
+          <div className="relative w-[100px] h-[100px] sm:w-full sm:aspect-[4/3] sm:h-auto overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 mb-0 sm:mb-3">
+            {imgUrl ? (
+              <img
+                src={imgUrl}
+                alt={product.name}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+              </div>
+            )}
           </div>
         </Link>
-        <Link href={`/product/${product.id}`}>
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2">{product.name}</h3>
-        </Link>
-        <p className="text-xs text-slate-500 mb-2 line-clamp-1">{product.specs.procesor}, {product.specs.display}</p>
-        <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-lg font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
-          {product.oldPrice && <span className="text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}
+
+        {/* Content — right side on mobile, below on desktop */}
+        <div className="flex flex-col flex-1 min-w-0 sm:mt-0">
+          <Link href={`/product/${product.id}`}>
+            <h3 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-0.5 sm:mb-1 line-clamp-2">{product.name}</h3>
+          </Link>
+          <p className="hidden sm:block text-xs text-slate-500 mb-1 sm:mb-2 line-clamp-1">{product.specs.procesor}, {product.specs.display}</p>
+
+          {/* Spacer */}
+          <div className="flex-1 min-h-1" />
+
+          {/* Price */}
+          <div className="flex items-baseline gap-1 sm:gap-2 mb-1.5 sm:mb-3">
+            <span className="text-xs sm:text-lg font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
+            {product.oldPrice && <span className="text-[10px] sm:text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-1.5 sm:gap-2">
+            <button onClick={() => addToCart(product)} className="flex-1 bg-primary text-white py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-1">
+              <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t('catalog.addToCart')}
+            </button>
+            <button onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)} className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 text-slate-400 hover:text-accent hover:border-accent'}`}>
+              <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => addToCart(product)} className="flex-1 bg-primary text-white py-2 rounded-xl text-xs font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-1.5">
-            <ShoppingCart className="w-3.5 h-3.5" /> {t('catalog.addToCart')}
-          </button>
-          <button onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)} className={`p-2 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 text-slate-400 hover:text-accent hover:border-accent'}`}>
-            <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
-          </button>
         </div>
       </motion.div>
     );
