@@ -448,7 +448,6 @@ function CatalogContent() {
             </button>
           </div>
         </div>
-        </div>
       </motion.div>
     );
   };
