@@ -80,13 +80,13 @@ export async function POST(request: NextRequest) {
       return errorResponse('Unul sau mai multe produse nu sunt disponibile');
     }
 
-    // Check stock
-    for (const item of items) {
-      const product = products.find((p) => p.id === item.productId);
-      if (product && product.stock < item.quantity) {
-        return errorResponse(`Stoc insuficient pentru ${product.name}`);
-      }
-    }
+    // Stock check — allow ordering even with 0 stock (import business)
+    // for (const item of items) {
+    //   const product = products.find((p) => p.id === item.productId);
+    //   if (product && product.stock < item.quantity) {
+    //     return errorResponse(`Stoc insuficient pentru ${product.name}`);
+    //   }
+    // }
 
     // Build order items
     const orderItems = items.map((item) => {
@@ -199,12 +199,12 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Decrease stock
+    // Decrease stock (allow going negative for import business)
     for (const item of orderItems) {
       await prisma.product.update({
         where: { id: item.productId },
         data: { stock: { decrement: item.quantity } },
-      });
+      }).catch(() => {});
     }
 
     // Clear user cart if logged in

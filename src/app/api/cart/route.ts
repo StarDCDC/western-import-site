@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
 
     const product = await prisma.product.findUnique({ where: { id: productId } });
     if (!product || !product.isActive) return errorResponse('Produs negăsit');
-    if (product.stock < quantity) return errorResponse('Stoc insuficient');
+    // Stock check — allow ordering even with 0 stock (import business)
+    // if (product.stock < quantity) return errorResponse('Stoc insuficient');
 
     const cart = await getOrCreateCart(user?.id || null, sessionId);
 
@@ -83,7 +84,8 @@ export async function POST(request: NextRequest) {
 
     if (existingItem) {
       const newQty = existingItem.quantity + quantity;
-      if (newQty > product.stock) return errorResponse('Stoc insuficient');
+      // Stock check removed — allow ordering (import business)
+      // if (newQty > product.stock) return errorResponse('Stoc insuficient');
 
       await prisma.cartItem.update({
         where: { id: existingItem.id },

@@ -48,11 +48,11 @@ export default function CategorySlider() {
           <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-5">
             {t('cat.laptopuri') ? 'Categorii Populare' : 'Popular Categories'}
           </h2>
-          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+          <div className="flex gap-4 flex-wrap justify-center pb-2 no-scrollbar snap-x snap-mandatory">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-[180px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 animate-pulse snap-start"
+                className="flex-shrink-0 w-[170px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 animate-pulse snap-start"
               >
                 <div className="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700 mx-auto mb-3" />
                 <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-2/3 mx-auto mb-2" />
@@ -74,7 +74,7 @@ export default function CategorySlider() {
           {locale === 'ru' ? 'Популярные категории' : 'Categorii Populare'}
         </h2>
         <div
-          className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory"
+          className="flex gap-4 flex-wrap justify-center pb-2"
           style={{ scrollPaddingLeft: '1rem' }}
         >
           {categories.map((cat, i) => {
@@ -87,11 +87,11 @@ export default function CategorySlider() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="snap-start"
+                className="snap-start flex-shrink-0"
               >
                 <Link
                   href={`/catalog?category=${cat.slug}`}
-                  className="flex flex-col items-center gap-3 w-[180px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 hover:-translate-y-1 hover:shadow-md hover:border-primary dark:hover:border-primary transition-all"
+                  className="flex flex-col items-center gap-3 w-[170px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 hover:-translate-y-1 hover:shadow-md hover:border-primary dark:hover:border-primary transition-all"
                 >
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center">
                     {icon}

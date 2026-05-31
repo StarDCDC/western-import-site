@@ -342,7 +342,7 @@ export interface Banner {
 }
 
 export async function getBanners(): Promise<Banner[]> {
-  const result = await apiFetch<Record<string, unknown>[]>('/api/admin/banners');
+  const result = await apiFetch<Record<string, unknown>[]>('/api/banners');
 
   if (result?.data && Array.isArray(result.data)) {
     return result.data

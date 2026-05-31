@@ -18,9 +18,9 @@ export default function Footer() {
   return (
     <footer className="bg-[#091f4a] text-slate-400 mt-10">
       <div className="max-w-[1280px] mx-auto px-5 pt-12 pb-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-10">
-          {/* Brand */}
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-10">
+          {/* Brand + Social */}
+          <div>
             <div className="flex items-center gap-2.5 mb-4">
               <img src="/logo-new.jpg" alt="Western Import" className="h-10 w-10 rounded-full object-cover" />
               <span className="text-lg font-bold tracking-tight text-white">
@@ -50,22 +50,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <h4 className="text-white text-sm font-bold mb-4">{t('footer.navigation')}</h4>
-            <ul className="space-y-2">
-              <li><Link href={lp("/catalog?category=laptopuri")} className="text-sm hover:text-white transition-colors">💻 {t('nav.laptopuri')}</Link></li>
-              <li><Link href={lp("/catalog?category=telefoane")} className="text-sm hover:text-white transition-colors">📱 {t('nav.telefoane')}</Link></li>
-              <li><Link href={lp("/catalog?category=tablete")} className="text-sm hover:text-white transition-colors">📋 {t('nav.tablete')}</Link></li>
-              <li><Link href={lp("/catalog?category=mini-pc")} className="text-sm hover:text-white transition-colors">🖥️ {t('nav.miniPc')}</Link></li>
-              <li><Link href={lp("/catalog?promo=true")} className="text-sm hover:text-white transition-colors">🔥 {t('nav.promotions')}</Link></li>
-              <li><Link href={lp("/catalog?discount=true")} className="text-sm hover:text-white transition-colors">🏷️ {t('nav.reduceri')}</Link></li>
-              <li><Link href={lp("/shipping")} className="text-sm hover:text-white transition-colors">🚚 {t('nav.livrare')}</Link></li>
-              <li><Link href={lp("/about")} className="text-sm hover:text-white transition-colors">ℹ️ {t('nav.about')}</Link></li>
-            </ul>
-          </div>
-
-          {/* Company */}
+          {/* Company & Support */}
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.company')}</h4>
             <ul className="space-y-2">
@@ -73,13 +58,6 @@ export default function Footer() {
               <li><Link href={lp("/contact")} className="text-sm hover:text-white transition-colors">{t('footer.contact')}</Link></li>
               <li><Link href={lp("/blog")} className="text-sm hover:text-white transition-colors">{t('footer.blog')}</Link></li>
               <li><Link href={lp("/terms")} className="text-sm hover:text-white transition-colors">{t('footer.terms')}</Link></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="text-white text-sm font-bold mb-4">{t('footer.support')}</h4>
-            <ul className="space-y-2">
               <li><Link href={lp("/shipping")} className="text-sm hover:text-white transition-colors">{t('footer.shipping')}</Link></li>
               <li><Link href={lp("/warranty")} className="text-sm hover:text-white transition-colors">{t('footer.warranty')}</Link></li>
               <li><Link href={lp("/faq")} className="text-sm hover:text-white transition-colors">{t('footer.faq')}</Link></li>
@@ -101,14 +79,14 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Map — lazy loaded */}
-          <div className="lg:col-span-1">
+          {/* Map */}
+          <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.location')}</h4>
-            <div className="rounded-2xl overflow-hidden h-[160px] bg-slate-800">
+            <div className="rounded-2xl overflow-hidden h-[180px] bg-slate-800">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2727.5!2d28.85!3d47.02!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c33b9e0f8e7%3A0x0!2sStrada%20Podgorenilor%2017%2C%20Chi%C8%99in%C4%83u%2C%20Moldova!5e0!3m2!1sro!2s!4v1700000000000!5m2!1sro!2s"
                 width="100%"
-                height="160"
+                height="180"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
