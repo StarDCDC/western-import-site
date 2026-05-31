@@ -90,8 +90,12 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, [banners.length]);
 
-  // Use sidebar banners from DB, fallback if none
-  const displayPromos = sidebarBanners.length >= 2 ? sidebarBanners : fallbackPromos;
+  // Use sidebar banners from DB, fallback if fewer than 2
+  const displayPromos: PromoCard[] = sidebarBanners.length >= 2
+    ? sidebarBanners
+    : sidebarBanners.length === 1
+      ? [sidebarBanners[0], fallbackPromos.find(f => f.id !== sidebarBanners[0]?.id) || fallbackPromos[0]]
+      : fallbackPromos;
 
   if (banners.length === 0) {
     // No banners — full-width hero with side promos

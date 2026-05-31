@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { User, Heart, ShoppingCart, Phone, Menu, X, Sun, Moon, ChevronDown, LogOut, Package, Settings } from 'lucide-react';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 import { useTheme } from '@/components/ui/ThemeProvider';
@@ -93,8 +94,8 @@ export default function Header() {
           {/* Desktop/Tablet Logo */}
           <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
             <div className="h-[36px] w-[36px] rounded-full overflow-hidden dark:overflow-visible">
-              <img src="/logo-mobile-light.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover scale-125 dark:hidden" />
-              <img src="/logo-mobile-dark.jpg" alt="" className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" />
+              <Image src="/logo-mobile-light.jpg" alt="Western Import" width={36} height={36} className="h-[36px] w-[36px] rounded-full object-cover scale-125 dark:hidden" priority />
+              <Image src="/logo-mobile-dark.jpg" alt="Western Import" width={36} height={36} className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" priority />
             </div>
             <span className="text-lg font-bold tracking-tight text-slate-800 dark:text-white">
               Western <span className="text-primary">Import</span>
@@ -104,8 +105,8 @@ export default function Header() {
           {/* Mobile circular logo */}
           <Link href="/" className="sm:hidden shrink-0">
             <div className="h-[32px] w-[32px] rounded-full overflow-hidden dark:overflow-visible">
-              <img src="/logo-mobile-light.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover scale-125 dark:hidden" />
-              <img src="/logo-mobile-dark.jpg" alt="" className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
+              <Image src="/logo-mobile-light.jpg" alt="Western Import" width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover scale-125 dark:hidden" />
+              <Image src="/logo-mobile-dark.jpg" alt="Western Import" width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
             </div>
           </Link>
 

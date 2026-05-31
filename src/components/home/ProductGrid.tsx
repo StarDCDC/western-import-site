@@ -72,7 +72,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-lg hover:border-transparent dark:hover:border-transparent transition-all relative overflow-hidden flex flex-col"
+      className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-lg hover:border-transparent dark:hover:border-transparent transition-all relative overflow-hidden flex flex-col"
     >
       {/* Badge */}
       <span className={`absolute top-3 left-3 z-10 px-2.5 py-1 rounded-lg text-[11px] font-bold text-white ${badgeClass}`}>
@@ -97,12 +97,12 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
       {/* Image */}
       <Link href={`/product/${product.id}`} className="block">
-        <div className="flex items-center justify-center h-36 mb-3 p-2">
+        <div className="relative w-full aspect-square sm:aspect-[4/3] mb-2 sm:mb-3 overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-700/50">
           {hasImages ? (
             <img
               src={imageUrl}
               alt={product.name}
-              className="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform"
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
@@ -111,7 +111,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             <svg
               viewBox={isPhone ? '0 0 120 160' : '0 0 200 130'}
               fill="none"
-              className="max-h-24 w-auto group-hover:scale-105 transition-transform"
+              className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
             >
               {isPhone ? (
                 <>
@@ -137,11 +137,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       {/* Content */}
       <div className="flex flex-col flex-1">
         <Link href={`/product/${product.id}`}>
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2 hover:text-primary transition-colors">
+          <h3 className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-0.5 sm:mb-1 line-clamp-2 hover:text-primary transition-colors">
             {product.name}
           </h3>
         </Link>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">
+        <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-1 sm:mb-2 leading-relaxed line-clamp-1 sm:line-clamp-2">
           {product.specs.procesor}, {product.specs.ram}, {product.specs.stocare}
           {product.specs.gpu ? `, ${product.specs.gpu}` : ''}
           {product.specs.display ? `, ${product.specs.display}` : ''}
@@ -158,8 +158,8 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         <div className="flex-1" />
 
         {/* Price */}
-        <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-lg font-extrabold text-primary-dark dark:text-blue-400">
+        <div className="flex items-baseline gap-1 sm:gap-2 mb-2 sm:mb-3">
+          <span className="text-sm sm:text-lg font-extrabold text-primary-dark dark:text-blue-400">
             {formatPrice(product.price)}
           </span>
           {product.oldPrice && (
@@ -176,7 +176,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         <div className="flex gap-2">
           <button
             onClick={() => addToCart(product)}
-            className="flex-1 bg-primary hover:bg-primary-dark text-white py-2.5 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 bg-primary hover:bg-primary-dark text-white py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
           >
             <ShoppingCart className="w-3.5 h-3.5" /> {t('product.addToCart')}
           </button>

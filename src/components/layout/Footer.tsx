@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 import { useSettings } from '@/lib/useSettings';
@@ -22,7 +23,7 @@ export default function Footer() {
           {/* Brand + Social */}
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <img src="/logo-new.jpg" alt="Western Import" className="h-10 w-10 rounded-full object-cover" />
+              <Image src="/logo-new.jpg" alt="Western Import" width={40} height={40} className="h-10 w-10 rounded-full object-cover" priority />
               <span className="text-lg font-bold tracking-tight text-white">
                 Western <span className="text-primary">Import</span>
               </span>
@@ -72,10 +73,16 @@ export default function Footer() {
               <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Transfer</span>
               <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Credit</span>
             </div>
-            <div className="space-y-2 text-sm">
-              <a href={`tel:${phoneClean}`} className="flex items-center gap-2 hover:text-white transition-colors"><Phone className="w-4 h-4 text-sky-400" /> {phone}</a>
-              <a href={`mailto:${email}`} className="flex items-center gap-2 hover:text-white transition-colors"><Mail className="w-4 h-4 text-sky-400" /> {email}</a>
-              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sky-400" /> {address}</span>
+            <div className="flex gap-3">
+              <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
+                <Phone className="w-4 h-4" />
+              </a>
+              <a href={`mailto:${email}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
+                <Mail className="w-4 h-4" />
+              </a>
+              <a href="https://maps.google.com/?q=Strada+Podgorenilor+17+Chisinau" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
+                <MapPin className="w-4 h-4" />
+              </a>
             </div>
           </div>
 

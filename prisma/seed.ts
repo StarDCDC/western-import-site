@@ -269,6 +269,26 @@ async function main() {
       order: 3,
       isActive: true,
     },
+    {
+      title: 'Laptopuri Gaming',
+      subtitle: 'De la 2990 MDL',
+      image: 'https://i.picrd.com/images/abMIHW72sm6.jpg',
+      link: '/catalog?category=laptopuri',
+      buttonText: 'Vezi oferta',
+      position: 'SIDEBAR',
+      order: 1,
+      isActive: true,
+    },
+    {
+      title: 'iPhone Recondiționat',
+      subtitle: 'Garanție 12 luni',
+      image: 'https://i.picrd.com/images/NTy1Am6S6YV.jpg',
+      link: '/catalog?category=telefoane',
+      buttonText: 'Descoperă',
+      position: 'SIDEBAR',
+      order: 2,
+      isActive: true,
+    },
   ];
 
   for (const banner of banners) {
