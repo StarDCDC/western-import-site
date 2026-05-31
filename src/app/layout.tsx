@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter } from "next/font/google";
-import dynamic from "next/dynamic";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import AuthProvider from "@/components/ui/AuthProvider";
 import { LanguageProvider } from "@/components/ui/LanguageProvider";
+import DynamicWidgets from "@/components/ui/DynamicWidgets";
 import { SITE_URL } from "@/lib/seo";
-
-// Lazy load non-critical UI components
-const ChatbotWidget = dynamic(() => import("@/components/ui/ChatbotWidget"), { ssr: false });
-const AnalyticsScripts = dynamic(() => import("@/components/ui/AnalyticsScripts"), { ssr: false });
-const RecaptchaScripts = dynamic(() => import("@/components/ui/RecaptchaScripts"), { ssr: false });
-const WhatsAppButton = dynamic(() => import("@/components/ui/WhatsAppButton"), { ssr: false });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -102,10 +96,7 @@ export default function RootLayout({
         <Script id="theme-init" strategy="afterInteractive">
           {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`}
         </Script>
-        <AnalyticsScripts />
-        <RecaptchaScripts />
-        <WhatsAppButton />
-        <ChatbotWidget widgetId={process.env.NEXT_PUBLIC_ELFSIGHT_WIDGET_ID || ""} />
+        <DynamicWidgets />
       </body>
     </html>
   );

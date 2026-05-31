@@ -10,12 +10,12 @@ import { useCartStore, useWishlistStore } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchBar from '@/components/ui/SearchBar';
 
-const navItems = [
+const navItems: { label: string; icon: string; href: string; highlight?: boolean }[] = [
   { label: 'nav.laptopuri', icon: '💻', href: '/catalog?category=laptopuri' },
   { label: 'nav.telefoane', icon: '📱', href: '/catalog?category=telefoane' },
   { label: 'nav.tablete', icon: '📋', href: '/catalog?category=tablete' },
   { label: 'nav.miniPc', icon: '🖥️', href: '/catalog?category=mini-pc' },
-  { label: 'nav.reduceri', icon: '🏷️', href: '/catalog?discount=true' },
+  { label: 'nav.reduceri', icon: '🏷️', href: '/catalog?discount=true', highlight: true },
 
   { label: 'nav.livrare', icon: '🚚', href: '/shipping' },
 

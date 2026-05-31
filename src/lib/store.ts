@@ -23,24 +23,10 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      addItem: (product: Product, quantity = 1) => {
-        set((state) => {
+      addItem: (product: Product, quantity: number = 1) => {
+        set((state): Partial<CartStore> => {
           const existing = state.items.find((i) => i.product.id === product.id);
           if (existing) {
-            // Validate stock limit for DB products (those with stock field)
-            if (product.stock !== undefined) {
-              const newQty = existing.quantity + quantity;
-              if (newQty > product.stock) {
-                // Cap at available stock
-                return {
-                  items: state.items.map((i) =>
-                    i.product.id === product.id
-                      ? { ...i, quantity: product.stock as number }
-                      : i
-                  ),
-                };
-              }
-            }
             return {
               items: state.items.map((i) =>
                 i.product.id === product.id
@@ -48,10 +34,6 @@ export const useCartStore = create<CartStore>()(
                   : i
               ),
             };
-          }
-          // New item — validate stock
-          if (product.stock !== undefined && quantity > product.stock) {
-            quantity = product.stock;
           }
           return { items: [...state.items, { product, quantity }] };
         });
