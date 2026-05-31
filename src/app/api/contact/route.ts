@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { sanitizeInput, validateRequired, validateEmail, hasSQLInjection } from '@/lib/validators';
 import { successResponse, errorResponse, serverErrorResponse, getClientIp, rateLimitResponse } from '@/lib/utils';
 import { rateLimit } from '@/lib/rateLimit';
-import { sendEmail, contactFormHtml } from '@/lib/email';
 
 // POST /api/contact
 export async function POST(request: NextRequest) {
@@ -24,6 +23,7 @@ export async function POST(request: NextRequest) {
     // Send email to admin
     const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
     if (adminEmail) {
+      const { sendEmail, contactFormHtml } = await import('@/lib/email');
       await sendEmail({
         to: adminEmail,
         subject: `Mesaj de contact de la ${name}`,

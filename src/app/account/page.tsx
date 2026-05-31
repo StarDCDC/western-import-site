@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { User, Package, CreditCard, Heart, Package as PackageIcon, Truck } from 'lucide-react';
+import { User, Package, CreditCard, Heart, Package as PackageIcon, Truck, LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
@@ -144,6 +145,15 @@ export default function AccountPage() {
                       <Heart className="w-4 h-4" />
                       Wishlist
                     </button>
+                    <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
+                      <button
+                        onClick={() => signOut({ callbackUrl: '/login' })}
+                        className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Deconectare
+                      </button>
+                    </div>
                   </nav>
                 </div>
               </div>
