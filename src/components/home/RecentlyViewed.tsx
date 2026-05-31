@@ -130,6 +130,8 @@ export default function RecentlyViewed() {
                           <img
                             src={imgs[0]}
                             alt={product.name}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-contain"
                             onError={(e) => {
                               (e.target as HTMLImageElement).style.display = 'none';

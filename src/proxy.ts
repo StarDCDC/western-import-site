@@ -16,9 +16,37 @@ export default function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // Cache static assets aggressively (1 year)
+  if (
+    pathname.match(/\.(js|css|woff2?|ttf|eot|ico|svg|jpg|jpeg|png|webp|avif)$/) ||
+    pathname.startsWith('/_next/static/')
+  ) {
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=31536000, immutable'
+    );
+    return response;
+  }
+
+  // Cache product images from external CDN (via _next/image)
+  if (pathname.startsWith('/_next/image')) {
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=86400, stale-while-revalidate=604800'
+    );
+    return response;
+  }
+
+  return response;
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/((?!api|_next/data|_next/build|_next/webpack).*)',
+    '/_next/image',
+    '/_next/static/:path*',
+  ],
 };
