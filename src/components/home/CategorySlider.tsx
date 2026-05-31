@@ -87,7 +87,7 @@ export default function CategorySlider() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="snap-start flex-shrink-0 lg:flex-shrink
+                className="snap-start flex-shrink-0 lg:flex-shrink"
               >
                 <Link
                   href={`/catalog?category=${cat.slug}`}
