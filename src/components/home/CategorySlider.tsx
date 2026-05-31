@@ -74,7 +74,7 @@ export default function CategorySlider() {
           {locale === 'ru' ? 'Популярные категории' : 'Categorii Populare'}
         </h2>
         <div
-          className="flex gap-4 flex-wrap justify-center pb-2"
+          className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory lg:flex-wrap lg:justify-center lg:overflow-x-visible"
           style={{ scrollPaddingLeft: '1rem' }}
         >
           {categories.map((cat, i) => {
@@ -87,7 +87,7 @@ export default function CategorySlider() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="snap-start flex-shrink-0"
+                className="snap-start flex-shrink-0 lg:flex-shrink
               >
                 <Link
                   href={`/catalog?category=${cat.slug}`}
