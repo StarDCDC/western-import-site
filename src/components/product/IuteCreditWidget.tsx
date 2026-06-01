@@ -164,8 +164,9 @@ export function IutePayCheckoutButton({
           sku: item.sku,
           unitPrice: item.unitPrice,
           qty: item.qty,
-          ...(item.itemImageUrl ? { itemImageUrl: item.itemImageUrl } : {}),
-          ...(item.itemUrl ? { itemUrl: item.itemUrl } : {}),
+          // REQUIRED by IutePay API (docs say optional but API rejects without them)
+          itemImageUrl: item.itemImageUrl || `${window.location.origin}/placeholder-product.png`,
+          itemUrl: item.itemUrl || `${window.location.origin}/product/${item.sku}`,
         })),
         metadata: {
           mode: 'modal',
