@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
         quantity: item.quantity,
         price: product.price,
         name: product.name,
+        imageUrl: Array.isArray(product.images) ? product.images[0] : '',
       };
     });
 
@@ -265,17 +266,27 @@ export async function POST(request: NextRequest) {
 
     console.log(`[ORDER] ✅ Order ${order.orderNumber} created successfully`);
 
-    // Generate IuteCredit redirect URL if credit payment
-    let redirectUrl: string | null = null;
+    // IutePay credit — return order data for SDK checkout modal
+    // (no redirect; frontend opens iute.checkout() modal with order details)
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://exquisite-spontaneity-production-183c.up.railway.app';
+    let iutePayOrder: { orderId: string; total: number; subtotal: number; items: Array<{displayName:string;sku:string;unitPrice:number;qty:number;itemImageUrl:string;itemUrl:string}> } | null = null;
     if (paymentMethod === 'CREDIT') {
-      // Redirect to IuteCredit website for credit application
-      // When we get the real Site ID from IuteCredit, we'll switch to API integration
-      const totalAmount = total;
-      const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://exquisite-spontaneity-production-183c.up.railway.app';
-      redirectUrl = `https://iutecredit.md/apply?amount=${totalAmount}&source=western-import&return_url=${encodeURIComponent(returnUrl + '/checkout/success')}`;
+      iutePayOrder = {
+        orderId: order.id,
+        total,
+        subtotal: totalDiscount > 0 ? subtotal - totalDiscount : subtotal,
+        items: orderItems.map(oi => ({
+          displayName: oi.name || 'Produs',
+          sku: oi.productId || '',
+          unitPrice: Number(oi.price),
+          qty: oi.quantity,
+          itemImageUrl: oi.imageUrl || `${siteUrl}/placeholder-product.png`,
+          itemUrl: `${siteUrl}/product/${oi.productId}`,
+        })),
+      };
     }
 
-    return successResponse({ ...order, redirectUrl }, 201);
+    return successResponse({ ...order, iutePayOrder }, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);
     console.error(`[ORDER] ❌ Order creation failed:`, err);

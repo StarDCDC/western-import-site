@@ -189,11 +189,59 @@ export default function CheckoutPage() {
         setOrderNumber(data.data.orderNumber);
         clearCart();
 
-        // Redirect to IuteCredit checkout if credit was selected
+        // Open IutePay checkout modal if credit was selected
         if (form.paymentMethod === 'CREDIT') {
-          const redirectUrl = data.data.redirectUrl;
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
+          const iuteOrder = data.data.iutePayOrder;
+          if (iuteOrder) {
+            // @ts-expect-error IutePay global
+            if (window.iute) {
+              // @ts-expect-error IutePay global
+              window.iute.checkout(
+                {
+                  merchant: {
+                    userConfirmationUrl: `${window.location.origin}/api/iute/confirm`,
+                    userCancelUrl: `${window.location.origin}/checkout`,
+                    userConfirmationUrlAction: 'POST',
+                    name: 'Western Import',
+                  },
+                  shipping: {
+                    name: { first: form.customerName.split(' ')[0] || '', last: form.customerName.split(' ').slice(1).join(' ') || '' },
+                    address: { line1: form.strada || '', line2: '', city: form.localitate || form.city || '', state: form.raion || '', zipcode: form.codPostal || '', country: 'mda' },
+                    phoneNumber: form.phone,
+                    email: form.email,
+                  },
+                  billing: {
+                    name: { first: form.customerName.split(' ')[0] || '', last: form.customerName.split(' ').slice(1).join(' ') || '' },
+                    address: { line1: form.strada || '', line2: '', city: form.localitate || form.city || '', state: form.raion || '', zipcode: form.codPostal || '', country: 'mda' },
+                    phoneNumber: form.phone,
+                    email: form.email,
+                  },
+                  items: iuteOrder.items,
+                  orderId: iuteOrder.orderId,
+                  currency: 'mdl',
+                  shippingAmount: 0,
+                  taxAmount: 0,
+                  subtotal: iuteOrder.subtotal,
+                  total: iuteOrder.total,
+                  metadata: { mode: 'modal' },
+                },
+                {
+                  onSuccess: (result: { checkoutSessionId: string }) => {
+                    console.log('[IutePay] Checkout success:', result);
+                    setStep('success');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  },
+                  onFailure: (result: { message: string }) => {
+                    console.error('[IutePay] Checkout failed:', result);
+                    setErrorMessage(result.message || 'IutePay checkout eșuat');
+                    setStep('error');
+                  },
+                },
+              );
+            } else {
+              setErrorMessage('IutePay SDK nu s-a încărcat. Reîncarcă pagina și încearcă din nou.');
+              setStep('error');
+            }
             return;
           }
         }
