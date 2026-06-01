@@ -1,125 +1,77 @@
-// src/app/api/integrations/999/route.ts — API proxy for 999.md integration
-import { NextRequest } from 'next/server';
+// src/app/api/integrations/999/route.ts — 999.md API Proxy
+import { NextRequest, NextResponse } from 'next/server';
 import {
-  configureNineNineMd,
-  getNineNineMdConfig,
-  uploadProduct,
-  syncProducts,
-  syncStock,
-  syncPrice,
-  deleteProduct,
-  testConnection,
-  type LocalProduct,
-} from '@/lib/integrations/nineNineMd';
-import { products as mockProducts } from '@/lib/data';
+  getCategories, getAdverts, getAdvert, createAdvert,
+  updateAdvert, republishAdvert, getFeaturesForAdvert, pushProductTo999,
+} from '@/lib/integrations/nineNineNineMd';
 
-// Helper: check admin
-function isAdmin(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization');
-  // In production, validate JWT/session properly
-  return !!authHeader;
-}
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
 
-// Helper: load config from localStorage-equivalent (env or settings store)
-function loadConfig() {
-  configureNineNineMd({
-    apiKey: process.env.NINE_MD_API_KEY || '',
-    endpoint: process.env.NINE_MD_ENDPOINT || 'https://api.999.md/api/v1',
-  });
-}
-
-// Helper: convert mock product to LocalProduct
-function toLocalProduct(p: typeof mockProducts[0]): LocalProduct {
-  return {
-    id: p.id,
-    name: p.name,
-    brand: p.brand,
-    category: p.category,
-    condition: p.condition,
-    price: p.price,
-    oldPrice: p.oldPrice,
-    description: p.description,
-    images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []),
-    specs: p.specs,
-    inStock: p.inStock,
-  };
-}
-
-// POST /api/integrations/999
-export async function POST(request: NextRequest) {
   try {
-    loadConfig();
-
-    const body = await request.json();
-    const { action, productId } = body as { action: 'sync' | 'upload' | 'delete' | 'test'; productId?: string };
-
-    if (!action) {
-      return Response.json({ success: false, error: 'Acțiunea este obligatorie' }, { status: 400 });
-    }
-
-    // Test connection
-    if (action === 'test') {
-      const result = await testConnection();
-      return Response.json({ success: result.success, data: result });
-    }
-
-    // Check admin
-    if (!isAdmin(request)) {
-      return Response.json({ success: false, error: 'Neautorizat' }, { status: 401 });
-    }
-
-    const cfg = getNineNineMdConfig();
-    if (!cfg.apiKey) {
-      return Response.json({ success: false, error: '999.md API key nu este configurată' }, { status: 400 });
-    }
-
     switch (action) {
-      case 'upload': {
-        if (!productId) {
-          return Response.json({ success: false, error: 'productId este obligatoriu pentru upload' }, { status: 400 });
-        }
-        const product = mockProducts.find((p) => p.id === productId);
-        if (!product) {
-          return Response.json({ success: false, error: 'Produsul nu a fost găsit' }, { status: 404 });
-        }
-        const result = await uploadProduct(toLocalProduct(product));
-        return Response.json({ success: result.success, data: result });
+      case 'categories': {
+        const lang = searchParams.get('lang') || 'ro';
+        const data = await getCategories(lang);
+        return NextResponse.json({ success: true, data });
       }
-
-      case 'sync': {
-        const localProducts = mockProducts.map(toLocalProduct);
-        const result = await syncProducts(localProducts);
-        return Response.json({ success: true, data: result });
+      case 'adverts': {
+        const page = searchParams.get('page') || '1';
+        const pageSize = searchParams.get('page_size') || '20';
+        const data = await getAdverts({ page, page_size: pageSize, state: searchParams.get('state') || 'public' });
+        return NextResponse.json({ success: true, data });
       }
-
-      case 'delete': {
-        if (!productId) {
-          return Response.json({ success: false, error: 'productId este obligatoriu pentru delete' }, { status: 400 });
-        }
-        const result = await deleteProduct(productId);
-        return Response.json({ success: result.success, data: result });
+      case 'advert': {
+        const id = searchParams.get('id');
+        if (!id) return NextResponse.json({ success: false, error: 'id required' }, { status: 400 });
+        const data = await getAdvert(id);
+        return NextResponse.json({ success: true, data });
       }
-
+      case 'features': {
+        const subId = searchParams.get('subcategoryId');
+        if (!subId) return NextResponse.json({ success: false, error: 'subcategoryId required' }, { status: 400 });
+        const data = await getFeaturesForAdvert(subId);
+        return NextResponse.json({ success: true, data });
+      }
       default:
-        return Response.json({ success: false, error: `Acțiune necunoscută: ${action}` }, { status: 400 });
+        return NextResponse.json({ success: false, error: 'Actions: categories, adverts, advert, features' }, { status: 400 });
     }
-  } catch (error) {
-    return Response.json(
-      { success: false, error: `Eroare: ${error instanceof Error ? error.message : 'Eroare internă'}` },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
-// GET /api/integrations/999 — get 999.md config status
-export async function GET() {
-  loadConfig();
-  const cfg = getNineNineMdConfig();
-  return Response.json({
-    success: true,
-    data: {
-      configured: !!cfg.apiKey,
-      endpoint: cfg.endpoint,
-    },
-  });
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { action } = body;
+
+    switch (action) {
+      case 'create': {
+        const data = await createAdvert(body.advert);
+        return NextResponse.json({ success: true, data });
+      }
+      case 'update': {
+        const { id, advert } = body;
+        if (!id || !advert) return NextResponse.json({ success: false, error: 'id and advert required' }, { status: 400 });
+        const data = await updateAdvert(id, advert);
+        return NextResponse.json({ success: true, data });
+      }
+      case 'republish': {
+        const { id } = body;
+        if (!id) return NextResponse.json({ success: false, error: 'id required' }, { status: 400 });
+        const data = await republishAdvert(id);
+        return NextResponse.json({ success: true, data });
+      }
+      case 'push-product': {
+        const data = await pushProductTo999(body.product);
+        return NextResponse.json({ success: true, data });
+      }
+      default:
+        return NextResponse.json({ success: false, error: 'Actions: create, update, republish, push-product' }, { status: 400 });
+    }
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
 }

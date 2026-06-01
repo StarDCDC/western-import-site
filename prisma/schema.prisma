@@ -577,3 +577,16 @@ model OnlineSession {
   @@index([lastSeen])
   @@map("online_sessions")
 }
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @default("")
+  phone     String   @default("")
+  subject   String   @default("")
+  message   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+
+  @@map("contact_messages")
+}
