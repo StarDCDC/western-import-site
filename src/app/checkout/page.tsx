@@ -246,12 +246,7 @@ export default function CheckoutPage() {
               doIuteCheckout();
             } else {
               // SDK not yet loaded — load it dynamically then call checkout
-              const publicKey = process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY;
-              if (!publicKey) {
-                setErrorMessage('IutePay nu este configurat.');
-                setStep('error');
-                return;
-              }
+              const publicKey = process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY || 'e757e925-8e5c-4ccf-9712-edf093290032';
               // Load CSS
               const css = document.createElement('link');
               css.rel = 'stylesheet';

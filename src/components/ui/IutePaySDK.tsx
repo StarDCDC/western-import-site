@@ -4,16 +4,14 @@
 
 import Script from 'next/script';
 
+const IUTEPAY_PUBLIC_KEY = process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY || 'e757e925-8e5c-4ccf-9712-edf093290032';
+const IUTEPAY_LANG = 'md';
+
 /**
  * Loads the official IutePay JavaScript SDK + CSS and configures it.
  * Must be loaded on ALL pages (docs: "must be loaded on all pages, even on pages that do not feature products").
  */
 export default function IutePaySDK() {
-  const publicKey = process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY;
-  const lang = 'md'; // Moldova
-
-  if (!publicKey) return null;
-
   return (
     <>
       <link
@@ -28,7 +26,7 @@ export default function IutePaySDK() {
           // @ts-expect-error IutePay global
           if (window.iute) {
             // @ts-expect-error IutePay global
-            window.iute.configure(publicKey, lang);
+            window.iute.configure(IUTEPAY_PUBLIC_KEY, IUTEPAY_LANG);
           }
         }}
       />
