@@ -193,8 +193,9 @@ export default function CheckoutPage() {
         if (form.paymentMethod === 'CREDIT') {
           const iuteOrder = data.data.iutePayOrder;
           if (iuteOrder) {
-            // @ts-expect-error IutePay global
-            if (window.iute) {
+            const doIuteCheckout = () => {
+              // @ts-expect-error IutePay global
+              window.iute.configure(publicKey, 'md');
               // @ts-expect-error IutePay global
               window.iute.checkout(
                 {
@@ -238,9 +239,33 @@ export default function CheckoutPage() {
                   },
                 },
               );
+            };
+
+            // @ts-expect-error IutePay global
+            if (window.iute) {
+              doIuteCheckout();
             } else {
-              setErrorMessage('IutePay SDK nu s-a încărcat. Reîncarcă pagina și încearcă din nou.');
-              setStep('error');
+              // SDK not yet loaded — load it dynamically then call checkout
+              const publicKey = process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY;
+              if (!publicKey) {
+                setErrorMessage('IutePay nu este configurat.');
+                setStep('error');
+                return;
+              }
+              // Load CSS
+              const css = document.createElement('link');
+              css.rel = 'stylesheet';
+              css.href = 'https://ecom.iutecredit.md/iutepay.css';
+              document.head.appendChild(css);
+              // Load JS
+              const script = document.createElement('script');
+              script.src = 'https://ecom.iutecredit.md/iutepay.js';
+              script.onload = () => doIuteCheckout();
+              script.onerror = () => {
+                setErrorMessage('Nu s-a putut încărca IutePay. Reîncarcă pagina.');
+                setStep('error');
+              };
+              document.head.appendChild(script);
             }
             return;
           }

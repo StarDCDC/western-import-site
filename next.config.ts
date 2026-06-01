@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const securityHeaders = [
-  // CSP removed — was causing console warnings and blocking nothing useful.
-  // Next.js manages its own script safety via Turbopack nonces.
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  // Removed X-Frame-Options — IutePay SDK opens checkout iframe from ecom.iutecredit.md
+  // SAMEORIGIN would block it. CSP frame-src below handles security instead.
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
@@ -13,6 +12,20 @@ const securityHeaders = [
   {
     key: "Strict-Transport-Security",
     value: "max-age=31536000; includeSubDomains",
+  },
+  // Allow IutePay SDK to load scripts and open iframes
+  {
+    key: "Content-Security-Policy",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ecom.iutecredit.md",
+      "style-src 'self' 'unsafe-inline' https://ecom.iutecredit.md https://fonts.googleapis.com",
+      "frame-src 'self' https://ecom.iutecredit.md https://iutecredit.md https://iute.md",
+      "connect-src 'self' https://ecom.iutecredit.md https://iutecredit.md",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' https://fonts.gstatic.com https://ecom.iutecredit.md",
+      "worker-src 'self' blob:",
+    ].join("; "),
   },
 ];
 
