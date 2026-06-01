@@ -149,7 +149,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   {Array.from({ length: 5 }, (_, i) => (
                     <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'}`} />
                   ))}
-                  <span className="text-sm text-slate-500 ml-1">({product.reviews.length} review-uri)</span>
+                  <span className="text-sm text-slate-500 ml-1">({product.reviews.length} {locale === 'ru' ? 'отзывов' : 'review-uri'})</span>
                 </div>
                 <span className="text-xs text-slate-400">Cod: WI-{product.id.padStart(4, '0')}</span>
               </div>
@@ -189,6 +189,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
                             onFailure: function(result: any) { console.error('IutePay failure:', result); },
                           }
                         );
+                      } else {
+                        // Fallback: open IuteCredit page directly
+                        window.open('https://iute.md', '_blank');
                       }
                     }}
                     className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
@@ -299,7 +302,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
 
           {/* Reviews */}
           <div className="mt-8 sm:mt-12">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-5">Review-uri</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-5">{locale === 'ru' ? 'Отзывы' : 'Review-uri'}</h2>
             <div className="space-y-4">
               {product.reviews.map((review) => (
                 <div key={review.id} className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
@@ -325,76 +328,86 @@ export default function ProductClient({ product, similar }: { product: Product; 
             </div>
           </div>
 
-          {/* ─── Buy Together (Cross-Sell) ─────────────────────── */}
+          {/* ─── Buy Together (Cross-Sell) — Horizontal cards on mobile ── */}
           {similar.length > 0 && (
             <div className="mt-12">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-bold text-slate-800 dark:text-white">{locale === 'ru' ? 'Купить вместе' : 'Cumpără împreună'}</h2>
                 <span className="text-xs text-slate-500">{locale === 'ru' ? 'Рекомендуемые товары' : 'Produse recomandate'}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {similar.slice(0, 4).map((sp, i) => (
-                  <div key={`similar-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all relative">
-                    {sp.oldPrice && (
-                      <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
-                    )}
-                    <Link href={`/product/${sp.id}`}>
-                      <div className="flex items-center justify-center h-32 mb-3">
-                        {(() => {
-                          const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
-                          return imgUrl ? (
-                            <img src={imgUrl} alt={sp.name} className="max-h-28 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {similar.slice(0, 4).map((sp, i) => {
+                  const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
+                  return (
+                    <div key={`bt-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0">
+                      {sp.oldPrice && (
+                        <span className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
+                      )}
+                      <Link href={`/product/${sp.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
+                        <div className="w-[100px] h-[100px] sm:w-full sm:h-32 sm:flex sm:items-center sm:justify-center overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                          {imgUrl ? (
+                            <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover sm:max-h-28 sm:w-auto sm:object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                           ) : (
-                            <svg viewBox="0 0 200 130" fill="none" className="max-h-24 w-auto"><rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" /><rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" /></svg>
-                          );
-                        })()}
+                            <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+                              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                      <div className="flex flex-col flex-1 min-w-0 sm:mt-3">
+                        <Link href={`/product/${sp.id}`}>
+                          <h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4>
+                        </Link>
+                        <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
+                        <div className="flex-1 min-h-1" />
+                        <div className="flex items-center justify-between mt-1 sm:mt-3">
+                          <div>
+                            <p className="text-xs sm:text-base font-extrabold text-primary-dark dark:text-primary">{formatPrice(sp.price)}</p>
+                            {sp.oldPrice && <p className="text-[10px] sm:text-xs text-slate-400 line-through">{formatPrice(sp.oldPrice)}</p>}
+                          </div>
+                          <button
+                            onClick={() => addToCart(sp)}
+                            className="p-1.5 sm:p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
+                            title={t('product.addToCart')}
+                          >
+                            <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </button>
+                        </div>
                       </div>
-                    </Link>
-                    <Link href={`/product/${sp.id}`}>
-                      <h4 className="text-sm font-semibold text-slate-800 dark:text-white line-clamp-1">{sp.name}</h4>
-                    </Link>
-                    <p className="text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
-                    <div className="flex items-center justify-between mt-3">
-                      <div>
-                        <p className="text-base font-extrabold text-primary-dark dark:text-primary">{formatPrice(sp.price)}</p>
-                        {sp.oldPrice && <p className="text-xs text-slate-400 line-through">{formatPrice(sp.oldPrice)}</p>}
-                      </div>
-                      <button
-                        onClick={() => addToCart(sp)}
-                        className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
-                        title={t('product.addToCart')}
-                      >
-                        <ShoppingCart className="w-4 h-4" />
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {/* Similar Products */}
+          {/* Similar Products — Horizontal cards on mobile */}
           {similar.length > 0 && (
             <div className="mt-12">
               <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5">{locale === 'ru' ? 'Похожие товары' : 'Produse Similare'}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {similar.map((sp, i) => (
-                  <Link key={`similar-${sp.id}-${i}`} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                    <div className="flex items-center justify-center h-32 mb-3">
-                      {(() => {
-                        const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
-                        return imgUrl ? (
-                          <img src={imgUrl} alt={sp.name} className="max-h-28 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {similar.map((sp, i) => {
+                  const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
+                  return (
+                    <Link key={`sim-${sp.id}-${i}`} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0">
+                      <div className="flex-shrink-0 w-[100px] h-[100px] sm:w-full sm:h-32 sm:flex sm:items-center sm:justify-center overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 sm:mb-3">
+                        {imgUrl ? (
+                          <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover sm:max-h-28 sm:w-auto sm:object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         ) : (
-                          <svg viewBox="0 0 200 130" fill="none" className="max-h-24 w-auto"><rect x="15" y="10" width="170" height="95" rx="6" fill="#e2e8f0" /><rect x="25" y="18" width="150" height="78" rx="2" fill="#1a56db" opacity=".08" /></svg>
-                        );
-                      })()}
-                    </div>
-                    <h4 className="text-sm font-semibold text-slate-800 dark:text-white line-clamp-1">{sp.name}</h4>
-                    <p className="text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
-                    <p className="text-base font-extrabold text-primary-dark dark:text-primary mt-2">{formatPrice(sp.price)}</p>
-                  </Link>
-                ))}
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+                            <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4>
+                        <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
+                        <div className="flex-1 min-h-1" />
+                        <p className="text-xs sm:text-base font-extrabold text-primary-dark dark:text-primary mt-1 sm:mt-2">{formatPrice(sp.price)}</p>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

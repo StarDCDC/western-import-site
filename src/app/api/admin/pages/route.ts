@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
@@ -61,6 +62,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Invalidate page cache so the new page appears immediately
+    revalidatePath('/about');
+    revalidatePath('/shipping');
+    revalidatePath('/warranty');
+    revalidatePath('/terms');
+    revalidatePath('/contact');
+    revalidatePath('/cookies');
+
     return successResponse(page, 201);
   } catch (err) {
     if (err instanceof Error && err.message.includes('obligatoriu')) return errorResponse(err.message);
@@ -117,6 +126,14 @@ export async function PUT(request: NextRequest) {
         details: JSON.stringify({ titleRo }),
       },
     });
+
+    // Invalidate page cache so changes appear immediately
+    revalidatePath('/about');
+    revalidatePath('/shipping');
+    revalidatePath('/warranty');
+    revalidatePath('/terms');
+    revalidatePath('/contact');
+    revalidatePath('/cookies');
 
     return successResponse(page);
   } catch {

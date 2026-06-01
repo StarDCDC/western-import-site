@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Send, Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 import { useSettings } from '@/lib/useSettings';
 
@@ -29,29 +29,26 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2.5 mb-4">
               <Image src="/logo-new.jpg" alt="Western Import" width={40} height={40} className="h-10 w-10 rounded-full object-cover" priority />
-              <span className="text-lg font-bold tracking-tight text-white">
-                Western <span className="text-primary">Import</span>
-              </span>
             </div>
             <p className="text-sm leading-relaxed mb-4">
               {t('footer.description')}
             </p>
             <div className="flex gap-3">
               {/* Facebook */}
-              <a href={facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              <a href={facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity">
+                <svg className="w-9 h-9" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path d="M29 25l.5-3.5h-3.5v-2.3c0-1 .5-1.9 2-1.9h1.7v-3s-.8-.1-1.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2.5H21V25h3v8.5h3.5V25H29z" fill="#fff"/></svg>
               </a>
               {/* Instagram */}
-              <a href={instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              <a href={instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity">
+                <svg className="w-9 h-9" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="url(#ig)"/><defs><radialGradient id="ig" cx="12" cy="40" r="40"><stop stopColor="#FD5"/><stop offset=".3" stopColor="#FD5"/><stop offset=".45" stopColor="#FF543E"/><stop offset=".6" stopColor="#C837AB"/><stop offset="1" stopColor="#405DE6"/></radialGradient></defs><rect x="11" y="11" width="26" height="26" rx="7" stroke="#fff" strokeWidth="2.5" fill="none"/><circle cx="24" cy="24" r="7.5" stroke="#fff" strokeWidth="2.5" fill="none"/><circle cx="33" cy="15" r="1.8" fill="#fff"/></svg>
               </a>
               {/* Telegram */}
-              <a href={telegram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors">
-                <Send className="w-4 h-4" />
+              <a href={telegram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity">
+                <svg className="w-9 h-9" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#26A5E4"/><path d="M10.5 23.5l7 2.6 2.7 8.7c.2.6.9.8 1.3.4l3.9-3.2c.4-.3.9-.3 1.3-.1l7 5.1c.5.4 1.2.1 1.3-.5L37.5 13c.1-.7-.5-1.2-1.1-1L10.3 22.4c-.7.3-.7 1.3.2 1.6l7 2.2" fill="#fff"/></svg>
               </a>
               {/* TikTok */}
-              <a href={tiktok} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+              <a href={tiktok} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity">
+                <svg className="w-9 h-9" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#010101"/><path d="M21 10h4.5v18c0 2.5-2 4.5-4.5 4.5s-4.5-2-4.5-4.5 2-4.5 4.5-4.5c.5 0 1 .1 1.5.2V19c-.5-.1-1-.1-1.5-.1-4.7 0-8.5 3.8-8.5 8.5s3.8 8.5 8.5 8.5 8.5-3.8 8.5-8.5V18.5c1.5 1.1 3.4 1.8 5.5 1.8V16c-3 0-5.5-2.5-5.5-5.5H26V10h-5z" fill="url(#tt)"/><defs><linearGradient id="tt" x1="20" y1="10" x2="32" y2="36"><stop stopColor="#25F4EE"/><stop offset=".5" stopColor="#FE2C55"/><stop offset="1" stopColor="#25F4EE"/></linearGradient></defs></svg>
               </a>
             </div>
           </div>
@@ -73,10 +70,23 @@ export default function Footer() {
           {/* Payment & Contact */}
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.payment')}</h4>
-            <div className="flex gap-2 flex-wrap mb-5">
-              <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Cash</span>
-              <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Transfer</span>
-              <span className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300">Credit</span>
+            <div className="flex gap-2 flex-wrap items-center mb-5">
+              {/* Visa */}
+              <span className="bg-white/10 px-3 py-1.5 rounded-lg flex items-center justify-center">
+                <svg className="h-5 w-auto" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#1A1F71"/><path d="M19.5 22h-3l1.9-12h3l-1.9 12zm12.8-11.7c-.6-.2-1.5-.5-2.7-.5-3 0-5.1 1.5-5.1 3.7 0 1.6 1.5 2.5 2.6 3.1 1.2.6 1.6.9 1.6 1.4 0 .8-.9 1.1-1.8 1.1-1.2 0-1.9-.2-2.9-.6l-.4-.2-.4 2.5c.7.3 2.1.6 3.5.6 3.2 0 5.2-1.5 5.2-3.8 0-1.3-.8-2.2-2.5-3-1-.5-1.7-.9-1.7-1.4 0-.5.5-1 1.7-1 1 0 1.7.2 2.2.4l.3.1.4-2.4zm7.9-.3h-2.3c-.7 0-1.3.2-1.6.9L32.1 22h3.2l.6-1.7h3.9l.4 1.7H43l-2.5-11.7h-2.8zm-2.5 7.5l1.2-3.2.4-1.1.3 1 .7 3.3h-2.6zM16.8 10l-2.8 8.2-.3-1.7c-.5-1.7-2.2-3.5-4-4.4l2.6 9.4h3.2l4.7-11.6h-3.4v.1z" fill="#fff"/><path d="M11.2 10H6.3l0 .2c3.8.9 6.3 3.2 7.3 5.8L12.5 11c-.2-.7-.7-.9-1.3-1z" fill="#F9A533"/></svg>
+              </span>
+              {/* Mastercard */}
+              <span className="bg-white/10 px-3 py-1.5 rounded-lg flex items-center justify-center">
+                <svg className="h-5 w-auto" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#252525"/><circle cx="18" cy="16" r="9" fill="#EB001B"/><circle cx="30" cy="16" r="9" fill="#F79E1B"/><path d="M24 9.4a9 9 0 010 13.2 9 9 0 000-13.2z" fill="#FF5F00"/></svg>
+              </span>
+              {/* Apple Pay */}
+              <span className="bg-white/10 px-3 py-1.5 rounded-lg flex items-center justify-center">
+                <svg className="h-5 w-auto" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#000"/><text x="8" y="21" fontFamily="system-ui" fontSize="13" fontWeight="600" fill="#fff">Pay</text><path d="M14.5 11.5c-.3.4-.8.7-1.3.7 0-.5.2-1 .5-1.4.3-.3.9-.6 1.3-.7.1.5-.1 1-.5 1.4zm.4.7c-.7 0-1.2.4-1.5.4s-.8-.4-1.3-.4c-1 0-2 .8-2 2.3 0 1.5 1 3 1.8 3 .4 0 .7-.3 1.2-.3.5 0 .7.3 1.2.3.8 0 1.4-1.1 1.6-1.6-.7-.3-1-1-1-1.7 0-.6.4-1.1.8-1.4-.4-.5-.8-.6-1.1-.6z" fill="#fff"/></svg>
+              </span>
+              {/* Google Pay */}
+              <span className="bg-white/10 px-3 py-1.5 rounded-lg flex items-center justify-center">
+                <svg className="h-5 w-auto" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#fff"/><text x="5" y="20" fontFamily="system-ui" fontSize="11" fontWeight="500" fill="#5F6368">G</text><text x="14" y="20" fontFamily="system-ui" fontSize="11" fontWeight="500" fill="#4285F4">o</text><text x="21" y="20" fontFamily="system-ui" fontSize="11" fontWeight="500" fill="#EA4335">o</text><text x="28" y="20" fontFamily="system-ui" fontSize="11" fontWeight="500" fill="#FBBC05">g</text><text x="35" y="20" fontFamily="system-ui" fontSize="11" fontWeight="500" fill="#4285F4">le</text></svg>
+              </span>
             </div>
             <div className="flex gap-3">
               <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">

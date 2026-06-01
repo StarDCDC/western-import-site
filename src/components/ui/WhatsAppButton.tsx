@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { useSettings } from '@/lib/useSettings';
+import { useLanguage } from '@/components/ui/LanguageProvider';
 
 export default function WhatsAppButton() {
   const settings = useSettings();
+  const { locale } = useLanguage();
   const [showTooltip, setShowTooltip] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -19,7 +21,7 @@ export default function WhatsAppButton() {
   }, [dismissed]);
 
   const openWhatsApp = () => {
-    const message = encodeURIComponent('Salut! Am o întrebare despre produsele de pe Western Import.');
+    const message = encodeURIComponent(locale === 'ru' ? 'Здравствуйте! У меня вопрос о товарах Western Import.' : 'Salut! Am o întrebare despre produsele de pe Western Import.');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
@@ -30,7 +32,7 @@ export default function WhatsAppButton() {
           <button onClick={() => { setDismissed(true); setShowTooltip(false); }} className="absolute -top-2 -right-2 w-5 h-5 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center">
             <X className="w-3 h-3" />
           </button>
-          <p className="text-xs text-slate-600 dark:text-slate-300">Ai întrebări? Scrie-ne pe WhatsApp! 💬</p>
+          <p className="text-xs text-slate-600 dark:text-slate-300">{locale === 'ru' ? 'Есть вопросы? Напишите нам в WhatsApp! 💬' : 'Ai întrebări? Scrie-ne pe WhatsApp! 💬'}</p>
         </div>
       )}
 
