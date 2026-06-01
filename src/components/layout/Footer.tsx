@@ -32,19 +32,19 @@ export default function Footer() {
             <p className="text-sm leading-relaxed mb-4">
               {t('footer.description')}
             </p>
-            {/* Social — official logos from simpleicons.org */}
+            {/* Social — official colored brand logos */}
             <div className="flex gap-3">
-              <a href={facebook} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Facebook">
-                <img src="/social-facebook.svg" alt="Facebook" width={36} height={36} className="w-9 h-9" />
+              <a href={facebook} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform" title="Facebook">
+                <img src="/social-facebook.svg" alt="Facebook" width={36} height={36} className="w-9 h-9 rounded-lg" />
               </a>
-              <a href={instagram} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Instagram">
-                <img src="/social-instagram.svg" alt="Instagram" width={36} height={36} className="w-9 h-9" />
+              <a href={instagram} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform" title="Instagram">
+                <img src="/social-instagram.svg" alt="Instagram" width={36} height={36} className="w-9 h-9 rounded-lg" />
               </a>
-              <a href={telegram} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Telegram">
-                <img src="/social-telegram.svg" alt="Telegram" width={36} height={36} className="w-9 h-9" />
+              <a href={telegram} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform" title="Telegram">
+                <img src="/social-telegram.svg" alt="Telegram" width={36} height={36} className="w-9 h-9 rounded-lg" />
               </a>
-              <a href={tiktok} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="TikTok">
-                <img src="/social-tiktok.svg" alt="TikTok" width={36} height={36} className="w-9 h-9" />
+              <a href={tiktok} target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform" title="TikTok">
+                <img src="/social-tiktok.svg" alt="TikTok" width={36} height={36} className="w-9 h-9 rounded-lg" />
               </a>
             </div>
           </div>
@@ -66,20 +66,12 @@ export default function Footer() {
           {/* Payment & Contact */}
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.payment')}</h4>
-            {/* Payment — official logos from simpleicons.org */}
+            {/* Payment — official brand logos */}
             <div className="flex gap-2 flex-wrap items-center mb-5">
-              <span className="bg-white px-2 py-1 rounded-md flex items-center justify-center">
-                <img src="/payment-visa.svg" alt="Visa" width={40} height={14} className="h-4 w-auto" />
-              </span>
-              <span className="bg-white px-2 py-1 rounded-md flex items-center justify-center">
-                <img src="/payment-mastercard.svg" alt="Mastercard" width={40} height={14} className="h-4 w-auto" />
-              </span>
-              <span className="bg-white px-2 py-1 rounded-md flex items-center justify-center">
-                <img src="/payment-applepay.svg" alt="Apple Pay" width={40} height={14} className="h-4 w-auto" />
-              </span>
-              <span className="bg-white px-2 py-1 rounded-md flex items-center justify-center">
-                <img src="/payment-googlepay.svg" alt="Google Pay" width={40} height={14} className="h-4 w-auto" />
-              </span>
+              <img src="/payment-visa.svg" alt="Visa" width={48} height={30} className="h-7 w-auto rounded" />
+              <img src="/payment-mastercard.svg" alt="Mastercard" width={48} height={30} className="h-7 w-auto rounded" />
+              <img src="/payment-applepay.svg" alt="Apple Pay" width={48} height={30} className="h-7 w-auto rounded" />
+              <img src="/payment-googlepay.svg" alt="Google Pay" width={48} height={30} className="h-7 w-auto rounded" />
             </div>
             <div className="flex gap-3">
               <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">

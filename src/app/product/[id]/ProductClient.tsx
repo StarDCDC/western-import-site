@@ -161,80 +161,10 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 )}
               </div>
 
-              {/* ─── IuteCredit ──────────────────────────────────────── */}
+              {/* ─── IutePay — promotional widget + checkout ────── */}
               {product.price >= 1000 && (
                 <div className="mb-6">
                   <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="product" />
-                  <button
-                    onClick={() => {
-                      try {
-                        // @ts-expect-error IutePay global
-                        if (window.iute) {
-                          // Re-configure to be safe
-                          // @ts-expect-error IutePay global
-                          window.iute.configure('e757e925-8e5c-4ccf-9712-edf093290032', 'md');
-                          // @ts-expect-error IutePay global
-                          window.iute.checkout(
-                          {
-                            merchant: { name: 'Western Import', userConfirmationUrl: window.location.origin + '/api/iute/confirm', userCancelUrl: window.location.href, userConfirmationUrlAction: 'POST' },
-                            shipping: { name: { first: '', last: '' }, address: { line1: '', line2: '', city: '', state: '', zipcode: '', country: 'mda' }, phoneNumber: '', email: '' },
-                            billing: { name: { first: '', last: '' }, address: { line1: '', line2: '', city: '', state: '', zipcode: '', country: 'mda' }, phoneNumber: '', email: '' },
-                            items: [{ displayName: product.name, sku: product.id, unitPrice: product.price, qty: 1 }],
-                            orderId: 'WI-' + Date.now(),
-                            currency: 'MDL',
-                            shippingAmount: 0,
-                            taxAmount: 0,
-                            subtotal: product.price,
-                            total: product.price,
-                            metadata: { mode: 'modal' },
-                          },
-                          {
-                            onSuccess: function(result: any) { console.log('IutePay success:', result); },
-                            onFailure: function(result: any) { console.error('IutePay failure:', result); },
-                          }
-                        );
-                      } else {
-                        // SDK not loaded — try loading it dynamically
-                        const script = document.createElement('script');
-                        script.src = 'https://ecom.iutecredit.md/iutepay.js';
-                        script.onload = () => {
-                          // @ts-expect-error
-                          if (window.iute) {
-                            // @ts-expect-error
-                            window.iute.configure('e757e925-8e5c-4ccf-9712-edf093290032', 'md');
-                            // @ts-expect-error
-                            window.iute.checkout(
-                              {
-                                merchant: { name: 'Western Import', userConfirmationUrl: window.location.origin + '/api/iute/confirm', userCancelUrl: window.location.href, userConfirmationUrlAction: 'POST' },
-                                shipping: { name: { first: '', last: '' }, address: { line1: '', line2: '', city: '', state: '', zipcode: '', country: 'mda' }, phoneNumber: '', email: '' },
-                                billing: { name: { first: '', last: '' }, address: { line1: '', line2: '', city: '', state: '', zipcode: '', country: 'mda' }, phoneNumber: '', email: '' },
-                                items: [{ displayName: product.name, sku: product.id, unitPrice: product.price, qty: 1 }],
-                                orderId: 'WI-' + Date.now(),
-                                currency: 'MDL',
-                                shippingAmount: 0,
-                                taxAmount: 0,
-                                subtotal: product.price,
-                                total: product.price,
-                                metadata: { mode: 'modal' },
-                              },
-                              {
-                                onSuccess: function(r: any) { console.log('IutePay success:', r); },
-                                onFailure: function(r: any) { console.error('IutePay failure:', r); },
-                              }
-                            );
-                          }
-                        };
-                        document.head.appendChild(script);
-                      }
-                      } catch (err) {
-                        console.error('IutePay error:', err);
-                      }
-                    }}
-                    className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
-                  >
-                    <CreditCard className="w-5 h-5" />
-                    <span>{locale === 'ru' ? 'Купить в рассрочку с IuteCredit' : 'Cumpără în rate cu IuteCredit'}</span>
-                  </button>
                 </div>
               )}
 

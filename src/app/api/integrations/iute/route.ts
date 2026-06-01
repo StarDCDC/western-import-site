@@ -1,127 +1,95 @@
-// src/app/api/integrations/iute/route.ts — IuteCredit API Proxy
-// Full integration: credit calculations, checkout sessions, applications, webhooks, status
+// src/app/api/integrations/iute/route.ts — IuteCredit Admin API Proxy
+// Conform docs: https://ecom-docs.iutecredit.md/docs/public/one-page-guide.html
+//
+// Real endpoints (admin key in header x-iute-admin-key):
+//   GET /api/v1/eshop/management/eshop-order-status?orderId=...  (v1)
+//   GET /api/v2/eshop/management/eshop-order-status?orderId=...  (v2, includes SIGNED status)
+//   GET /api/v1/eshop/management/loan-product                    (list loan products)
+//   GET /api/v1/eshop/management/product-mapping?skus=...        (read mappings)
+//   POST /api/v2/eshop/management/product-mapping?batch=true      (create mappings)
+
 import { NextRequest } from 'next/server';
 import {
   configureIuteCredit,
-  calculateMonthlyPayment,
-  getAllCreditPlans,
-  generateCheckoutUrl,
-  generateCreditLink,
-  createCheckoutSession,
-  submitCreditApplication,
-  getCreditStatus,
-  testConnection,
-  verifyWebhookSignature,
+  checkOrderStatus,
+  getLoanProducts,
+  getProductMappings,
+  createProductMappings,
   isIuteCreditConfigured,
-  AVAILABLE_MONTHS,
-  type CreditPlan,
-  type CreditApplicationRequest,
+  hasAdminKey,
+  mapIuteStatusToOrder,
 } from '@/lib/integrations/iuteCredit';
 import prisma from '@/lib/prisma';
 
-// Helper: load config from env
+// Load config from env
 function loadConfig() {
   configureIuteCredit({
-    apiKey: process.env.IUTE_CREDIT_API_KEY || '',
-    partnerId: process.env.IUTE_CREDIT_API_KEY || '',  // Use API key as partnerId
-    siteId: process.env.IUTE_CREDIT_API_KEY || '',      // Use API key as siteId
-    endpoint: process.env.IUTE_CREDIT_ENDPOINT || 'https://ecom.iutecredit.md/api/v1/eshop',
-    checkoutUrl: process.env.IUTE_CREDIT_CHECKOUT_URL || 'https://checkout.iutecredit.md',
+    publicKey: process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY || '',
+    adminKey: process.env.IUTE_CREDIT_ADMIN_API_KEY || '',
   });
 }
 
 // ─── GET ──────────────────────────────────────────────────────────
-// Various read operations based on `action` query param
 
 export async function GET(request: NextRequest) {
-  try {
-    loadConfig();
+  loadConfig();
 
-    const { searchParams } = new URL(request.url);
-    const action = searchParams.get('action');
-    const productId = searchParams.get('productId');
-    const applicationId = searchParams.get('applicationId');
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
 
-    // ── Test connection ──
-    if (action === 'test') {
-      if (!isIuteCreditConfigured()) {
-        return Response.json({
-          success: false,
-          configured: false,
-          message: 'IuteCredit nu este configurat. Adaugă IUTE_CREDIT_API_KEY, IUTE_CREDIT_PARTNER_ID, IUTE_CREDIT_SITE_ID în .env',
-        });
-      }
-      const result = await testConnection();
-      return Response.json({ success: result.success, configured: true, data: result });
-    }
-
-    // ── Check application status ──
-    if (action === 'status' && applicationId) {
-      if (!isIuteCreditConfigured()) {
-        return Response.json({ success: false, error: 'IuteCredit nu este configurat' }, { status: 503 });
-      }
-      try {
-        const status = await getCreditStatus(applicationId);
-        return Response.json({ success: true, data: status });
-      } catch {
-        return Response.json({ success: false, error: 'Aplicația nu a fost găsită' }, { status: 404 });
-      }
-    }
-
-    // ── Check if configured ──
-    if (action === 'config') {
-      return Response.json({
-        success: true,
-        configured: isIuteCreditConfigured(),
-        hasApiKey: !!(process.env.IUTE_CREDIT_API_KEY),
-        hasAdminKey: !!(process.env.IUTE_CREDIT_ADMIN_API_KEY),
-        endpoint: process.env.IUTE_CREDIT_ENDPOINT || 'not set',
-      });
-    }
-
-    // ── Get credit calculations for a product ──
-    if (!productId) {
-      return Response.json({ success: false, error: 'productId este obligatoriu (sau action=test/status/config)' }, { status: 400 });
-    }
-
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      include: { category: true, brand: true },
+  // ── Check configuration ──
+  if (action === 'config') {
+    return Response.json({
+      success: true,
+      configured: isIuteCreditConfigured(),
+      hasPublicKey: !!(process.env.NEXT_PUBLIC_IUTE_CREDIT_API_KEY),
+      hasAdminKey: hasAdminKey(),
     });
+  }
 
-    if (!product) {
-      return Response.json({ success: false, error: 'Produsul nu a fost găsit' }, { status: 404 });
+  // ── All admin actions require admin key ──
+  if (!hasAdminKey()) {
+    return Response.json({
+      success: false,
+      error: 'IuteCredit Admin API key nu este configurată. Adaugă IUTE_CREDIT_ADMIN_API_KEY în .env',
+    }, { status: 503 });
+  }
+
+  try {
+    // ── Check order status (conform docs: v1/v2 endpoint) ──
+    // GET ?action=status&orderId=...&version=2
+    if (action === 'status') {
+      const orderId = searchParams.get('orderId');
+      if (!orderId) {
+        return Response.json({ success: false, error: 'orderId este obligatoriu' }, { status: 400 });
+      }
+
+      const version = searchParams.get('version') === '1' ? 1 : 2;
+      const result = await checkOrderStatus(orderId, version);
+
+      return Response.json({ success: true, data: result });
     }
 
-    const plans: CreditPlan[] = getAllCreditPlans(product.price);
-    const bestPlan = plans[plans.length - 1];
-
-    const responseData: Record<string, unknown> = {
-      productId: product.id,
-      productName: product.name,
-      price: product.price,
-      currency: 'MDL',
-      plans,
-      bestPlan,
-    };
-
-    // Generate checkout URL if configured
-    let checkoutLink: string;
-    if (isIuteCreditConfigured()) {
-      checkoutLink = generateCheckoutUrl(product.id, product.name, product.price);
-      responseData.creditLink = checkoutLink;
-    } else {
-      checkoutLink = generateCreditLink(productId, product.price);
-      responseData.creditLink = checkoutLink;
+    // ── List loan products ──
+    // GET ?action=loan-products
+    if (action === 'loan-products') {
+      const products = await getLoanProducts();
+      return Response.json({ success: true, data: products });
     }
 
-    // If accessed directly from browser (Accept: text/html), redirect to checkout
-    const accept = request.headers.get('accept') || '';
-    if (accept.includes('text/html')) {
-      return Response.redirect(checkoutLink);
+    // ── Read product mappings ──
+    // GET ?action=mappings&skus=sku1,sku2
+    if (action === 'mappings') {
+      const skusParam = searchParams.get('skus');
+      const skus = skusParam ? skusParam.split(',') : undefined;
+      const mappings = await getProductMappings(skus);
+      return Response.json({ success: true, data: mappings });
     }
 
-    return Response.json({ success: true, data: responseData });
+    return Response.json({
+      success: false,
+      error: 'Acțiune necunoscută. Valide: config, status, loan-products, mappings',
+    }, { status: 400 });
   } catch (error) {
     console.error('[IuteCredit] GET error:', error);
     return Response.json(
@@ -132,214 +100,83 @@ export async function GET(request: NextRequest) {
 }
 
 // ─── POST ─────────────────────────────────────────────────────────
-// Submit credit application or create checkout session
 
 export async function POST(request: NextRequest) {
+  loadConfig();
+
+  if (!hasAdminKey()) {
+    return Response.json({
+      success: false,
+      error: 'IuteCredit Admin API key nu este configurată',
+    }, { status: 503 });
+  }
+
   try {
-    loadConfig();
-
     const body = await request.json();
-    const { action, ...data } = body;
+    const { action } = body;
 
-    // ── Test connection ──
-    if (action === 'test') {
-      if (!isIuteCreditConfigured()) {
-        return Response.json({
-          success: false,
-          configured: false,
-          message: 'IuteCredit nu este configurat. Adaugă cheile în .env',
-        });
+    // ── Create product mappings (conform docs: POST /api/v2/.../product-mapping?batch=true) ──
+    // POST { action: "create-mappings", mappings: [{ sku: "...", loanProductId: "..." }] }
+    if (action === 'create-mappings') {
+      const { mappings } = body;
+      if (!mappings || !Array.isArray(mappings) || mappings.length === 0) {
+        return Response.json({ success: false, error: 'mappings array este obligatoriu' }, { status: 400 });
       }
-      const result = await testConnection();
-      return Response.json({ success: result.success, configured: true, data: result });
+
+      const result = await createProductMappings(mappings);
+      return Response.json({ success: true, data: result });
     }
 
-    // ── Create checkout session ──
-    if (action === 'checkout') {
-      const { productId, months, customerPhone, customerEmail } = data;
-      if (!productId || !months) {
-        return Response.json({ success: false, error: 'productId și months sunt obligatorii' }, { status: 400 });
-      }
+    // ── Sync pending orders status ──
+    // POST { action: "sync-orders" }
+    // Checks all pending iutepay orders against IuteCredit API (recommended: 5 min cron)
+    if (action === 'sync-orders') {
+      const pendingOrders = await prisma.order.findMany({
+        where: {
+          paymentMethod: 'iutepay',
+          status: { in: ['pending', 'confirmed'] },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+      });
 
-      const product = await prisma.product.findUnique({ where: { id: productId } });
-      if (!product) {
-        return Response.json({ success: false, error: 'Produsul nu a fost găsit' }, { status: 404 });
-      }
+      const results: Array<{ orderId: string; oldStatus: string; newStatus: string }> = [];
 
-      if (!AVAILABLE_MONTHS.includes(months)) {
-        return Response.json({ success: false, error: `Perioadă invalidă. Valide: ${AVAILABLE_MONTHS.join(', ')}` }, { status: 400 });
-      }
-
-      // If API configured, create real checkout session
-      if (isIuteCreditConfigured()) {
+      for (const order of pendingOrders) {
         try {
-          const session = await createCheckoutSession({
-            productId: product.id,
-            productName: product.name,
-            price: product.price,
-            months,
-            customerPhone,
-            customerEmail,
-          });
-          return Response.json({ success: true, data: session });
-        } catch (err) {
-          console.error('[IuteCredit] Checkout session error:', err);
-          // Fall through to fallback
+          let iuteOrderId = order.id;
+          // Check if we stored a checkout session ID in metadata
+          const meta = JSON.parse((order as Record<string, unknown>).metadata as string || '{}');
+          if (meta.iuteOrderId) {
+            iuteOrderId = meta.iuteOrderId;
+          }
+
+          const statusResult = await checkOrderStatus(iuteOrderId, 2);
+          const newStatus = mapIuteStatusToOrder(statusResult.status);
+
+          if (newStatus !== order.status) {
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { status: newStatus },
+            });
+            results.push({ orderId: order.id, oldStatus: order.status, newStatus });
+          }
+        } catch {
+          // Skip orders that can't be checked (might not exist in IutePay yet)
         }
       }
 
-      // Fallback: generate checkout URL
-      const checkoutUrl = generateCheckoutUrl(product.id, product.name, product.price, months);
-      const monthlyPayment = calculateMonthlyPayment(product.price, months);
-
-      return Response.json({
-        success: true,
-        data: {
-          sessionId: `IUTE-${Date.now()}`,
-          checkoutUrl,
-          status: 'created',
-          amount: product.price,
-          months,
-          monthlyPayment,
-        },
-      });
+      return Response.json({ success: true, data: { checked: pendingOrders.length, updated: results.length, results } });
     }
-
-    // ── Submit credit application ──
-    const { productId, months, customerName, customerPhone, customerEmail, customerPin, monthlyIncome } = data;
-
-    if (!productId || !months || !customerName || !customerPhone) {
-      return Response.json(
-        { success: false, error: 'Date incomplete: productId, months, customerName, customerPhone sunt obligatorii' },
-        { status: 400 }
-      );
-    }
-
-    const product = await prisma.product.findUnique({ where: { id: productId } });
-    if (!product) {
-      return Response.json({ success: false, error: 'Produsul nu a fost găsit' }, { status: 404 });
-    }
-
-    if (!AVAILABLE_MONTHS.includes(months)) {
-      return Response.json(
-        { success: false, error: `Perioadă invalidă. Valide: ${AVAILABLE_MONTHS.join(', ')}` },
-        { status: 400 }
-      );
-    }
-
-    // If API is configured, submit to IuteCredit
-    if (isIuteCreditConfigured()) {
-      try {
-        const application: CreditApplicationRequest = {
-          productId,
-          productName: product.name,
-          price: product.price,
-          months,
-          customerName,
-          customerPhone,
-          customerEmail: customerEmail || '',
-          customerPin: customerPin || '',
-          monthlyIncome,
-        };
-
-        const result = await submitCreditApplication(application);
-
-        // Log to DB
-        await prisma.auditLog.create({
-          data: {
-            userId: 'system',
-            action: 'CREDIT_APPLICATION',
-            entity: 'IuteCredit',
-            entityId: result.applicationId,
-            details: JSON.stringify({ productId, months, amount: product.price }),
-          },
-        });
-
-        return Response.json({ success: true, data: result });
-      } catch (err) {
-        console.error('[IuteCredit] Application error:', err);
-        // Fall through to fallback
-      }
-    }
-
-    // Fallback: return generated link
-    const link = generateCreditLink(productId, product.price, months);
-    const monthlyPayment = calculateMonthlyPayment(product.price, months);
 
     return Response.json({
-      success: true,
-      data: {
-        applicationId: `IUTE-${Date.now()}`,
-        status: 'pending' as const,
-        redirectUrl: link,
-        monthlyPayment,
-        months,
-        totalAmount: monthlyPayment * months,
-      },
-    });
+      success: false,
+      error: 'Acțiune necunoscută. Valide: create-mappings, sync-orders',
+    }, { status: 400 });
   } catch (error) {
     console.error('[IuteCredit] POST error:', error);
     return Response.json(
       { success: false, error: `Eroare: ${error instanceof Error ? error.message : 'Eroare internă'}` },
-      { status: 500 }
-    );
-  }
-}
-
-// ─── PUT ──────────────────────────────────────────────────────────
-// Webhook receiver — IuteCredit calls this to notify about status changes
-
-export async function PUT(request: NextRequest) {
-  try {
-    loadConfig();
-
-    const body = await request.text();
-    const signature = request.headers.get('X-Iute-Signature') || '';
-    const eventType = request.headers.get('X-Iute-Event') || '';
-
-    // Verify signature (if API is configured)
-    if (isIuteCreditConfigured() && !verifyWebhookSignature(body, signature)) {
-      return Response.json({ success: false, error: 'Semnătură invalidă' }, { status: 401 });
-    }
-
-    const data = JSON.parse(body);
-
-    // Log the webhook event
-    await prisma.auditLog.create({
-      data: {
-        userId: 'iute-webhook',
-        action: `WEBHOOK_${eventType.toUpperCase()}`,
-        entity: 'IuteCredit',
-        entityId: data.applicationId || 'unknown',
-        details: body,
-      },
-    });
-
-    // If there's an order associated with this application, update it
-    if (data.metadata?.orderId) {
-      const orderStatusMap: Record<string, string> = {
-        'application.approved': 'confirmed',
-        'application.rejected': 'cancelled',
-        'application.disbursed': 'delivered',
-        'application.cancelled': 'cancelled',
-      };
-
-      const newStatus = orderStatusMap[eventType];
-      if (newStatus) {
-        await prisma.order.update({
-          where: { id: data.metadata.orderId },
-          data: { status: newStatus },
-        }).catch(() => {
-          // Order might not exist
-        });
-      }
-    }
-
-    return Response.json({ success: true, event: eventType });
-  } catch (error) {
-    console.error('[IuteCredit] Webhook error:', error);
-    return Response.json(
-      { success: false, error: 'Webhook processing error' },
       { status: 500 }
     );
   }

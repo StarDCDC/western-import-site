@@ -1,6 +1,5 @@
-// src/app/api/iute/confirm/route.ts
-// IutePay checkout confirmation webhook.
-// IuteCredit POSTs here when a loan application is approved/signed.
+// src/app/api/iute/confirm/route.ts — IutePay Webhook: userConfirmationUrl
+// Docs: IuteCredit POSTs here when loan application is approved/signed.
 // This is the userConfirmationUrl from the checkout flow.
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
@@ -21,7 +20,7 @@ export async function POST(request: NextRequest) {
       order = await prisma.order.findUnique({ where: { id: orderId } });
     }
     if (!order && checkoutSessionId) {
-      // Try to find order with checkoutSessionId in metadata
+      // Search pending iutepay orders for matching session
       const orders = await prisma.order.findMany({
         where: { paymentMethod: 'iutepay', status: 'pending' },
         orderBy: { createdAt: 'desc' },
@@ -36,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (order) {
-      // Update order status to confirmed (payment approved via IutePay)
+      // Update order — loan was approved/signed via IutePay
       await prisma.order.update({
         where: { id: order.id },
         data: {
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Log the confirmation
+      // Audit log
       await prisma.auditLog.create({
         data: {
           userId: 'iute-webhook',
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
       }).catch(() => {});
     }
 
-    // IutePay expects a 200 response
+    // Docs: IutePay expects a 200 response
     return Response.json({ success: true, received: true });
   } catch (error) {
     console.error('[IutePay] Confirm webhook error:', error);
