@@ -19,6 +19,7 @@ interface FormData {
   codPostal: string;
   deliveryMethod: 'PICKUP' | 'COURIER_CHISINAU' | 'COURIER_NATIONAL';
   paymentMethod: 'CASH' | 'CARD' | 'CREDIT';
+  installmentMonths: number;
   notes: string;
   couponCode: string;
   terms: boolean;
@@ -55,6 +56,7 @@ export default function CheckoutPage() {
     codPostal: '',
     deliveryMethod: 'COURIER_CHISINAU',
     paymentMethod: 'CASH',
+    installmentMonths: 4,
     notes: '',
     couponCode: '',
     terms: false,
@@ -277,7 +279,7 @@ export default function CheckoutPage() {
     }
   }
 
-  function updateField(field: keyof FormData, value: string | boolean) {
+  function updateField(field: keyof FormData, value: string | boolean | number) {
     setForm((f) => ({ ...f, [field]: value }));
     // Clear error on change
     if (errors[field]) {
@@ -529,6 +531,65 @@ export default function CheckoutPage() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Installment plan selector — shown only when CREDIT selected */}
+                  {form.paymentMethod === 'CREDIT' && total >= 1000 && (
+                    <div className="mt-4 p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-100 dark:border-orange-800/30">
+                      <p className="text-xs font-bold text-orange-700 dark:text-orange-400 mb-3 uppercase tracking-wide">
+                        📊 Alege planul de rate
+                      </p>
+                      <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                        {[
+                          { months: 4, pct: 0 },
+                          { months: 6, pct: 6 },
+                          { months: 8, pct: 8 },
+                          { months: 10, pct: 10 },
+                          { months: 12, pct: 12 },
+                          { months: 24, pct: 24 },
+                          { months: 36, pct: 36 },
+                        ].map((plan) => {
+                          const planTotal = Math.ceil(total * (1 + plan.pct / 100) / plan.months) * plan.months;
+                          const monthly = Math.ceil(total * (1 + plan.pct / 100) / plan.months);
+                          const selected = form.installmentMonths === plan.months;
+                          return (
+                            <button
+                              key={plan.months}
+                              type="button"
+                              onClick={() => updateField('installmentMonths', plan.months)}
+                              className={`p-2 rounded-xl text-center transition-all border-2 ${
+                                selected
+                                  ? 'border-orange-500 bg-orange-500 text-white shadow-md'
+                                  : 'border-orange-200 dark:border-orange-800/40 bg-white dark:bg-slate-800 hover:border-orange-300'
+                              }`}
+                            >
+                              <span className={`block text-sm font-bold ${selected ? 'text-white' : 'text-slate-800 dark:text-white'}`}>
+                                {plan.months}
+                              </span>
+                              <span className={`block text-[10px] font-semibold ${selected ? 'text-orange-100' : 'text-orange-500'}`}>
+                                {plan.pct}%
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {/* Selected plan summary */}
+                      <div className="mt-3 pt-3 border-t border-orange-200 dark:border-orange-800/30 flex items-center justify-between">
+                        <div>
+                          <span className="text-xs text-orange-600/70">{form.installmentMonths} luni × </span>
+                          <span className="text-lg font-black text-orange-600">
+                            {formatPrice(Math.ceil(total * (1 + [0,6,8,10,12,24,36][[4,6,8,10,12,24,36].indexOf(form.installmentMonths)] / 100) / form.installmentMonths))}
+                          </span>
+                          <span className="text-xs text-orange-600/70">/lună</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] text-orange-600/70 block">Total final</span>
+                          <span className="text-sm font-bold text-slate-800 dark:text-white">
+                            {formatPrice(Math.ceil(total * (1 + [0,6,8,10,12,24,36][[4,6,8,10,12,24,36].indexOf(form.installmentMonths)] / 100) / form.installmentMonths) * form.installmentMonths)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Notes */}
@@ -597,6 +658,27 @@ export default function CheckoutPage() {
                       <span>Total</span>
                       <span className="text-primary-dark dark:text-primary">{formatPrice(total)}</span>
                     </div>
+
+                    {/* Installment summary in sidebar */}
+                    {form.paymentMethod === 'CREDIT' && total >= 1000 && (() => {
+                      const idx = [4,6,8,10,12,24,36].indexOf(form.installmentMonths);
+                      const pct = [0,6,8,10,12,24,36][idx] ?? 0;
+                      const monthly = Math.ceil(total * (1 + pct / 100) / form.installmentMonths);
+                      return (
+                        <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3 mt-3 border border-orange-100 dark:border-orange-800/30">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-[10px] uppercase tracking-wide text-orange-600/70 font-semibold">Rata lunară</p>
+                              <p className="text-2xl font-black text-orange-600">{formatPrice(monthly)}<span className="text-xs font-medium text-orange-400">/lună</span></p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-[10px] uppercase tracking-wide text-orange-600/70 font-semibold">{form.installmentMonths} rate • {pct}%</p>
+                              <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Total: {formatPrice(monthly * form.installmentMonths)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Free shipping reminder */}
