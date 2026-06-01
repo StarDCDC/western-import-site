@@ -10,9 +10,9 @@ import { formatPrice, getDiscount } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { Product } from '@/lib/data';
 import { useLanguage } from '@/components/ui/LanguageProvider';
-import IuteCreditWidget from '@/components/product/IuteCreditWidget';
 import InstallmentCalculator from '@/components/product/InstallmentCalculator';
 import { trackProductView } from '@/components/home/RecentlyViewed';
 
@@ -72,12 +72,19 @@ export default function ProductClient({ product, similar }: { product: Product; 
             <div>
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-8 flex items-center justify-center min-h-[250px] sm:min-h-[400px] relative">
                 {currentImage ? (
-                  <img
-                    src={currentImage}
-                    alt={`${product.name} - ${selectedThumb + 1}`}
-                    className="max-h-[220px] sm:max-h-[360px] w-auto object-contain"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={selectedThumb}
+                      src={currentImage}
+                      alt={`${product.name} - ${selectedThumb + 1}`}
+                      className="max-h-[220px] sm:max-h-[360px] w-auto object-contain"
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      transition={{ duration: 0.28, ease: 'easeInOut' }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </AnimatePresence>
                 ) : (
                   <svg viewBox={isPhone ? '0 0 200 300' : '0 0 400 280'} fill="none" className="w-full max-w-sm">
                     {isPhone ? (

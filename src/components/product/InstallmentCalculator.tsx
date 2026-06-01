@@ -160,17 +160,6 @@ export default function InstallmentCalculator({ price, minPrice = 1000 }: Props)
             ))}
           </div>
         </div>
-
-        {/* IutePay SDK promo */}
-        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
-          <div
-            className="iute-as-low-as"
-            data-amount={String(price)}
-            data-page-type="product"
-            data-sku={String(price)}
-            data-learnmore-show="true"
-          />
-        </div>
       </div>
     </div>
   );

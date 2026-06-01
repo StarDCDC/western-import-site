@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { getProducts, formatPrice, getDiscount } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import { useLanguage } from '@/components/ui/LanguageProvider';
-import IuteCreditWidget from '@/components/product/IuteCreditWidget';
+
 import type { Product } from '@/lib/api';
 
 function StarRating({ rating }: { rating: number }) {
@@ -156,7 +156,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* Actions — below content */}
-        <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="category" minPrice={1000} />
+
         <div className="flex gap-1.5 sm:gap-2">
           <button
             onClick={() => addToCart(product)}
