@@ -9,164 +9,147 @@ import { formatPrice } from '@/lib/api';
 interface InstallmentPlan {
   months: number;
   interestPercent: number;
-  label: string;
 }
 
 const PLANS: InstallmentPlan[] = [
-  { months: 4,  interestPercent: 0,  label: 'Smart' },
-  { months: 6,  interestPercent: 6,  label: 'Flex 6' },
-  { months: 8,  interestPercent: 8,  label: 'Flex 8' },
-  { months: 10, interestPercent: 10, label: 'Flex 10' },
-  { months: 12, interestPercent: 12, label: 'Flex 12' },
-  { months: 24, interestPercent: 24, label: 'Standard 24' },
-  { months: 36, interestPercent: 36, label: 'Long 36' },
+  { months: 4,  interestPercent: 0  },
+  { months: 6,  interestPercent: 6  },
+  { months: 8,  interestPercent: 8  },
+  { months: 10, interestPercent: 10 },
+  { months: 12, interestPercent: 12 },
+  { months: 24, interestPercent: 24 },
+  { months: 36, interestPercent: 36 },
 ];
 
-interface InstallmentCalculatorProps {
+interface Props {
   price: number;
   minPrice?: number;
 }
 
-export default function InstallmentCalculator({ price, minPrice = 1000 }: InstallmentCalculatorProps) {
+export default function InstallmentCalculator({ price, minPrice = 1000 }: Props) {
   const { locale } = useLanguage();
   const [selected, setSelected] = useState(0);
-  const isRu = locale === 'ru';
+  const ru = locale === 'ru';
 
   if (price < minPrice) return null;
 
-  const calculations = useMemo(() => {
-    return PLANS.map((plan) => {
-      const totalInterest = price * (plan.interestPercent / 100);
-      const total = price + totalInterest;
-      const monthly = Math.ceil(total / plan.months);
-      const finalTotal = monthly * plan.months; // adjust for rounding
-      const overpayment = finalTotal - price;
+  const calcs = useMemo(() => PLANS.map(p => {
+    const total = price * (1 + p.interestPercent / 100);
+    const monthly = Math.ceil(total / p.months);
+    const finalTotal = monthly * p.months;
+    return { ...p, monthly, finalTotal, over: finalTotal - price };
+  }), [price]);
 
-      return {
-        ...plan,
-        totalInterest,
-        monthly,
-        finalTotal,
-        overpayment,
-      };
-    });
-  }, [price]);
-
-  const active = calculations[selected];
+  const a = calcs[selected];
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-800">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-          <svg className="w-4 h-4 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-            <line x1="1" y1="10" x2="23" y2="10"/>
-          </svg>
-        </div>
-        <h3 className="text-sm font-bold text-slate-800 dark:text-white">
-          {isRu ? 'Рассрочка с IutePay' : 'Cumpără în rate cu IutePay'}
-        </h3>
+      <div className="flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500">
+        <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+        <span className="text-sm font-bold text-white tracking-wide">
+          {ru ? 'Рассрочка с IutePay' : 'Cumpără în rate cu IutePay'}
+        </span>
       </div>
 
-      {/* Plan selector tabs */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
-        {calculations.map((plan, i) => (
+      {/* Plan tabs */}
+      <div className="flex overflow-x-auto gap-1 px-3 pt-3 pb-2 scrollbar-none">
+        {calcs.map((c, i) => (
           <button
-            key={plan.months}
+            key={c.months}
             onClick={() => setSelected(i)}
             className={`
-              px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border
+              shrink-0 px-3 py-2 rounded-xl text-xs font-bold transition-all
               ${selected === i
-                ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
-                : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-orange-300 hover:text-orange-600'
+                ? 'bg-orange-500 text-white shadow-md shadow-orange-200 dark:shadow-orange-900/40'
+                : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
               }
             `}
           >
-            {plan.months}/{plan.interestPercent}%
+            <span className="block text-sm">{c.months}</span>
+            <span className={`block text-[10px] font-semibold ${selected === i ? 'text-orange-100' : 'text-slate-400'}`}>
+              {c.interestPercent}%
+            </span>
           </button>
         ))}
       </div>
 
-      {/* Selected plan details */}
-      <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-4 border border-orange-100 dark:border-orange-800/30">
-        {/* Monthly payment - big number */}
-        <div className="text-center mb-3 pb-3 border-b border-orange-100 dark:border-orange-800/30">
-          <p className="text-xs text-orange-600/70 font-medium mb-1">
-            {isRu ? 'Ежемесячный платёж' : 'Plata lunară'}
+      {/* Main display */}
+      <div className="px-4 pb-4">
+        {/* Monthly payment */}
+        <div className="text-center py-4">
+          <p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">
+            {ru ? 'Ежемесячный платёж' : 'Plata lunară'}
           </p>
-          <p className="text-3xl font-extrabold text-orange-600">
-            {formatPrice(active.monthly)}
-            <span className="text-sm font-medium text-orange-400 ml-1">/ {isRu ? 'мес.' : 'lună'}</span>
+          <p className="text-4xl font-black text-slate-900 dark:text-white">
+            {formatPrice(a.monthly)}
+          </p>
+          <p className="text-xs text-slate-400 mt-0.5">
+            × {a.months} {ru ? 'месяцев' : 'luni'}
           </p>
         </div>
 
-        {/* Details grid */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <p className="text-orange-600/60 text-xs">{isRu ? 'Срок' : 'Perioada'}</p>
-            <p className="font-bold text-slate-800 dark:text-white">{active.months} {isRu ? 'месяцев' : 'luni'}</p>
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="text-center p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+            <p className="text-[10px] text-slate-400 mb-0.5">{ru ? 'Ставка' : 'Dobânda'}</p>
+            <p className="text-sm font-bold text-slate-800 dark:text-white">{a.interestPercent}%</p>
           </div>
-          <div>
-            <p className="text-orange-600/60 text-xs">{isRu ? 'Ставка' : 'Dobânda'}</p>
-            <p className="font-bold text-slate-800 dark:text-white">{active.interestPercent}%</p>
+          <div className="text-center p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+            <p className="text-[10px] text-slate-400 mb-0.5">{ru ? 'Переплата' : 'Supraplată'}</p>
+            <p className={`text-sm font-bold ${a.over === 0 ? 'text-green-600' : 'text-slate-800 dark:text-white'}`}>
+              {a.over === 0 ? '0' : formatPrice(a.over)}
+            </p>
           </div>
-          <div>
-            <p className="text-orange-600/60 text-xs">{isRu ? 'Переплата' : 'Supraplată'}</p>
-            <p className="font-bold text-slate-800 dark:text-white">{formatPrice(active.overpayment)}</p>
-          </div>
-          <div>
-            <p className="text-orange-600/60 text-xs">{isRu ? 'Итого' : 'Total final'}</p>
-            <p className="font-bold text-slate-800 dark:text-white">{formatPrice(active.finalTotal)}</p>
+          <div className="text-center p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+            <p className="text-[10px] text-slate-400 mb-0.5">{ru ? 'Итого' : 'Total'}</p>
+            <p className="text-sm font-bold text-slate-800 dark:text-white">{formatPrice(a.finalTotal)}</p>
           </div>
         </div>
 
-        {/* Zero interest badge */}
-        {active.interestPercent === 0 && (
-          <div className="mt-3 text-center">
-            <span className="inline-flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-full">
-              ✓ 0% {isRu ? '— без переплаты!' : '— fără supraplată!'}
+        {/* 0% badge */}
+        {a.interestPercent === 0 && (
+          <div className="flex items-center justify-center gap-1.5 py-2 px-3 mb-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/30">
+            <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+            </svg>
+            <span className="text-xs font-bold text-green-700 dark:text-green-400">
+              {ru ? '0% — без переплаты!' : '0% — fără supraplată!'}
             </span>
           </div>
         )}
 
-        {/* Payment schedule preview */}
-        <div className="mt-3 pt-3 border-t border-orange-100 dark:border-orange-800/30">
-          <p className="text-xs text-orange-600/60 mb-2">
-            {isRu ? 'График платежей' : 'Grafic de plată'} ({active.months} {isRu ? 'мес.' : 'luni'}):
+        {/* Payment schedule */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-700">
+          <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">
+            {ru ? 'График платежей' : 'Grafic de plată'}
           </p>
-          <div className="flex flex-wrap gap-1">
-            {Array.from({ length: active.months }, (_, i) => (
+          <div className="flex flex-wrap gap-1.5">
+            {Array.from({ length: a.months }, (_, i) => (
               <span
                 key={i}
-                className="inline-flex items-center justify-center bg-white dark:bg-slate-700 rounded-md px-2 py-1 text-[10px] font-medium text-slate-600 dark:text-slate-300 border border-orange-100 dark:border-slate-600"
+                className="inline-flex items-center justify-center min-w-[52px] px-2 py-1 bg-orange-50 dark:bg-orange-900/20 rounded-lg text-[10px] font-semibold text-orange-700 dark:text-orange-300"
               >
-                {formatPrice(active.monthly)}
+                {formatPrice(a.monthly)}
               </span>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* IutePay widget — SDK promo messaging */}
-      <div className="mt-2">
-        <IuteCreditWidgetInline price={price} productId={String(price)} />
+        {/* IutePay SDK promo widget */}
+        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+          <div
+            className="iute-as-low-as"
+            data-amount={String(price)}
+            data-page-type="product"
+            data-sku={String(price)}
+            data-learnmore-show="true"
+          />
+        </div>
       </div>
     </div>
   );
-}
-
-/**
- * Minimal inline wrapper — loads IutePay SDK promo for this price
- */
-function IuteCreditWidgetInline({ price, productId }: { price: number; productId: string }) {
-  return (
-    <div
-      className="iute-as-low-as"
-      data-amount={String(price)}
-      data-page-type="product"
-      data-sku={productId}
-      data-learnmore-show="true"
-    />
-  )
 }
