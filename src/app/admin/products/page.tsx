@@ -30,6 +30,14 @@ export default function AdminProductsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [categories, setCategories] = useState<{ id: string; nameRo: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/categories?flat=true")
+      .then((r) => r.json())
+      .then((j) => { if (j.success && Array.isArray(j.data)) setCategories(j.data); })
+      .catch(() => {});
+  }, []);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -153,12 +161,9 @@ export default function AdminProductsPage() {
             className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none"
           >
             <option value="">Toate categoriile</option>
-            <option value="laptopuri">Laptopuri</option>
-            <option value="telefoane">Telefoane</option>
-            <option value="pc-monitoare">PC & Monitoare</option>
-            <option value="tablete">Tablete</option>
-            <option value="componente">Componente</option>
-            <option value="accesorii">Accesorii</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.nameRo}</option>
+            ))}
           </select>
           <select
             value={sort}

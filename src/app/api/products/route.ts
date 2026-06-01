@@ -4,13 +4,63 @@ import { requireAdmin } from '@/lib/auth';
 import { sanitizeInput, validateRequired, hasSQLInjection } from '@/lib/validators';
 import { successResponse, errorResponse, paginatedResponse, getPaginationParams, parseSort, getClientIp, rateLimitResponse, serverErrorResponse } from '@/lib/utils';
 import { rateLimit } from '@/lib/rateLimit';
-import { resolveProductWhere } from '@/lib/queries';
+import { resolveProductWhere, CACHE_TAGS } from '@/lib/queries';
 import { revalidate } from '@/lib/revalidate';
+import { unstable_cache } from 'next/cache';
 import type { ProductsFilters } from '@/lib/api';
 
 // Spec field names
 const SPEC_FIELDS = ['display', 'storage', 'weight', 'refreshRate', 'ram', 'gpuModel', 'cpuModel', 'resolution', 'gpuSeries', 'cpuSeries', 'os', 'storageType', 'gpuType'] as const;
 type SpecField = typeof SPEC_FIELDS[number];
+
+// The raw DB read + shaping, cached and tagged so identical requests are instant
+// even on a slow DB. Admin writes call revalidate('products') to drop this cache,
+// so changes still appear immediately. `revalidate: 30` is a max-staleness safety
+// net. Without this the route hit the DB on every call (~2s each on Railway free).
+function fetchProductsList(args: {
+  filters: ProductsFilters; skip: number; limit: number; field: string; order: 'asc' | 'desc';
+}) {
+  return unstable_cache(
+    async () => {
+      const { filters, skip, limit, field, order } = args;
+      const where = await resolveProductWhere(filters);
+      const [products, total] = await Promise.all([
+        prisma.product.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: { [field]: order },
+          include: {
+            category: { select: { id: true, nameRo: true, slug: true } },
+            brand: { select: { id: true, name: true, slug: true } },
+            reviews: { select: { rating: true } },
+            _count: { select: { reviews: true } },
+            spec: true,
+          },
+        }),
+        prisma.product.count({ where }),
+      ]);
+
+      const productsWithRating = products.map((p) => {
+        const avgRating = p.reviews.length > 0
+          ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
+          : 0;
+        const { reviews, ...rest } = p;
+        let parsedImages: string[] = [];
+        if (typeof rest.images === 'string' && rest.images.length > 0) {
+          try { parsedImages = JSON.parse(rest.images); } catch { parsedImages = []; }
+        } else if (Array.isArray(rest.images)) {
+          parsedImages = rest.images as unknown as string[];
+        }
+        return { ...rest, images: parsedImages, avgRating: Math.round(avgRating * 10) / 10, reviewCount: p._count.reviews };
+      });
+
+      return { productsWithRating, total };
+    },
+    ['api-products', JSON.stringify(args)],
+    { tags: [CACHE_TAGS.products], revalidate: 30 },
+  )();
+}
 
 // GET /api/products — list with filters, pagination, search
 export async function GET(request: NextRequest) {
@@ -54,39 +104,7 @@ export async function GET(request: NextRequest) {
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
       ...specFilters,
     };
-    const where = await resolveProductWhere(filters);
-
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { [field]: order },
-        include: {
-          category: { select: { id: true, nameRo: true, slug: true } },
-          brand: { select: { id: true, name: true, slug: true } },
-          reviews: { select: { rating: true } },
-          _count: { select: { reviews: true } },
-          spec: true,
-        },
-      }),
-      prisma.product.count({ where }),
-    ]);
-
-    const productsWithRating = products.map((p) => {
-      const avgRating = p.reviews.length > 0
-        ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
-        : 0;
-      const { reviews, ...rest } = p;
-      // Parse images from JSON string to array
-      let parsedImages: string[] = [];
-      if (typeof rest.images === 'string' && rest.images.length > 0) {
-        try { parsedImages = JSON.parse(rest.images); } catch { parsedImages = []; }
-      } else if (Array.isArray(rest.images)) {
-        parsedImages = rest.images as unknown as string[];
-      }
-      return { ...rest, images: parsedImages, avgRating: Math.round(avgRating * 10) / 10, reviewCount: p._count.reviews };
-    });
+    const { productsWithRating, total } = await fetchProductsList({ filters, skip, limit, field, order });
 
     return paginatedResponse(productsWithRating, total, page, limit);
   } catch {

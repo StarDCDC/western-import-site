@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
+import { revalidate } from '@/lib/revalidate';
 
 // GET /api/admin/brands — list all brands (requires admin)
 // POST /api/admin/brands — create brand (requires admin)
@@ -84,6 +85,7 @@ export async function DELETE(request: NextRequest) {
     if (count > 0) return NextResponse.json({ success: false, error: `Brandul are ${count} produse. Ștergeți produsele mai întâi.` }, { status: 400 });
 
     await prisma.brand.delete({ where: { id } });
+    revalidate('brands');
     return NextResponse.json({ success: true, data: { message: 'Brand șters' } });
   } catch (error) {
     console.error('Brands DELETE error:', error);

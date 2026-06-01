@@ -90,9 +90,16 @@ export default function AdminCouponsPage() {
   const deleteCoupon = async (id: string) => {
     if (!confirm("Ștergi acest cupon?")) return;
     try {
-      await fetch(`/api/admin/coupons?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/coupons/${id}`, { method: "DELETE" });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.success === false) {
+        setError(json.error || "Eroare la ștergerea cuponului");
+        return;
+      }
       fetchCoupons();
-    } catch {}
+    } catch {
+      setError("Eroare la ștergerea cuponului");
+    }
   };
 
   if (loading) {

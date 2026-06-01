@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
+import { revalidate } from '@/lib/revalidate';
 import * as XLSX from 'xlsx';
 
 function parseCSV(buffer: Buffer): Record<string, unknown>[] {

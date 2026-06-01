@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
 
 // GET abandoned carts (no update in >24h, with items)
 export async function GET(req: NextRequest) {
   try {
+    const { error } = await requireAdmin(req);
+    if (error) return NextResponse.json({ error: 'Neautorizat' }, { status: error === 'forbidden' ? 403 : 401 });
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -57,6 +61,9 @@ export async function GET(req: NextRequest) {
 // POST - send recovery email to a specific cart
 export async function POST(req: NextRequest) {
   try {
+    const { error } = await requireAdmin(req);
+    if (error) return NextResponse.json({ error: 'Neautorizat' }, { status: error === 'forbidden' ? 403 : 401 });
+
     const { cartId } = await req.json();
 
     if (!cartId) {

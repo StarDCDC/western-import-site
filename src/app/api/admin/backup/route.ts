@@ -1,10 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync } from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/auth";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const { error } = await requireAdmin(request);
+    if (error) return NextResponse.json({ success: false, error: "Neautorizat" }, { status: error === "forbidden" ? 403 : 401 });
+
     const backupDir = path.join(process.cwd(), "backups");
     if (!existsSync(backupDir)) {
       mkdirSync(backupDir, { recursive: true });

@@ -52,7 +52,14 @@ export async function GET(request: NextRequest) {
         { slug: { contains: search, mode: 'insensitive' } },
       ];
     }
-    if (category) whereClause.categoryId = category;
+    if (category) {
+      // The filter dropdown may send a slug OR a real id — resolve either.
+      const cat = await prisma.category.findFirst({
+        where: { OR: [{ id: category }, { slug: category }] },
+        select: { id: true },
+      });
+      whereClause.categoryId = cat?.id ?? category;
+    }
     if (brand) whereClause.brandId = brand;
     if (condition) whereClause.condition = condition as any;
     if (isActive !== null) whereClause.isActive = isActive === 'true';
