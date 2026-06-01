@@ -3,7 +3,7 @@
 import ProductPage from '@/app/product/[id]/page';
 import LocaleSetter from '@/components/ui/LocaleSetter';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 30;
 
 export default async function ProductRuPage({ params }: { params: Promise<{ id: string }> }) {
   return (

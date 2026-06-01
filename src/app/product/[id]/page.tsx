@@ -5,7 +5,8 @@ import { notFound } from 'next/navigation';
 import { getProductData } from '@/lib/queries';
 import ProductClient from './ProductClient';
 
-export const dynamic = 'force-dynamic';
+// ISR with 30s revalidation. Admin writes trigger revalidateTag() for instant updates.
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;

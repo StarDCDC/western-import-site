@@ -4,7 +4,8 @@
 import { getProductsData, getCategoriesData, getBrandsData } from '@/lib/queries';
 import CatalogClient, { type CatalogInitial } from './CatalogClient';
 
-export const dynamic = 'force-dynamic';
+// ISR with 30s revalidation. Admin writes trigger revalidateTag() for instant updates.
+export const revalidate = 30;
 
 const PER_PAGE = 12;
 

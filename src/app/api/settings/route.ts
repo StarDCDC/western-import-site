@@ -7,7 +7,17 @@ import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils
 let settingsCache: { data: Record<string, unknown>; ts: number } | null = null;
 const CACHE_TTL = 60_000;
 
-// GET /api/settings — get all settings (public, cached)
+// SECURITY: this endpoint is PUBLIC. Only non-secret keys may be returned —
+// never SMTP/API keys or the admin_settings blob. Whitelist explicitly.
+const PUBLIC_KEYS = new Set([
+  'siteName', 'phone', 'email', 'address', 'schedule', 'metaTitle', 'metaDescription',
+  'facebook', 'instagram', 'telegram', 'tiktok',
+  // legacy / analytics keys read by existing client components (non-secret)
+  'site_phone', 'site_email', 'site_address', 'WHATSAPP_NUMBER',
+  'GOOGLE_ANALYTICS_ID', 'FACEBOOK_PIXEL_ID', 'TIKTOK_PIXEL_ID',
+]);
+
+// GET /api/settings — get public settings (cached, whitelisted)
 export async function GET() {
   try {
     const now = Date.now();
@@ -17,7 +27,7 @@ export async function GET() {
     const settings = await prisma.setting.findMany();
     const settingsObj: Record<string, unknown> = {};
     settings.forEach((s) => {
-      settingsObj[s.key] = s.value;
+      if (PUBLIC_KEYS.has(s.key)) settingsObj[s.key] = s.value;
     });
     settingsCache = { data: settingsObj, ts: now };
     return successResponse({ settings: settingsObj });

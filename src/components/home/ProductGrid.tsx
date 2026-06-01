@@ -2,12 +2,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
 import Link from 'next/link';
 import { getProducts, formatPrice, getDiscount } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import { useLanguage } from '@/components/ui/LanguageProvider';
+import IuteCreditWidget from '@/components/product/IuteCreditWidget';
 import type { Product } from '@/lib/api';
 
 function StarRating({ rating }: { rating: number }) {
@@ -23,7 +23,7 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-function ProductCard({ product, index }: { product: Product; index: number }) {
+function ProductCard({ product }: { product: Product }) {
   const { t } = useLanguage();
   const addToCart = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.addItem);
@@ -63,11 +63,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   const imageUrl = getImageUrl();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index, 3) * 0.04 }}
-      /* Mobile: horizontal card (image left, text right) */
+    <div
+      /* Mobile: horizontal card (image left, text right). No entrance animation —
+         content must be visible from the SSR HTML before JS hydrates (perceived speed). */
       className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-lg hover:border-transparent dark:hover:border-transparent transition-all relative overflow-hidden
         flex flex-row sm:flex-col gap-2 sm:gap-0"
     >
@@ -158,6 +156,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         </div>
 
         {/* Actions — below content */}
+        <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="category" minPrice={1000} />
         <div className="flex gap-1.5 sm:gap-2">
           <button
             onClick={() => addToCart(product)}
@@ -180,7 +179,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -247,8 +246,8 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
 
         {/* Mobile: single column (horizontal cards), Desktop: 3 columns (vertical cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          {productList.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
+          {productList.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>

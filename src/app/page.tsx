@@ -8,26 +8,27 @@ import ProductGrid from '@/components/home/ProductGrid';
 import FeaturesBar from '@/components/home/FeaturesBar';
 import BrandCarousel from '@/components/home/BrandCarousel';
 import RecentlyViewed from '@/components/home/RecentlyViewed';
-import { getProductsData } from '@/lib/queries';
+import { getProductsData, getCategoriesData, getBannersData } from '@/lib/queries';
 
-// Render per-request so admin changes appear immediately (no stale cache).
-export const dynamic = 'force-dynamic';
+// ISR: revalidate every 30s, but admin writes call revalidateTag() for instant
+// invalidation. This avoids per-request DB hits while keeping content fresh.
+export const revalidate = 30;
 
 export default async function HomePage() {
-  let initialProducts;
-  try {
-    const result = await getProductsData({ sort: 'newest', limit: 6 });
-    initialProducts = result.products.slice(0, 6);
-  } catch {
-    initialProducts = undefined; // client will fetch as fallback
-  }
+  // Fetch all homepage data in parallel on the server — zero client waterfalls.
+  const [productsResult, categories, banners] = await Promise.all([
+    getProductsData({ sort: 'newest', limit: 6 }).catch(() => ({ products: [], total: 0, page: 1, totalPages: 1 })),
+    getCategoriesData().catch(() => []),
+    getBannersData().catch(() => []),
+  ]);
+  const initialProducts = productsResult.products.slice(0, 6);
 
   return (
     <>
       <Header />
       <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
-        <HeroSection />
-        <CategorySlider />
+        <HeroSection initialBanners={banners} />
+        <CategorySlider initialCategories={categories} />
         <FeaturesBar />
         <ProductGrid initialProducts={initialProducts} />
         <RecentlyViewed />

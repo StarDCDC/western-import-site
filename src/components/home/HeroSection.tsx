@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ShoppingCart, Heart } from 'lucide-react';
 import Link from 'next/link';
-import { getBanners, formatPrice, type Banner } from '@/lib/api';
+import { formatPrice, type Banner } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 
@@ -43,43 +43,29 @@ const fallbackPromos: PromoCard[] = [
   },
 ];
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  initialBanners?: Banner[];
+}
+
+export default function HeroSection({ initialBanners }: HeroSectionProps) {
   const router = useRouter();
   const { t } = useLanguage();
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [sidebarBanners, setSidebarBanners] = useState<PromoCard[]>([]);
+  const [banners, setBanners] = useState<Banner[]>(initialBanners ?? []);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const addToCart = useCartStore((s) => s.addItem);
-  const toggleWishlist = useWishlistStore((s) => s.addItem);
-  const isInWishlist = useWishlistStore((s) => s.isInWishlist);
-  const removeWishlist = useWishlistStore((s) => s.removeItem);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const bannerData = await getBanners();
-        setBanners(bannerData);
-
-        // Sidebar banners: get banners with SIDEBAR or MIDDLE position (max 2)
-        const sideBanners = bannerData
-          .filter((b) => b.position === 'SIDEBAR' || b.position === 'MIDDLE')
-          .slice(0, 2)
-          .map((b) => ({
-            id: b.id,
-            title: b.title,
-            subtitle: b.subtitle || '',
-            image: b.image,
-            link: b.link || '/catalog',
-            cta: b.buttonText || 'Vezi detalii',
-            gradient: b.gradient || 'from-[#1a56db] to-[#0c3a8f]',
-          }));
-        setSidebarBanners(sideBanners);
-      } catch (e) {
-        console.error('Failed to load hero data:', e);
-      }
-    }
-    load();
-  }, []);
+  // Compute sidebar banners from data
+  const sidebarBanners: PromoCard[] = (banners)
+    .filter((b) => b.position === 'SIDEBAR' || b.position === 'MIDDLE')
+    .slice(0, 2)
+    .map((b) => ({
+      id: b.id,
+      title: b.title,
+      subtitle: b.subtitle || '',
+      image: b.image,
+      link: b.link || '/catalog',
+      cta: b.buttonText || 'Vezi detalii',
+      gradient: b.gradient || 'from-[#1a56db] to-[#0c3a8f]',
+    }));
 
   // Auto-slide
   useEffect(() => {

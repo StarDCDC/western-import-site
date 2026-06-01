@@ -3,7 +3,7 @@
 import CatalogPage from '@/app/catalog/page';
 import LocaleSetter from '@/components/ui/LocaleSetter';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 30;
 
 export default async function CatalogRuPage({
   searchParams,

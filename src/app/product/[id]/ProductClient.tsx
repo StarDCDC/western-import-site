@@ -14,6 +14,7 @@ import type { Product } from '@/lib/data';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 import { AVAILABLE_MONTHS } from '@/lib/integrations/iuteCredit';
 import { trackProductView } from '@/components/home/RecentlyViewed';
+import IuteCreditWidget from '@/components/product/IuteCreditWidget';
 
 export default function ProductClient({ product, similar }: { product: Product; similar: Product[] }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -186,6 +187,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   <span className="text-base sm:text-lg text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
                 )}
               </div>
+
+              {/* ─── IutePay Official Widget ──────────────────────────── */}
+              <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="product" />
 
               {/* ─── IuteCredit Section ─────────────────────────────── */}
               <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-3 sm:p-5 mb-6 border border-orange-200 dark:border-orange-800">

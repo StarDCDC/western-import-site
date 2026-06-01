@@ -3,8 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Laptop, Smartphone, Monitor, Tablet, Cpu, Plug, Loader2 } from 'lucide-react';
+import { Laptop, Smartphone, Monitor, Tablet } from 'lucide-react';
 import { getCategories, type ApiCategory } from '@/lib/api';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 
@@ -22,48 +21,25 @@ const iconMap: Record<string, React.ReactNode> = {
 
 const defaultIcon = <Laptop className="w-7 h-7 text-primary" />;
 
-export default function CategorySlider() {
-  const { locale, t } = useLanguage();
-  const [categories, setCategories] = useState<ApiCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+interface CategorySliderProps {
+  initialCategories?: ApiCategory[];
+}
 
+export default function CategorySlider({ initialCategories }: CategorySliderProps) {
+  const { locale, t } = useLanguage();
+  const [categories, setCategories] = useState<ApiCategory[]>(initialCategories ?? []);
+
+  // Fallback: fetch client-side only if server didn't provide data.
   useEffect(() => {
+    if (initialCategories && initialCategories.length > 0) return;
     async function load() {
       try {
         const data = await getCategories();
         setCategories(data);
-      } catch {
-        // silently fail, keep empty
-      } finally {
-        setLoading(false);
-      }
+      } catch { /* silently fail */ }
     }
     load();
-  }, []);
-
-  if (loading) {
-    return (
-      <section className="py-3 pb-8">
-        <div className="max-w-[1280px] mx-auto px-5">
-          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-5">
-            {t('cat.laptopuri') ? 'Categorii Populare' : 'Popular Categories'}
-          </h2>
-          <div className="flex gap-4 flex-wrap justify-center pb-2 no-scrollbar snap-x snap-mandatory">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex-shrink-0 w-[170px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 animate-pulse snap-start"
-              >
-                <div className="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700 mx-auto mb-3" />
-                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-2/3 mx-auto mb-2" />
-                <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2 mx-auto" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
+  }, [initialCategories]);
 
   if (categories.length === 0) return null;
 
@@ -77,16 +53,13 @@ export default function CategorySlider() {
           className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory lg:flex-wrap lg:justify-center lg:overflow-x-visible"
           style={{ scrollPaddingLeft: '1rem' }}
         >
-          {categories.map((cat, i) => {
+          {categories.map((cat) => {
             const name = locale === 'ru' && cat.nameRu ? cat.nameRu : cat.nameRo;
             const icon = iconMap[cat.slug] || iconMap[cat.icon ?? ''] || defaultIcon;
 
             return (
-              <motion.div
+              <div
                 key={cat.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
                 className="snap-start flex-shrink-0 lg:flex-shrink"
               >
                 <Link
@@ -103,7 +76,7 @@ export default function CategorySlider() {
                     {cat.count} {locale === 'ru' ? (cat.count === 1 ? 'товар' : cat.count < 5 ? 'товара' : 'товаров') : (cat.count === 1 ? 'produs' : cat.count < 5 || cat.count === 0 ? 'produse' : 'produse')} →
                   </span>
                 </Link>
-              </motion.div>
+              </div>
             );
           })}
         </div>

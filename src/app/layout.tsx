@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import AuthProvider from "@/components/ui/AuthProvider";
 import { LanguageProvider } from "@/components/ui/LanguageProvider";
 import DynamicWidgets from "@/components/ui/DynamicWidgets";
+import IutePaySDK from "@/components/ui/IutePaySDK";
 import { SITE_URL } from "@/lib/seo";
 
 const inter = Inter({
@@ -83,6 +84,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ro" suppressHydrationWarning className="h-full" data-scroll-behavior="smooth">
+      <head>
+        <link href="https://ecom.iutecredit.md/iutepay.css" rel="stylesheet" type="text/css" />
+      </head>
       <body
         className={`${inter.variable} min-h-full flex flex-col font-sans antialiased bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 transition-colors`}
       >
@@ -97,6 +101,8 @@ export default function RootLayout({
           {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`}
         </Script>
         <DynamicWidgets />
+        {/* IutePay Official SDK */}
+        <IutePaySDK />
       </body>
     </html>
   );

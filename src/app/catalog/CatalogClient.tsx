@@ -55,14 +55,16 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Filters are comma-separated in the URL (e.g. ?category=id1,id2) — split into
+  // arrays so multiple selections survive a URL round-trip (was collapsing to one).
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    searchParams.get('category') ? [searchParams.get('category')!] : []
+    searchParams.get('category') ? searchParams.get('category')!.split(',') : []
   );
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
-    searchParams.get('brand') ? [searchParams.get('brand')!] : []
+    searchParams.get('brand') ? searchParams.get('brand')!.split(',') : []
   );
   const [selectedConditions, setSelectedConditions] = useState<string[]>(
-    searchParams.get('condition') ? [searchParams.get('condition')!] : []
+    searchParams.get('condition') ? searchParams.get('condition')!.split(',') : []
   );
   const [priceMin, setPriceMin] = useState(Number(searchParams.get('minPrice')) || 0);
   const [priceMax, setPriceMax] = useState(Number(searchParams.get('maxPrice')) || 50000);
@@ -124,17 +126,17 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
   useEffect(() => {
     const cat = searchParams.get('category');
-    const newCats = cat ? [cat] : [];
+    const newCats = cat ? cat.split(',') : [];
     if (JSON.stringify(selectedCategories) !== JSON.stringify(newCats)) {
       setSelectedCategories(newCats);
     }
     const brand = searchParams.get('brand');
-    const newBrands = brand ? [brand] : [];
+    const newBrands = brand ? brand.split(',') : [];
     if (JSON.stringify(selectedBrands) !== JSON.stringify(newBrands)) {
       setSelectedBrands(newBrands);
     }
     const cond = searchParams.get('condition');
-    const newConds = cond ? [cond] : [];
+    const newConds = cond ? cond.split(',') : [];
     if (JSON.stringify(selectedConditions) !== JSON.stringify(newConds)) {
       setSelectedConditions(newConds);
     }
@@ -382,7 +384,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     </div>
   );
 
-  const ProductCardSmall = ({ product, index }: { product: Product; index: number }) => {
+  const ProductCardSmall = ({ product }: { product: Product }) => {
     const discount = product.oldPrice ? getDiscount(product.oldPrice, product.price) : null;
     const badgeText = product.condition === 'nou' ? t('product.nou') : discount ? `-${discount}%` : t('product.refurbished');
     const badgeClass = product.condition === 'nou' ? 'bg-emerald-600' : discount ? 'bg-accent' : 'bg-indigo-500';
@@ -407,11 +409,8 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     const imgUrl = getImageUrl();
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.03 }}
-        /* Mobile: horizontal (image left | text right), Desktop: vertical card */
+      <div
+        /* No entrance animation — cards must paint from SSR HTML before hydration. */
         className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0"
       >
         {/* Badge */}
@@ -465,7 +464,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
@@ -616,7 +615,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {filteredProducts.map((p, i) => (
-                    <ProductCardSmall key={`${p.id}-${i}`} product={p} index={i} />
+                    <ProductCardSmall key={`${p.id}-${i}`} product={p} />
                   ))}
                 </div>
               )}

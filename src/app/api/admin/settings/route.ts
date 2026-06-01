@@ -3,10 +3,19 @@ import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 
-// All admin settings live in a single `settings` row under this key (value is a
-// JSON string). This persists across restarts/redeploys — the previous
-// in-memory store reset on every Railway deploy.
+// The full settings object (incl. SECRETS like SMTP/API keys) lives in a single
+// admin-only JSON row. Persisted in DB so it survives redeploys.
 const SETTINGS_KEY = 'admin_settings';
+
+// Public-safe fields are ALSO written as individual Setting rows so the public
+// /api/settings endpoint (and the footer/header) can read them. SECRETS are NEVER
+// written as individual rows — they stay only inside the admin_settings blob, and
+// the public endpoint whitelists these keys (see PUBLIC_SETTING_KEYS below + the
+// /api/settings route). Keep this list and that whitelist in sync.
+export const PUBLIC_SETTING_KEYS = [
+  'siteName', 'phone', 'email', 'address', 'schedule',
+  'metaTitle', 'metaDescription', 'facebook', 'instagram', 'telegram', 'tiktok',
+] as const;
 
 async function loadSettings(): Promise<AdminSettings> {
   const row = await prisma.setting.findUnique({ where: { key: SETTINGS_KEY } });
@@ -19,12 +28,20 @@ async function loadSettings(): Promise<AdminSettings> {
 }
 
 async function saveSettings(settings: AdminSettings): Promise<void> {
-  const value = JSON.stringify(settings);
-  await prisma.setting.upsert({
-    where: { key: SETTINGS_KEY },
-    update: { value },
-    create: { key: SETTINGS_KEY, value },
-  });
+  // 1) full object (with secrets) in the admin-only blob row
+  const writes = [
+    prisma.setting.upsert({
+      where: { key: SETTINGS_KEY },
+      update: { value: JSON.stringify(settings) },
+      create: { key: SETTINGS_KEY, value: JSON.stringify(settings) },
+    }),
+    // 2) public-safe fields as individual rows for the public endpoint/footer
+    ...PUBLIC_SETTING_KEYS.map((k) => {
+      const value = String((settings as unknown as Record<string, unknown>)[k] ?? '');
+      return prisma.setting.upsert({ where: { key: k }, update: { value }, create: { key: k, value } });
+    }),
+  ];
+  await prisma.$transaction(writes);
 }
 
 // ─── Settings Interface ───────────────────────────────────────────
@@ -40,6 +57,7 @@ export interface AdminSettings {
   facebook: string;
   instagram: string;
   telegram: string;
+  tiktok: string;
   smtpHost: string;
   smtpPort: string;
   smtpUser: string;
@@ -66,6 +84,7 @@ const DEFAULT_SETTINGS: AdminSettings = {
   facebook: 'https://facebook.com/westernimport',
   instagram: 'https://instagram.com/westernimport',
   telegram: 'https://t.me/westernimport',
+  tiktok: 'https://tiktok.com/@westernimport',
   smtpHost: 'smtp.gmail.com',
   smtpPort: '587',
   smtpUser: 'info@western.md',
