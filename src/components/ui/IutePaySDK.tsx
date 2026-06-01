@@ -26,7 +26,7 @@ export default function IutePaySDK() {
           // @ts-expect-error IutePay global
           if (window.iute) {
             // @ts-expect-error IutePay global
-            window.iute.configure(IUTEPAY_PUBLIC_KEY, IUTEPAY_LANG);
+            window.iute.configure('e757e925-8e5c-4ccf-9712-edf093290032', IUTEPAY_LANG);
           }
         }}
       />
