@@ -96,11 +96,11 @@ export default function RootLayout({
               {children}
             </AuthProvider>
           </ThemeProvider>
+          <DynamicWidgets />
         </LanguageProvider>
         <Script id="theme-init" strategy="afterInteractive">
           {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`}
         </Script>
-        <DynamicWidgets />
         {/* IutePay Official SDK */}
         <IutePaySDK />
       </body>

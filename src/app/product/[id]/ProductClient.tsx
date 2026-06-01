@@ -30,6 +30,24 @@ export default function ProductClient({ product, similar }: { product: Product; 
     trackProductView(product.id);
   }, [product.id]);
 
+  // Base description for the current locale (RU uses stored translation if present).
+  const baseDescription = (locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description;
+
+  // On-demand RU translation when no stored `descriptionRu` exists.
+  const [translatedDesc, setTranslatedDesc] = useState<string | null>(null);
+  useEffect(() => {
+    setTranslatedDesc(null);
+    if (locale !== 'ru' || product.descriptionRu || !product.description) return;
+    let active = true;
+    fetch(`/api/translate?from=ro&to=ru&text=${encodeURIComponent(product.description)}`)
+      .then((r) => r.json())
+      .then((d) => { if (active && d?.text) setTranslatedDesc(d.text); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [locale, product.description, product.descriptionRu]);
+
+  const displayDescription = (locale === 'ru' && !product.descriptionRu && translatedDesc) ? translatedDesc : baseDescription;
+
   const discount = product.oldPrice ? getDiscount(product.oldPrice, product.price) : null;
   const isPhone = product.category === 'telefoane';
 
@@ -134,7 +152,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
               )}
 
               {/* Description text under image */}
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-3 px-1">{(locale === 'ru' && product.descriptionRu) ? product.descriptionRu : product.description}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-3 px-1">{displayDescription}</p>
             </div>
 
             {/* Details */}
