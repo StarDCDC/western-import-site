@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { translateToRu } from '@/lib/translate';
 import { requireAdmin } from '@/lib/auth';
+import { pushProductTo999, updateAdvert, getAdverts } from '@/lib/integrations/nineNineNineMd';
 import { revalidate } from '@/lib/revalidate';
 
 const productSchema = z.object({
@@ -141,6 +142,10 @@ export async function PUT(request: NextRequest) {
 
     const product = await prisma.product.update({ where: { id }, data: updateData, include: { category: true, brand: true, spec: true } });
     revalidate('products', 'categories');
+
+    // Auto-sync to 999.md (background, non-blocking)
+    syncProductTo999(product).catch(e => console.error('[999.md] Auto-sync failed:', e?.message));
+
     return NextResponse.json({ success: true, data: product });
   } catch (error) {
     console.error('Admin products PUT error:', error);
@@ -186,10 +191,51 @@ export async function POST(request: NextRequest) {
 
     const product = await prisma.product.create({ data: productData as Parameters<typeof prisma.product.create>[0]['data'], include: { category: true, brand: true, spec: true } });
     revalidate('products', 'categories');
+
+    // Auto-push to 999.md (background, non-blocking)
+    syncProductTo999(product).catch(e => console.error('[999.md] Auto-push failed:', e?.message));
+
     return NextResponse.json({ success: true, data: product, message: 'Produs creat cu succes' });
   } catch (error) {
     console.error('Admin products POST error:', error);
     if (error instanceof z.ZodError) return NextResponse.json({ success: false, error: 'Date invalide', details: error.issues }, { status: 400 });
     return NextResponse.json({ success: false, error: 'Eroare la creare produs' }, { status: 500 });
+  }
+}
+// ─── 999.md Auto-Sync Helper ──────────────────────────────────────
+async function syncProductTo999(product: any) {
+  if (!product.isActive) return; // Don't push inactive products
+
+  const images = Array.isArray(product.images) ? product.images : [];
+  const description = product.descriptionRo || product.name;
+
+  // Check if we already have this product on 999.md (by matching title)
+  let existing999Id: string | number | null = null;
+  try {
+    const adverts = await getAdverts({ page: '1', page_size: '100', state: 'public' });
+    const items = Array.isArray(adverts) ? adverts : (adverts?.data || []);
+    const match = items.find((a: any) => a.title === product.name);
+    if (match) existing999Id = match.id;
+  } catch {}
+
+  if (existing999Id) {
+    // Update existing advert
+    await updateAdvert(existing999Id, {
+      title: product.name,
+      price: product.price,
+      description,
+      images: images.map((url: string, i: number) => ({ url, order: i })),
+    });
+    console.log(`[999.md] Updated advert #${existing999Id} for "${product.name}"`);
+  } else {
+    // Create new advert
+    const result = await pushProductTo999({
+      name: product.name,
+      price: product.price,
+      description,
+      images,
+      sku: product.sku || undefined,
+    });
+    console.log(`[999.md] Created advert for "${product.name}":`, JSON.stringify(result));
   }
 }
