@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, Credit
 import type { Product } from '@/lib/data';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 import IuteCreditWidget from '@/components/product/IuteCreditWidget';
+import InstallmentCalculator from '@/components/product/InstallmentCalculator';
 import { trackProductView } from '@/components/home/RecentlyViewed';
 
 export default function ProductClient({ product, similar }: { product: Product; similar: Product[] }) {
@@ -161,11 +162,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 )}
               </div>
 
-              {/* ─── IutePay — promotional widget + checkout ────── */}
+              {/* ─── IutePay — calculator rate ────── */}
               {product.price >= 1000 && (
-                <div className="mb-6">
-                  <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="product" />
-                </div>
+                <InstallmentCalculator price={product.price} />
               )}
 
               {/* Specs Table */}
