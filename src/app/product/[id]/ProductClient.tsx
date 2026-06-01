@@ -6,15 +6,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { formatPrice, getDiscount, type CreditCalculation } from '@/lib/api';
+import { formatPrice, getDiscount } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield } from 'lucide-react';
 import type { Product } from '@/lib/data';
 import { useLanguage } from '@/components/ui/LanguageProvider';
-import { AVAILABLE_MONTHS } from '@/lib/integrations/iuteCredit';
-import { trackProductView } from '@/components/home/RecentlyViewed';
 import IuteCreditWidget from '@/components/product/IuteCreditWidget';
+import { trackProductView } from '@/components/home/RecentlyViewed';
 
 export default function ProductClient({ product, similar }: { product: Product; similar: Product[] }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -25,31 +24,6 @@ export default function ProductClient({ product, similar }: { product: Product; 
   const isInWishlist = useWishlistStore((s) => s.isInWishlist);
   const removeWishlist = useWishlistStore((s) => s.removeItem);
 
-  // IuteCredit plans — computed locally for instant load (no remote call, no effect).
-  const creditPlans = useMemo<CreditCalculation[]>(() => {
-    const INTEREST_RATES: Record<number, number> = { 3: 0, 6: 0, 9: 4.9, 12: 7.9, 18: 11.9, 24: 14.9 };
-    return AVAILABLE_MONTHS.map(months => {
-      const rate = INTEREST_RATES[months] || 0;
-      let monthlyPayment: number;
-      if (rate === 0) {
-        monthlyPayment = Math.ceil(product.price / months);
-      } else {
-        const monthlyRate = rate / 100 / 12;
-        const factor = Math.pow(1 + monthlyRate, months);
-        monthlyPayment = Math.ceil(product.price * (monthlyRate * factor) / (factor - 1));
-      }
-      const totalPayment = monthlyPayment * months;
-      return { months, monthlyPayment, totalPayment, interestRate: rate, interestAmount: totalPayment - product.price };
-    });
-  }, [product.price]);
-
-  // Default the selector to the longest 0% plan.
-  const defaultMonths = useMemo(() => {
-    const zero = creditPlans.filter(p => p.interestRate === 0);
-    return zero.length > 0 ? zero[zero.length - 1].months : 12;
-  }, [creditPlans]);
-  const [selectedMonths, setSelectedMonths] = useState<number>(defaultMonths);
-
   // Track recent view once on mount.
   useEffect(() => {
     trackProductView(product.id);
@@ -57,7 +31,6 @@ export default function ProductClient({ product, similar }: { product: Product; 
 
   const discount = product.oldPrice ? getDiscount(product.oldPrice, product.price) : null;
   const isPhone = product.category === 'telefoane';
-  const selectedPlan = creditPlans.find(p => p.months === selectedMonths);
 
   // Parse images from string or array
   const productImages: string[] = (() => {
@@ -188,97 +161,43 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 )}
               </div>
 
-              {/* ─── IutePay Official Widget ──────────────────────────── */}
-              <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="product" />
-
-              {/* ─── IuteCredit Section ─────────────────────────────── */}
-              <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 rounded-2xl p-3 sm:p-5 mb-6 border border-orange-200 dark:border-orange-800">
-                <div className="flex items-center gap-2 mb-3">
-                  <CreditCard className="w-5 h-5 text-orange-600" />
-                  <h3 className="font-bold text-sm text-orange-800 dark:text-orange-300">Cumpără în rate — IuteCredit</h3>
-                  {selectedPlan?.interestRate === 0 && (
-                    <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold rounded-full">0% DOBÂNDĂ</span>
-                  )}
-                </div>
-
-                {creditPlans.length > 0 && (
-                  <>
-                    <div className="flex items-baseline gap-2 mb-3">
-                      <span className="text-2xl font-extrabold text-orange-700 dark:text-orange-300">
-                        de la {formatPrice(creditPlans[0].monthlyPayment)}/lună
-                      </span>
-                    </div>
-
-                    {/* Months selector */}
-                    <div className="flex gap-2 mb-3 flex-wrap">
-                      {creditPlans.map((plan) => (
-                        <button
-                          key={plan.months}
-                          onClick={() => setSelectedMonths(plan.months)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                            selectedMonths === plan.months
-                              ? 'bg-orange-600 text-white shadow-md'
-                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-orange-400'
-                          }`}
-                        >
-                          {plan.months} luni
-                          {plan.interestRate === 0 && <span className="ml-1 text-green-600">✓</span>}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Selected plan details */}
-                    {selectedPlan && (
-                      <div className="bg-white dark:bg-slate-800 rounded-xl p-3 mb-3 text-xs space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-slate-500">Rata lunară:</span>
-                          <span className="font-bold text-slate-800 dark:text-white">{formatPrice(selectedPlan.monthlyPayment)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-500">Total de plată:</span>
-                          <span className="font-bold text-slate-800 dark:text-white">{formatPrice(selectedPlan.totalPayment)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-500">Dobândă anuală:</span>
-                          <span className={`font-bold ${selectedPlan.interestRate === 0 ? 'text-green-600' : 'text-slate-800 dark:text-white'}`}>
-                            {selectedPlan.interestRate === 0 ? '0% (GRATUIT)' : `${selectedPlan.interestRate}%`}
-                          </span>
-                        </div>
-                        {selectedPlan.interestAmount > 0 && (
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">Cost credit:</span>
-                            <span className="text-orange-600 font-bold">+{formatPrice(selectedPlan.interestAmount)}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <button
-                      onClick={async () => {
-                        try {
-                          const res = await fetch('/api/integrations/iute', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'checkout', productId: product.id, months: selectedMonths }),
-                          });
-                          const json = await res.json();
-                          if (json.success && json.data?.checkoutUrl) {
-                            window.open(json.data.checkoutUrl, '_blank');
-                          } else if (json.success && json.data?.redirectUrl) {
-                            window.open(json.data.redirectUrl, '_blank');
+              {/* ─── IuteCredit ──────────────────────────────────────── */}
+              {product.price >= 1000 && (
+                <div className="mb-6">
+                  <IuteCreditWidget productId={product.id} price={product.price} productName={product.name} pageType="product" />
+                  <button
+                    onClick={() => {
+                      // @ts-expect-error IutePay global
+                      if (window.iute) {
+                        // @ts-expect-error IutePay global
+                        window.iute.checkout(
+                          {
+                            merchant: { name: 'Western Import', userConfirmationUrl: window.location.origin + '/api/iute/confirm', userCancelUrl: window.location.href, userConfirmationUrlAction: 'POST' },
+                            shipping: { name: { first: '', last: '' }, address: { line1: '', line2: '', city: '', state: '', zipcode: '', country: 'mda' }, phoneNumber: '', email: '' },
+                            billing: { name: { first: '', last: '' }, address: { line1: '', line2: '', city: '', state: '', zipcode: '', country: 'mda' }, phoneNumber: '', email: '' },
+                            items: [{ displayName: product.name, sku: product.id, unitPrice: product.price, qty: 1 }],
+                            orderId: 'WI-' + Date.now(),
+                            currency: 'MDL',
+                            shippingAmount: 0,
+                            taxAmount: 0,
+                            subtotal: product.price,
+                            total: product.price,
+                            metadata: { mode: 'modal' },
+                          },
+                          {
+                            onSuccess: function(result: any) { console.log('IutePay success:', result); },
+                            onFailure: function(result: any) { console.error('IutePay failure:', result); },
                           }
-                        } catch {
-                          window.open(`/api/integrations/iute?productId=${product.id}`, '_blank');
-                        }
-                      }}
-                      className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
-                    >
-                      <ExternalLink className="w-4 h-4" /> Aplică pentru credit
-                    </button>
-                    <p className="text-[10px] text-slate-500 mt-1.5 text-center">Credit oferit de IuteCredit Moldova. Termeni și condiții aplicabile.</p>
-                  </>
-                )}
-              </div>
+                        );
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
+                  >
+                    <CreditCard className="w-5 h-5" />
+                    <span>{locale === 'ru' ? 'Купить в рассрочку с IuteCredit' : 'Cumpără în rate cu IuteCredit'}</span>
+                  </button>
+                </div>
+              )}
 
               {/* Specs Table */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">

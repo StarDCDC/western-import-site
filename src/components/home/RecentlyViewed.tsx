@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Heart, Clock, X } from 'lucide-react';
 import { formatPrice, getDiscount } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
+import { useLanguage } from '@/components/ui/LanguageProvider';
 
 interface RecentProduct {
   id: string;
@@ -48,6 +49,7 @@ export async function trackProductView(productId: string) {
 }
 
 export default function RecentlyViewed() {
+  const { t, locale } = useLanguage();
   const [products, setProducts] = useState<RecentProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const addToCart = useCartStore((s) => s.addItem);
@@ -81,7 +83,7 @@ export default function RecentlyViewed() {
       <div className="max-w-[1280px] mx-auto px-5">
         <div className="flex items-center gap-2 mb-5">
           <Clock className="w-5 h-5 text-slate-400" />
-          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">Recent vizualizate</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">{locale === 'ru' ? 'Недавно просмотренные' : 'Recent vizualizate'}</h2>
         </div>
 
         {loading ? (
@@ -157,7 +159,7 @@ export default function RecentlyViewed() {
                       onClick={() => addToCart(product as any)}
                       className="flex-1 bg-primary text-white py-1.5 rounded-lg text-[11px] font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-1"
                     >
-                      <ShoppingCart className="w-3 h-3" /> Adaugă
+                      <ShoppingCart className="w-3 h-3" /> {locale === 'ru' ? 'Добавить' : 'Adaugă'}
                     </button>
                     <button
                       onClick={() => {

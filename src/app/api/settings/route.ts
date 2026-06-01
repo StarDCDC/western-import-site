@@ -3,9 +3,9 @@ import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { successResponse, errorResponse, serverErrorResponse } from '@/lib/utils';
 
-// Cache settings for 60 seconds
+// Cache settings — short TTL, cleared on admin save.
 let settingsCache: { data: Record<string, unknown>; ts: number } | null = null;
-const CACHE_TTL = 60_000;
+const CACHE_TTL = 5_000; // 5 seconds instead of 60 for faster updates
 
 // SECURITY: this endpoint is PUBLIC. Only non-secret keys may be returned —
 // never SMTP/API keys or the admin_settings blob. Whitelist explicitly.

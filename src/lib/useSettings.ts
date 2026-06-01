@@ -16,7 +16,7 @@ interface SiteSettings {
 // Singleton cache — shared across all component instances
 let cachedSettings: SiteSettings | null = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 60_000; // 60 seconds
+const CACHE_TTL = 5_000; // 5 seconds for fast admin updates
 let fetchPromise: Promise<SiteSettings> | null = null;
 
 async function fetchSettings(): Promise<SiteSettings> {
