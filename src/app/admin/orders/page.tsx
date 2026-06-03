@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Trash2, AlertTriangle, X, Loader2 } from "lucide-react";
 
 interface OrderItem {
   id: string;
@@ -50,6 +52,110 @@ const statusMap: Record<string, { label: string; cls: string }> = {
   REFUNDED: { label: "Rambursată", cls: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400" },
 };
 
+// ─── Confirm Modal ────────────────────────────────────────────────
+interface ConfirmModalProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  loading: boolean;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  details?: string;
+  icon?: "trash" | "warning";
+}
+
+function ConfirmModal({ open, onClose, onConfirm, loading, title, message, confirmLabel = "Șterge", details, icon = "trash" }: ConfirmModalProps) {
+  if (!open) return null;
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={onClose}
+          />
+
+          {/* Modal */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden"
+          >
+            {/* Header gradient */}
+            <div className={`px-6 pt-6 pb-4 ${icon === "warning" ? "bg-gradient-to-br from-red-500 to-orange-600" : "bg-gradient-to-br from-red-500 to-red-700"}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    {icon === "warning" ? (
+                      <AlertTriangle className="w-6 h-6 text-white" />
+                    ) : (
+                      <Trash2 className="w-6 h-6 text-white" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">{title}</h3>
+                    <p className="text-sm text-white/80">Acțiune ireversibilă</p>
+                  </div>
+                </div>
+                <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors">
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5">
+              <p className="text-slate-700 dark:text-slate-200 text-sm leading-relaxed">{message}</p>
+              {details && (
+                <div className="mt-3 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl">
+                  <p className="text-sm text-red-700 dark:text-red-300 font-medium">{details}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="px-6 pb-6 flex gap-3">
+              <button
+                onClick={onClose}
+                disabled={loading}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={onConfirm}
+                disabled={loading}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Se șterge...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    {confirmLabel}
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── Main Page ─────────────────────────────────────────────────────
 export default function AdminOrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -59,39 +165,59 @@ export default function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
+  // Modal state
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTarget, setModalTarget] = useState<{ type: "single" | "all"; orderId?: string; orderNumber?: string }>({ type: "all" });
 
-  const deleteOrder = async (orderId: string) => {
-    if (!confirm('Sigur vrei să ștergi această comandă?')) return;
-    setDeleting(orderId);
-    try {
-      const res = await fetch(`/api/orders/${orderId}`, { method: 'DELETE' });
-      const json = await res.json();
-      if (json.success) {
-        fetchOrders(); // refresh list
-      } else {
-        alert(json.error || 'Eroare la ștergere');
-      }
-    } catch {
-      alert('Eroare de conexiune');
-    } finally {
-      setDeleting(null);
-    }
+  const openDeleteSingle = (orderId: string, orderNumber: string) => {
+    setModalTarget({ type: "single", orderId, orderNumber });
+    setModalOpen(true);
   };
 
-  const deleteAllOrders = async () => {
-    if (!confirm('Sigur vrei să ștergi TOATE comenzile? Acțiunea e ireversibilă!')) return;
-    try {
-      const res = await fetch('/api/admin/orders/delete-all', { method: 'POST' });
-      const json = await res.json();
-      if (json.success) {
-        alert(json.message);
-        fetchOrders();
-      } else {
-        alert(json.error || 'Eroare');
+  const openDeleteAll = () => {
+    setModalTarget({ type: "all" });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    if (deleting) return; // don't close while deleting
+    setModalOpen(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (modalTarget.type === "single" && modalTarget.orderId) {
+      setDeleting(modalTarget.orderId);
+      try {
+        const res = await fetch(`/api/orders/${modalTarget.orderId}`, { method: "DELETE" });
+        const json = await res.json();
+        if (json.success) {
+          fetchOrders();
+        } else {
+          alert(json.error || "Eroare la ștergere");
+        }
+      } catch {
+        alert("Eroare de conexiune");
+      } finally {
+        setDeleting(null);
+        setModalOpen(false);
       }
-    } catch {
-      alert('Eroare de conexiune');
+    } else {
+      setDeleting("all");
+      try {
+        const res = await fetch("/api/admin/orders/delete-all", { method: "POST" });
+        const json = await res.json();
+        if (json.success) {
+          fetchOrders();
+        } else {
+          alert(json.error || "Eroare");
+        }
+      } catch {
+        alert("Eroare de conexiune");
+      } finally {
+        setDeleting(null);
+        setModalOpen(false);
+      }
     }
   };
 
@@ -117,11 +243,19 @@ export default function AdminOrdersPage() {
 
   const counts: Record<string, number> = { all: total };
   statusOptions.forEach((s) => {
-    const filteredOrders = filter ? orders.filter((o) => o.status === filter) : orders;
     counts[s.value] = orders.filter((o) => o.status === s.value).length;
   });
 
   const displayed = filter ? orders.filter((o) => o.status === filter) : orders;
+
+  // Modal props based on target
+  const modalTitle = modalTarget.type === "all" ? "Șterge toate comenzile" : `Șterge comanda ${modalTarget.orderNumber}`;
+  const modalMessage = modalTarget.type === "all"
+    ? "Sigur vrei să ștergi toate comenzile din sistem? Această acțiune nu poate fi anulată și vei pierde tot istoricul de comenzi."
+    : `Sigur vrei să ștergi comanda ${modalTarget.orderNumber}? Produsele din comandă nu vor fi afectate.`;
+  const modalDetails = modalTarget.type === "all"
+    ? `⚠️ Se vor șterge permanent ${total} comenz${total === 1 ? "e" : "i"} și toate item-urile asociate.`
+    : undefined;
 
   return (
     <div className="space-y-6">
@@ -129,10 +263,11 @@ export default function AdminOrdersPage() {
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Comenzi</h1>
         {total > 0 && (
           <button
-            onClick={deleteAllOrders}
+            onClick={openDeleteAll}
             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition flex items-center gap-1.5"
           >
-            🗑️ Șterge toate ({total})
+            <Trash2 className="w-4 h-4" />
+            Șterge toate ({total})
           </button>
         )}
       </div>
@@ -188,11 +323,12 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center gap-2">
                         <button onClick={() => router.push(`/admin/orders/${o.id}`)} className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium">Detalii</button>
                         <button
-                          onClick={(e) => { e.stopPropagation(); deleteOrder(o.id); }}
+                          onClick={(e) => { e.stopPropagation(); openDeleteSingle(o.id, o.orderNumber); }}
                           disabled={deleting === o.id}
-                          className="text-red-500 hover:text-red-700 hover:underline text-xs font-medium disabled:opacity-50"
+                          className="text-red-500 hover:text-red-700 hover:underline text-xs font-medium disabled:opacity-50 flex items-center gap-1"
                         >
-                          {deleting === o.id ? '...' : '🗑️ Șterge'}
+                          {deleting === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                          {deleting === o.id ? "Se șterge..." : "Șterge"}
                         </button>
                       </div>
                     </td>
@@ -221,6 +357,19 @@ export default function AdminOrdersPage() {
           {displayed.length} comandă(e) afișate din {total} total
         </div>
       </div>
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        open={modalOpen}
+        onClose={closeModal}
+        onConfirm={handleConfirmDelete}
+        loading={!!deleting}
+        title={modalTitle}
+        message={modalMessage}
+        details={modalDetails}
+        confirmLabel={modalTarget.type === "all" ? "Șterge tot" : "Șterge comanda"}
+        icon={modalTarget.type === "all" ? "warning" : "trash"}
+      />
     </div>
   );
 }
