@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { translateToRu } from '@/lib/translate';
 import { requireAdmin } from '@/lib/auth';
-import { pushProductTo999, updateAdvert, getAdverts } from '@/lib/integrations/nineNineNineMd';
+import { pushProductTo999, updateProductOn999, findAdvertByTitle, type Local999Product } from '@/lib/integrations/nineNineNineMd';
 import { revalidate } from '@/lib/revalidate';
 
 const productSchema = z.object({
@@ -204,38 +204,35 @@ export async function POST(request: NextRequest) {
 }
 // ─── 999.md Auto-Sync Helper ──────────────────────────────────────
 async function syncProductTo999(product: any) {
-  if (!product.isActive) return; // Don't push inactive products
+  if (!product.isActive) return; // Nu publicăm produse inactive
 
-  const images = Array.isArray(product.images) ? product.images : [];
-  const description = product.descriptionRo || product.name;
-
-  // Check if we already have this product on 999.md (by matching title)
-  let existing999Id: string | number | null = null;
+  // `images` în DB e un JSON string ("[...]"); îl normalizăm la string[]
+  let images: string[] = [];
   try {
-    const adverts = await getAdverts({ page: '1', page_size: '100', state: 'public' });
-    const items = Array.isArray(adverts) ? adverts : (adverts?.data || []);
-    const match = items.find((a: any) => a.title === product.name);
-    if (match) existing999Id = match.id;
-  } catch {}
+    images = Array.isArray(product.images) ? product.images : JSON.parse(product.images || '[]');
+  } catch { images = []; }
 
-  if (existing999Id) {
-    // Update existing advert
-    await updateAdvert(existing999Id, {
-      title: product.name,
-      price: product.price,
-      description,
-      images: images.map((url: string, i: number) => ({ url, order: i })),
-    });
-    console.log(`[999.md] Updated advert #${existing999Id} for "${product.name}"`);
+  const mapped: Local999Product = {
+    name: product.name,
+    price: product.price,
+    currency: 'mdl',
+    descriptionRo: product.descriptionRo,
+    descriptionRu: product.descriptionRu,
+    images,
+    brand: product.brand?.name ?? null,
+    condition: product.condition,           // NEW | REFURBISHED | USED
+    categorySlug: product.category?.slug ?? null,
+    categoryName: product.category?.name ?? null,
+  };
+
+  // Sync idempotent: dacă există deja un advert cu același titlu → update, altfel create
+  const existingId = await findAdvertByTitle(product.name).catch(() => null);
+
+  if (existingId) {
+    const { warnings } = await updateProductOn999(existingId, mapped);
+    console.log(`[999.md] Advert #${existingId} actualizat pentru "${product.name}"`, warnings.length ? warnings : '');
   } else {
-    // Create new advert
-    const result = await pushProductTo999({
-      name: product.name,
-      price: product.price,
-      description,
-      images,
-      sku: product.sku || undefined,
-    });
-    console.log(`[999.md] Created advert for "${product.name}":`, JSON.stringify(result));
+    const { id, warnings } = await pushProductTo999(mapped);
+    console.log(`[999.md] Advert #${id} creat pentru "${product.name}"`, warnings.length ? warnings : '');
   }
 }
