@@ -59,6 +59,42 @@ export default function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const deleteOrder = async (orderId: string) => {
+    if (!confirm('Sigur vrei să ștergi această comandă?')) return;
+    setDeleting(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (json.success) {
+        fetchOrders(); // refresh list
+      } else {
+        alert(json.error || 'Eroare la ștergere');
+      }
+    } catch {
+      alert('Eroare de conexiune');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const deleteAllOrders = async () => {
+    if (!confirm('Sigur vrei să ștergi TOATE comenzile? Acțiunea e ireversibilă!')) return;
+    try {
+      const res = await fetch('/api/admin/orders/delete-all', { method: 'POST' });
+      const json = await res.json();
+      if (json.success) {
+        alert(json.message);
+        fetchOrders();
+      } else {
+        alert(json.error || 'Eroare');
+      }
+    } catch {
+      alert('Eroare de conexiune');
+    }
+  };
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
@@ -89,7 +125,17 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Comenzi</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Comenzi</h1>
+        {total > 0 && (
+          <button
+            onClick={deleteAllOrders}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition flex items-center gap-1.5"
+          >
+            🗑️ Șterge toate ({total})
+          </button>
+        )}
+      </div>
 
       {/* Filters */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
@@ -139,7 +185,16 @@ export default function AdminOrdersPage() {
                     <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{Math.round(o.total).toLocaleString()} MDL</td>
                     <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-xs font-medium ${s.cls}`}>{s.label}</span></td>
                     <td className="px-4 py-3">
-                      <button onClick={() => router.push(`/admin/orders/${o.id}`)} className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium">Vezi detalii</button>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => router.push(`/admin/orders/${o.id}`)} className="text-blue-600 dark:text-blue-400 hover:underline text-xs font-medium">Detalii</button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); deleteOrder(o.id); }}
+                          disabled={deleting === o.id}
+                          className="text-red-500 hover:text-red-700 hover:underline text-xs font-medium disabled:opacity-50"
+                        >
+                          {deleting === o.id ? '...' : '🗑️ Șterge'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

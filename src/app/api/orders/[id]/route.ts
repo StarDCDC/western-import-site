@@ -96,3 +96,27 @@ export async function PATCH(
     return serverErrorResponse();
   }
 }
+
+// DELETE /api/orders/[id] — delete single order (admin only)
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await getAuthUser(_request);
+    if (!user) return errorResponse('Neautorizat', 401);
+    const isAdmin = user.role === 'ADMIN' || user.role === 'MODERATOR';
+    if (!isAdmin) return errorResponse('Acces interzis', 403);
+
+    const { id } = await params;
+    const existing = await prisma.order.findUnique({ where: { id } });
+    if (!existing) return errorResponse('Comandă negăsită', 404);
+
+    await prisma.orderItem.deleteMany({ where: { orderId: id } });
+    await prisma.order.delete({ where: { id } });
+
+    return successResponse({ message: 'Comandă ștearsă' });
+  } catch {
+    return serverErrorResponse();
+  }
+}
