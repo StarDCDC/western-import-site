@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { getPageContent } from "@/lib/pages";
+import { parseBlocks } from "@/lib/blocks";
+import PageBlocks from "@/components/public/PageBlocks";
 
 export const metadata: Metadata = {
   title: "Politica de Confidențialitate",
@@ -16,14 +19,42 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const pageData = await getPageContent("privacy");
+
+  if (pageData?.contentRo) {
+    const content = pageData.contentRo;
+    const isBlockContent = content.trim().startsWith("[");
+    const blocks = isBlockContent ? parseBlocks(content) : [];
+
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <Breadcrumb items={[{ label: "Politica de Confidențialitate" }]} />
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Politica de Confidențialitate</h1>
+              <div className="w-16 h-1 bg-primary rounded-full mb-8" />
+              {isBlockContent ? (
+                <PageBlocks blocks={blocks} />
+              ) : (
+                <div className="prose prose-slate dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+              )}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
       <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Politica de Confidențialitate" }]} />
-
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Politica de Confidențialitate
@@ -32,8 +63,6 @@ export default function PrivacyPage() {
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-8">
               Ultima actualizare: 20 mai 2026
             </p>
-
-            {/* 1. Introducere */}
             <section className="mb-8">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
                 1. Introducere

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { getPageContent } from "@/lib/pages";
+import { parseBlocks } from "@/lib/blocks";
+import PageBlocks from "@/components/public/PageBlocks";
 
 export const metadata: Metadata = {
   title: "Политика конфиденциальности",
@@ -9,7 +12,36 @@ export const metadata: Metadata = {
     "Политика конфиденциальности Western Import. Информация о сборе, использовании и защите персональных данных в соответствии с GDPR.",
 };
 
-export default function PrivacyRuPage() {
+export default async function PrivacyRuPage() {
+  const pageData = await getPageContent("privacy");
+
+  if (pageData?.contentRu) {
+    const content = pageData.contentRu;
+    const isBlockContent = content.trim().startsWith('[');
+    const blocks = isBlockContent ? parseBlocks(content) : [];
+
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <Breadcrumb items={[{ label: "Политика конфиденциальности" }]} />
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Политика конфиденциальности</h1>
+              <div className="w-16 h-1 bg-primary rounded-full mb-8" />
+              {isBlockContent ? (
+                <PageBlocks blocks={blocks} />
+              ) : (
+                <div className="prose prose-slate dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+              )}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />

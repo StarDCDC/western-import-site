@@ -3,7 +3,9 @@ import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { getPageContent, getLocalizedContent } from "@/lib/pages";
+import { getPageContent } from "@/lib/pages";
+import { parseBlocks } from "@/lib/blocks";
+import PageBlocks from "@/components/public/PageBlocks";
 import { Truck, RotateCcw, Package, Clock, ShieldCheck, MapPin } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -23,20 +25,27 @@ export default async function ShippingPage() {
   const pageData = await getPageContent("shipping");
 
   if (pageData?.contentRo) {
-    const { title, content } = getLocalizedContent(pageData, 'ro');
+    const content = pageData.contentRo;
+    const isBlockContent = content.trim().startsWith("[");
+    const blocks = isBlockContent ? parseBlocks(content) : [];
+
     return (
       <>
         <Header />
         <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
           <div className="max-w-4xl mx-auto px-4 py-8">
-            <Breadcrumb items={[{ label: title }]} />
+            <Breadcrumb items={[{ label: "Livrare și Returnare" }]} />
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h1>
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Livrare și Returnare</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
-              <div
-                className="prose prose-slate dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: content || '' }}
-              />
+              {isBlockContent ? (
+                <PageBlocks blocks={blocks} />
+              ) : (
+                <div
+                  className="prose prose-slate dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              )}
             </div>
           </div>
         </main>

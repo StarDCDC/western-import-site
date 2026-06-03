@@ -3,7 +3,9 @@ import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { getPageContent, getLocalizedContent } from "@/lib/pages";
+import { getPageContent } from "@/lib/pages";
+import { parseBlocks } from "@/lib/blocks";
+import PageBlocks from "@/components/public/PageBlocks";
 
 export const metadata: Metadata = {
   title: "Termeni și Condiții",
@@ -22,27 +24,27 @@ export default async function TermsPage() {
   const pageData = await getPageContent("terms");
 
   if (pageData?.contentRo) {
-    const { title, content } = getLocalizedContent(pageData, 'ro');
+    const content = pageData.contentRo;
+    const isBlockContent = content.trim().startsWith("[");
+    const blocks = isBlockContent ? parseBlocks(content) : [];
+
     return (
       <>
         <Header />
         <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
           <div className="max-w-4xl mx-auto px-4 py-8">
-            <Breadcrumb items={[{ label: title }]} />
+            <Breadcrumb items={[{ label: "Termeni și Condiții" }]} />
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h1>
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Termeni și Condiții</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
-              <div
-                className="prose prose-slate dark:prose-invert max-w-none
-                  prose-headings:text-slate-900 dark:prose-headings:text-white
-                  prose-h2:text-xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4
-                  prose-p:text-slate-600 dark:prose-p:text-slate-400
-                  prose-a:text-primary hover:prose-a:underline
-                  prose-strong:text-slate-800 dark:prose-strong:text-slate-200
-                  prose-li:text-slate-600 dark:prose-li:text-slate-400
-                  prose-ul:my-2"
-                dangerouslySetInnerHTML={{ __html: content || "" }}
-              />
+              {isBlockContent ? (
+                <PageBlocks blocks={blocks} />
+              ) : (
+                <div
+                  className="prose prose-slate dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              )}
             </div>
           </div>
         </main>

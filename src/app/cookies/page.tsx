@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { getPageContent } from "@/lib/pages";
+import { parseBlocks } from "@/lib/blocks";
+import PageBlocks from "@/components/public/PageBlocks";
 
 export const metadata: Metadata = {
   title: "Politica Cookies",
@@ -16,7 +19,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CookiesPage() {
+export default async function CookiesPage() {
+  const pageData = await getPageContent("cookies");
+
+  if (pageData?.contentRo) {
+    const content = pageData.contentRo;
+    const isBlockContent = content.trim().startsWith("[");
+    const blocks = isBlockContent ? parseBlocks(content) : [];
+
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <Breadcrumb items={[{ label: "Politica Cookies" }]} />
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Politica Cookies</h1>
+              <div className="w-16 h-1 bg-primary rounded-full mb-8" />
+              {isBlockContent ? (
+                <PageBlocks blocks={blocks} />
+              ) : (
+                <div className="prose prose-slate dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+              )}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />

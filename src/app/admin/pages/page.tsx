@@ -34,7 +34,6 @@ export default function AdminPagesPage() {
 
   const [blocksRo, setBlocksRo] = useState<PageBlock[]>([]);
   const [blocksRu, setBlocksRu] = useState<PageBlock[]>([]);
-  const [seeding, setSeeding] = useState(false);
 
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -138,32 +137,6 @@ export default function AdminPagesPage() {
               ✓ Salvat cu succes!
             </motion.span>
           )}
-          {/* Seed button */}
-          <button
-            onClick={async () => {
-              setSeeding(true);
-              try {
-                const res = await fetch("/api/admin/pages/seed-all", { method: "POST" });
-                const json = await res.json();
-                if (json.success) {
-                  setSaved(true);
-                  fetchPages();
-                  setTimeout(() => setSaved(false), 3000);
-                } else {
-                  alert("Eroare: " + (json.error || "Unknown"));
-                }
-              } catch {
-                alert("Eroare de conexiune");
-              } finally {
-                setSeeding(false);
-              }
-            }}
-            disabled={seeding}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50 flex items-center gap-2"
-          >
-            {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : "🌱"}
-            {seeding ? "Seeding..." : "Seed All Pages"}
-          </button>
           {/* Save always visible */}
           <button
             onClick={handleSave}
