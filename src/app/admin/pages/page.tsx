@@ -28,7 +28,7 @@ export default function AdminPagesPage() {
   const [editContentRu, setEditContentRu] = useState("");
   const [activeTab, setActiveTab] = useState<"ro" | "ru">("ro");
   const [viewMode, setViewMode] = useState<"preview" | "edit">("preview");
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [iframeKey, setIframeKey] = useState(0);
 
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -160,42 +160,8 @@ export default function AdminPagesPage() {
     }
   };
 
-  // Parse HTML to a preview that looks like the site
-  const renderSitePreview = (html: string | null, title: string) => {
-    if (!html) {
-      return (
-        <div className="text-center py-16 text-slate-400">
-          <p className="text-lg mb-2">Pagină fără conținut</p>
-          <p className="text-sm">Apasă „Editează" pentru a adăuga conținut</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-6">
-        {/* Page title — styled like site */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-800">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h1>
-          <div className="w-16 h-1 bg-amber-500 rounded-full mb-8" />
-          <div
-            className="prose prose-slate dark:prose-invert max-w-none
-              prose-headings:text-slate-900 dark:prose-headings:text-white
-              prose-h1:text-3xl prose-h1:font-bold prose-h1:mb-4
-              prose-h2:text-xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4 prose-h2:flex prose-h2:items-center prose-h2:gap-2
-              prose-h3:text-lg prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3
-              prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-p:leading-relaxed
-              prose-a:text-amber-600 hover:prose-a:underline
-              prose-strong:text-slate-800 dark:prose-strong:text-slate-200
-              prose-li:text-slate-600 dark:prose-li:text-slate-400
-              prose-blockquote:border-l-amber-500 prose-blockquote:bg-amber-50 dark:prose-blockquote:bg-amber-900/10 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
-              prose-ul:my-2 prose-ol:my-2
-              prose-img:rounded-xl"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
-        </div>
-      </div>
-    );
-  };
+  const pageSlug = form ? (activeTab === "ru" ? `ru/${form.slug}` : form.slug) : "";
+  const previewSrc = `${siteUrl}/${pageSlug}`;
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent" /></div>;
@@ -205,8 +171,7 @@ export default function AdminPagesPage() {
     return <div className="text-center py-20 text-slate-400">Nu sunt pagini</div>;
   }
 
-  const currentContent = activeTab === "ro" ? form.contentRo : form.contentRu;
-  const currentTitle = activeTab === "ro" ? form.titleRo : form.titleRu;
+
 
   return (
     <div className="space-y-6">
@@ -343,9 +308,33 @@ export default function AdminPagesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="bg-slate-50 dark:bg-slate-950 rounded-xl p-6 min-h-[500px] border border-slate-200 dark:border-slate-800"
+                className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white"
               >
-                {renderSitePreview(currentContent, currentTitle)}
+                {/* Browser chrome */}
+                <div className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-2.5 flex items-center gap-3">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-400" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                    <div className="w-3 h-3 rounded-full bg-green-400" />
+                  </div>
+                  <div className="flex-1 bg-white dark:bg-slate-700 rounded-md px-3 py-1 text-xs text-slate-500 dark:text-slate-400 font-mono truncate">
+                    {siteUrl}/{pageSlug}
+                  </div>
+                  <button
+                    onClick={() => setIframeKey((k) => k + 1)}
+                    className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition"
+                    title="Reîncarcă preview"
+                  >
+                    ↻
+                  </button>
+                </div>
+                <iframe
+                  key={iframeKey}
+                  src={previewSrc}
+                  className="w-full border-0"
+                  style={{ height: "70vh", minHeight: 500 }}
+                  title={`Preview /${pageSlug}`}
+                />
               </motion.div>
             ) : (
               <motion.div
