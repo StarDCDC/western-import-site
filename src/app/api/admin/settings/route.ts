@@ -15,6 +15,7 @@ const SETTINGS_KEY = 'admin_settings';
 export const PUBLIC_SETTING_KEYS = [
   'siteName', 'phone', 'email', 'address', 'schedule',
   'metaTitle', 'metaDescription', 'facebook', 'instagram', 'telegram', 'tiktok',
+  'whatsapp', 'viber',
 ] as const;
 
 async function loadSettings(): Promise<AdminSettings> {
@@ -58,6 +59,8 @@ export interface AdminSettings {
   instagram: string;
   telegram: string;
   tiktok: string;
+  whatsapp: string;
+  viber: string;
   smtpHost: string;
   smtpPort: string;
   smtpUser: string;
@@ -85,6 +88,8 @@ const DEFAULT_SETTINGS: AdminSettings = {
   instagram: 'https://instagram.com/westernimport',
   telegram: 'https://t.me/westernimport',
   tiktok: 'https://tiktok.com/@westernimport',
+  whatsapp: 'https://wa.me/37322123456',
+  viber: 'viber://chat?number=37322123456',
   smtpHost: 'smtp.gmail.com',
   smtpPort: '587',
   smtpUser: 'info@western.md',

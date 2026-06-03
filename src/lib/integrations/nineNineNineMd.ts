@@ -312,29 +312,46 @@ function findOption(options: FeatureOption[] | undefined, ...candidates: string[
 const titleMatches = (t: string, ...keys: string[]) => keys.some((k) => norm(t).includes(norm(k)));
 
 // ─── Spec matching helpers ─────────────────────────────────────────
-// Mapare între cheile de spec locale și cuvinte-cheie din titlurile 999.md
-const SPEC_KEYWORD_MAP: Record<string, string[]> = {
-  ram: ['ram', 'memorie', 'память', 'оперативн'],
-  storage: ['storage', 'stocare', 'память', 'накопит', 'hdd', 'ssd', 'диск'],
-  display: ['display', 'ecran', 'экран', 'диагонал', 'монитор'],
-  refreshRate: ['refresh', 'частот', 'герц', 'hz'],
-  gpuModel: ['placa video', 'gpu', 'видеокарт', 'графич'],
-  gpuSeries: ['serie video', 'gpu serie', 'графич'],
-  cpuModel: ['procesor', 'cpu', 'процессор'],
-  cpuSeries: ['serie procesor', 'cpu serie', 'процессор'],
-  resolution: ['rezolut', 'разрешен', 'resolution'],
-  os: ['sistem operare', 'os', 'операцион', 'os'],
-  storageType: ['tip stocare', 'storage type', 'тип накоп', 'ssd', 'hdd'],
-  gpuType: ['tip video', 'gpu type', 'тип видеокарт'],
-  weight: ['greutat', 'вес', 'weight', 'маса'],
-};
+// Mapare între cheile de spec locale și feature IDs / titluri 999.md
+// Pe 999.md specificatiile sunt DROP_DOWN cu optiuni predefinite.
+// Trebuie sa potrivim valoarea din spec cu optiunea corecta.
+
+// Mapare: specKey local → [{featureId 999.md, ...keywords pentru titlu}]
+const SPEC_FEATURE_MAP: Array<{
+  specKeys: string[];
+  featureKeywords: string[];
+  matchMode: 'exact_option' | 'contains' | 'prefix';
+}> = [
+  // RAM: "8 GB" → optiunea "8 GB"
+  { specKeys: ['ram'], featureKeywords: ['memorie ram', 'ram'], matchMode: 'exact_option' },
+  // Storage capacity: "256 GB" → optiunea "256 GB"
+  { specKeys: ['storage'], featureKeywords: ['capacitatea hard', 'capacit', 'stocare'], matchMode: 'exact_option' },
+  // CPU Series: "Intel Core i5" → "Intel Core i5"
+  { specKeys: ['cpuSeries', 'cpuModel'], featureKeywords: ['serie procesor', 'procesor'], matchMode: 'exact_option' },
+  // GPU Series: "GeForce RTX 30" → optiunea
+  { specKeys: ['gpuSeries'], featureKeywords: ['serie placa video', 'serie plac'], matchMode: 'exact_option' },
+  // GPU Type: "Dedicată" sau "Încorporată"
+  { specKeys: ['gpuType'], featureKeywords: ['tip placa video', 'tip plac'], matchMode: 'exact_option' },
+  // Display: "15.6"" → optiunea "15.6\""  
+  { specKeys: ['display'], featureKeywords: ['diagonala', 'ecran', 'diagonal'], matchMode: 'contains' },
+  // Resolution: "1920x1080" → optiunea "1920x1080 px"
+  { specKeys: ['resolution'], featureKeywords: ['rezolut', 'resolution'], matchMode: 'contains' },
+  // Refresh rate: "144" → optiunea "144 Hz"
+  { specKeys: ['refreshRate'], featureKeywords: ['frecventa', 'refresh'], matchMode: 'contains' },
+  // OS: "Windows" → optiunea "Windows"
+  { specKeys: ['os'], featureKeywords: ['sistem de operare', 'sistem oper'], matchMode: 'exact_option' },
+  // Storage type: "SSD" → optiunea "SSD"
+  { specKeys: ['storageType'], featureKeywords: ['tip de stocare', 'tip stocare'], matchMode: 'exact_option' },
+];
 
 function tryMatchSpec(featureTitle: string, specs?: Record<string, string | null>): string | null {
   if (!specs) return null;
-  for (const [specKey, keywords] of Object.entries(SPEC_KEYWORD_MAP)) {
-    if (keywords.some((k) => norm(featureTitle).includes(norm(k)))) {
-      const val = specs[specKey];
-      if (val) return val;
+  for (const mapping of SPEC_FEATURE_MAP) {
+    if (mapping.featureKeywords.some((k) => norm(featureTitle).includes(norm(k)))) {
+      for (const key of mapping.specKeys) {
+        const val = specs[key];
+        if (val) return val;
+      }
     }
   }
   return null;
@@ -343,22 +360,48 @@ function tryMatchSpec(featureTitle: string, specs?: Record<string, string | null
 function tryMatchSpecNumeric(featureTitle: string, specs?: Record<string, string | null>): string | undefined {
   const textVal = tryMatchSpec(featureTitle, specs);
   if (!textVal) return undefined;
-  // Extragem numărul din valoare (ex: "16 GB" → "16", "8" → "8")
   const num = textVal.match(/\d+(?:\.\d+)?/);
   return num ? num[0] : undefined;
 }
 
+/** Cauta valoarea spec-ului in optiunile dropdown-ului 999.md */
 function tryMatchSpecDropdown(
   featureTitle: string,
   options: FeatureOption[] | undefined,
   specs?: Record<string, string | null>,
   product?: Local999Product
 ): string | undefined {
-  if (!specs && !product) return undefined;
-  const specVal = tryMatchSpec(featureTitle, specs);
-  if (specVal && options?.length) {
-    // Căutăm opțiunea care conține valoarea din spec
-    return findOption(options, specVal);
+  if (!specs || !options?.length) return undefined;
+
+  for (const mapping of SPEC_FEATURE_MAP) {
+    if (!mapping.featureKeywords.some((k) => norm(featureTitle).includes(norm(k)))) continue;
+
+    for (const specKey of mapping.specKeys) {
+      const specVal = specs[specKey];
+      if (!specVal) continue;
+
+      // 1) Potrivire exacta a optiunii ("8 GB" == "8 GB")
+      const exact = findOption(options, specVal);
+      if (exact) return exact;
+
+      // 2) Potrivire partiala — valoarea spec contine sau e continuta
+      const normSpec = norm(specVal);
+      for (const opt of options) {
+        const normOpt = norm(opt.title);
+        if (normOpt.includes(normSpec) || normSpec.includes(normOpt)) {
+          return String(opt.id);
+        }
+      }
+
+      // 3) Potrivire pe numere ("15.6" in "15.6\"")
+      const specNum = specVal.match(/[\d.]+/)?.[0];
+      if (specNum) {
+        for (const opt of options) {
+          const optNum = opt.title.match(/[\d.]+/)?.[0];
+          if (optNum === specNum) return String(opt.id);
+        }
+      }
+    }
   }
   return undefined;
 }

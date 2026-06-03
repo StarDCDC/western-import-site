@@ -9,12 +9,73 @@ import Footer from '@/components/layout/Footer';
 import { formatPrice, getDiscount } from '@/lib/api';
 import { useCartStore, useWishlistStore } from '@/lib/store';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Heart, BarChart3, Star, CreditCard, Truck, Shield, Share2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Product } from '@/lib/data';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 import InstallmentCalculator from '@/components/product/InstallmentCalculator';
 import { trackProductView } from '@/components/home/RecentlyViewed';
+
+// ─── Share Buttons Component ────────────────────────────────────
+function ShareButtons({ productName }: { productName: string }) {
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [showShare, setShowShare] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/admin/settings').then(r => r.json()).then(d => {
+      if (d?.data) setSettings(d.data);
+    }).catch(() => {});
+  }, []);
+
+  if (typeof window === 'undefined') return null;
+
+  const productUrl = encodeURIComponent(window.location.href);
+  const shareText = encodeURIComponent(productName + ' — Western Import');
+
+  const shareLinks = [
+    { key: 'facebook', label: 'Facebook', url: `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`, color: '#1877F2', icon: 'f' },
+    { key: 'instagram', label: 'Instagram', url: settings.instagram || '#', color: '#E4405F', icon: '📷' },
+    { key: 'whatsapp', label: 'WhatsApp', url: `https://wa.me/?text=${shareText}%20${productUrl}`, color: '#25D366', icon: '💬' },
+    { key: 'viber', label: 'Viber', url: `viber://forward?text=${shareText}%20${productUrl}`, color: '#7360F2', icon: '📞' },
+    { key: 'telegram', label: 'Telegram', url: `https://t.me/share/url?url=${productUrl}&text=${shareText}`, color: '#26A5E4', icon: '✈️' },
+    { key: 'tiktok', label: 'TikTok', url: settings.tiktok || '#', color: '#000000', icon: '🎵' },
+  ];
+
+  return (
+    <div className="mb-6">
+      <button
+        onClick={() => setShowShare(!showShare)}
+        className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors mb-3"
+      >
+        <Share2 className="w-4 h-4" />
+        {showShare ? 'Închide' : 'Distribuie'}
+      </button>
+      {showShare && (
+        <div className="flex flex-wrap gap-2">
+          {shareLinks.map(s => (
+            <a
+              key={s.key}
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-medium hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: s.color }}
+            >
+              <span>{s.icon}</span> {s.label}
+            </a>
+          ))}
+          {/* Copy link */}
+          <button
+            onClick={() => { navigator.clipboard.writeText(window.location.href); }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+          >
+            📋 Copiază link
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProductClient({ product, similar }: { product: Product; similar: Product[] }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -271,6 +332,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   <BarChart3 className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Share Buttons */}
+              <ShareButtons productName={product.name} />
 
               {/* Benefits */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3">

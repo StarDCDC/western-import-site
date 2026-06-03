@@ -14,6 +14,8 @@ interface Settings {
   facebook: string;
   instagram: string;
   tiktok: string;
+  whatsapp: string;
+  viber: string;
   telegram: string;
   smtpHost: string;
   smtpPort: string;
@@ -49,6 +51,8 @@ const defaultSettings: Settings = {
   facebook: "https://facebook.com/westernimport",
   instagram: "https://instagram.com/westernimport",
   tiktok: "https://tiktok.com/@westernimport",
+  whatsapp: "https://wa.me/37322123456",
+  viber: "viber://chat?number=37322123456",
   telegram: "https://t.me/westernimport",
   smtpHost: "smtp.gmail.com",
   smtpPort: "587",
@@ -197,6 +201,8 @@ export default function AdminSettingsPage() {
           <div><label className={labelCls}>Instagram</label><input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} className={inputCls} /></div>
           <div><label className={labelCls}>TikTok</label><input value={form.tiktok || ''} onChange={(e) => set("tiktok", e.target.value)} className={inputCls} placeholder="https://tiktok.com/@..." /></div>
           <div><label className={labelCls}>Telegram</label><input value={form.telegram} onChange={(e) => set("telegram", e.target.value)} className={inputCls} /></div>
+          <div><label className={labelCls}>WhatsApp</label><input value={form.whatsapp || ''} onChange={(e) => set("whatsapp", e.target.value)} className={inputCls} placeholder="https://wa.me/373..." /></div>
+          <div><label className={labelCls}>Viber</label><input value={form.viber || ''} onChange={(e) => set("viber", e.target.value)} className={inputCls} placeholder="viber://chat?number=373..." /></div>
         </div>
       </div>
 
