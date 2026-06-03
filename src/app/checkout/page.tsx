@@ -22,6 +22,13 @@ interface FormData {
   notes: string;
   couponCode: string;
   terms: boolean;
+  // Credit365 fields
+  c365_idnp: string;
+  c365_lastName: string;
+  c365_firstName: string;
+  c365_birthDate: string;
+  c365_gender: '1' | '2';
+  c365_duration: string;
 }
 
 interface FormErrors {
@@ -58,9 +65,26 @@ export default function CheckoutPage() {
     notes: '',
     couponCode: '',
     terms: false,
+    c365_idnp: '',
+    c365_lastName: '',
+    c365_firstName: '',
+    c365_birthDate: '',
+    c365_gender: '1',
+    c365_duration: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Credit365 flow state
+  const [c365Step, setC365Step] = useState<'idle' | 'idnp' | 'terms' | 'details' | 'sms' | 'done'>('idle');
+  const [c365Terms, setC365Terms] = useState<Array<{ months: number; amounts: number[] }>>([]);
+  const [c365ProductId, setC365ProductId] = useState<number | null>(null);
+  const [c365UserId, setC365UserId] = useState<number | null>(null);
+  const [c365ApplicationId, setC365ApplicationId] = useState<number | null>(null);
+  const [c365SmsCode, setC365SmsCode] = useState('');
+  const [c365Passport, setC365Passport] = useState<string | null>(null);
+  const [c365Loading, setC365Loading] = useState(false);
+  const [c365Error, setC365Error] = useState('');
 
   const subtotal = getTotal();
 
@@ -286,6 +310,11 @@ export default function CheckoutPage() {
 
   function updateField(field: keyof FormData, value: string | boolean | number) {
     setForm((f) => ({ ...f, [field]: value }));
+    // Reset Credit365 flow when switching payment method
+    if (field === 'paymentMethod' && value !== 'CREDIT_365') {
+      setC365Step('idle');
+      setC365Error('');
+    }
     // Clear error on change
     if (errors[field]) {
       setErrors((e) => {
@@ -512,7 +541,7 @@ export default function CheckoutPage() {
                     {[
                       { id: 'CASH' as const, label: 'Cash la livrare', desc: 'Plătești la primirea comenzii', icon: '💵' },
                       { id: 'CREDIT' as const, label: 'Credit IuteCredit', desc: 'Rate fără dobândă până la 12 luni', icon: '🏦' },
-                      { id: 'CREDIT_365' as const, label: 'Credit Credit365', desc: 'Credit rapid online, 5 000 – 200 000 MDL', icon: '💳' },
+                      { id: 'CREDIT_365' as const, label: 'Credit Credit365', desc: 'Credit rapid online, aprobare în minute', icon: '💳' },
                     ].map((m) => (
                       <button
                         key={m.id}
@@ -573,7 +602,7 @@ export default function CheckoutPage() {
                     </div>
                   )}
 
-                  {/* Credit365 info */}
+                  {/* Credit365 Interactive Flow */}
                   {form.paymentMethod === 'CREDIT_365' && (
                     <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
                       <div className="flex items-center gap-2 mb-3">
@@ -582,33 +611,201 @@ export default function CheckoutPage() {
                           Credit365 — Credit rapid online
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 mb-3">
-                        <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
-                          <p className="text-[10px] text-blue-600/60">Suma</p>
-                          <p className="text-sm font-bold text-slate-800 dark:text-white">{formatPrice(total)}</p>
+
+                      {c365Error && (
+                        <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg text-sm text-red-600 dark:text-red-400">
+                          ⚠️ {c365Error}
                         </div>
-                        <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
-                          <p className="text-[10px] text-blue-600/60">Perioada</p>
-                          <p className="text-sm font-bold text-slate-800 dark:text-white">3-24 luni</p>
+                      )}
+
+                      {/* Step: IDNP */}
+                      {c365Step === 'idle' || c365Step === 'idnp' ? (
+                        <div className="space-y-3">
+                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 1: Introdu codul IDNP (13 cifre)</p>
+                          <input
+                            type="text"
+                            value={form.c365_idnp}
+                            onChange={(e) => updateField('c365_idnp', e.target.value.replace(/\D/g, '').slice(0, 13))}
+                            placeholder="ex: 2002001079359"
+                            maxLength={13}
+                            className="w-full px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (form.c365_idnp.length < 13) { setC365Error('IDNP trebuie să aibă 13 cifre'); return; }
+                              setC365Loading(true); setC365Error('');
+                              try {
+                                const res = await fetch('/api/credit365/check-idnp', {
+                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ idnp: form.c365_idnp }),
+                                });
+                                const data = await res.json();
+                                if (!data.success) throw new Error(data.error || 'Eroare');
+                                setC365Terms(data.data.terms);
+                                setC365ProductId(data.data.productId);
+                                setC365UserId(data.data.userId);
+                                setC365Step('terms');
+                              } catch (err) {
+                                setC365Error(err instanceof Error ? err.message : 'Eroare verificare IDNP');
+                              } finally { setC365Loading(false); }
+                            }}
+                            disabled={c365Loading}
+                            className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
+                          >
+                            {c365Loading ? 'Se verifică...' : 'Verifică IDNP →'}
+                          </button>
                         </div>
-                      </div>
-                      <div className="space-y-1.5 text-xs text-blue-600 dark:text-blue-400 mb-3">
-                        <p>✅ Credit doar cu buletinul</p>
-                        <p>✅ Aprobare în 2-10 minute</p>
-                        <p>✅ 5 000 – 200 000 MDL</p>
-                        <p>✅ Fără gaj</p>
-                      </div>
-                      <a
-                        href="https://credit365.md/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition"
-                      >
-                        Aplică pe credit365.md →
-                      </a>
-                      <p className="text-[10px] text-blue-500/70 text-center mt-2">
-                        Comanda va fi procesată după aprobarea creditului.
-                      </p>
+                      ) : null}
+
+                      {/* Step: Select term */}
+                      {c365Step === 'terms' && (
+                        <div className="space-y-3">
+                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 2: Alege perioada și suma</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {c365Terms.map((t) => (
+                              <button
+                                key={t.months}
+                                type="button"
+                                onClick={() => {
+                                  updateField('c365_duration', String(t.months));
+                                  setC365Step('details');
+                                }}
+                                className={`p-3 rounded-lg border-2 text-center transition ${
+                                  form.c365_duration === String(t.months)
+                                    ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/30'
+                                    : 'border-blue-200 dark:border-blue-700 bg-white dark:bg-slate-700 hover:border-blue-300'
+                                }`}
+                              >
+                                <p className="text-lg font-bold text-slate-800 dark:text-white">{t.months} luni</p>
+                                <p className="text-[10px] text-blue-600/70">{formatPrice(Math.ceil(total / t.months))}/lună</p>
+                              </button>
+                            ))}
+                          </div>
+                          <button type="button" onClick={() => setC365Step('idnp')} className="text-xs text-blue-500 hover:underline">← Înapoi</button>
+                        </div>
+                      )}
+
+                      {/* Step: Personal details */}
+                      {c365Step === 'details' && (
+                        <div className="space-y-3">
+                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 3: Date personale</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            <input value={form.c365_firstName} onChange={(e) => updateField('c365_firstName', e.target.value)} placeholder="Prenume" className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                            <input value={form.c365_lastName} onChange={(e) => updateField('c365_lastName', e.target.value)} placeholder="Nume" className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                            <input type="date" value={form.c365_birthDate} onChange={(e) => updateField('c365_birthDate', e.target.value)} className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                            <select value={form.c365_gender} onChange={(e) => updateField('c365_gender', e.target.value)} className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm">
+                              <option value="1">Masculin</option>
+                              <option value="2">Feminin</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-blue-600/70">Foto buletin (opțional)</label>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                  const base64 = (reader.result as string).split(',')[1];
+                                  setC365Passport(base64);
+                                };
+                                reader.readAsDataURL(file);
+                              }}
+                              className="w-full text-xs"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (!form.c365_firstName || !form.c365_lastName || !form.c365_birthDate) {
+                                setC365Error('Completează toate câmpurile'); return;
+                              }
+                              setC365Loading(true); setC365Error('');
+                              try {
+                                const phoneNum = parseInt(form.phone.replace(/\D/g, ''));
+                                const res = await fetch('/api/credit365/submit', {
+                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    idnp: form.c365_idnp,
+                                    lastName: form.c365_lastName,
+                                    firstName: form.c365_firstName,
+                                    phone: phoneNum,
+                                    email: form.email || null,
+                                    productId: c365ProductId,
+                                    amount: total,
+                                    duration: parseInt(form.c365_duration),
+                                    birthDate: form.c365_birthDate,
+                                    gender: parseInt(form.c365_gender),
+                                    commodityName: items.map(i => i.product.name).join(', ').slice(0, 100),
+                                    passportBase64: c365Passport,
+                                  }),
+                                });
+                                const data = await res.json();
+                                if (!data.success) throw new Error(data.error || 'Eroare');
+                                setC365ApplicationId(data.data.applicationId);
+                                setC365Step('sms');
+                              } catch (err) {
+                                setC365Error(err instanceof Error ? err.message : 'Eroare trimitere cerere');
+                              } finally { setC365Loading(false); }
+                            }}
+                            disabled={c365Loading}
+                            className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
+                          >
+                            {c365Loading ? 'Se trimite...' : 'Trimite cererea →'}
+                          </button>
+                          <button type="button" onClick={() => setC365Step('terms')} className="text-xs text-blue-500 hover:underline">← Înapoi</button>
+                        </div>
+                      )}
+
+                      {/* Step: SMS confirmation */}
+                      {c365Step === 'sms' && (
+                        <div className="space-y-3">
+                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 4: Confirmă cu codul SMS</p>
+                          <p className="text-xs text-slate-500">Un cod de confirmare a fost trimis pe telefonul tău.</p>
+                          <input
+                            type="text"
+                            value={c365SmsCode}
+                            onChange={(e) => setC365SmsCode(e.target.value)}
+                            placeholder="Cod SMS"
+                            maxLength={6}
+                            className="w-full px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm text-center text-lg tracking-widest"
+                          />
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (!c365SmsCode || !c365ApplicationId) return;
+                              setC365Loading(true); setC365Error('');
+                              try {
+                                const res = await fetch('/api/credit365/confirm', {
+                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ applicationId: c365ApplicationId, smsCode: c365SmsCode }),
+                                });
+                                const data = await res.json();
+                                if (!data.success) throw new Error(data.error || 'Cod invalid');
+                                setC365Step('done');
+                              } catch (err) {
+                                setC365Error(err instanceof Error ? err.message : 'Eroare confirmare');
+                              } finally { setC365Loading(false); }
+                            }}
+                            disabled={c365Loading}
+                            className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
+                          >
+                            {c365Loading ? 'Se confirmă...' : 'Confirmă ✅'}
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Done */}
+                      {c365Step === 'done' && (
+                        <div className="text-center space-y-2">
+                          <div className="text-3xl">✅</div>
+                          <p className="text-sm font-bold text-green-600">Cerere de credit aprobată!</p>
+                          <p className="text-xs text-slate-500">Poți plasa comanda acum.</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -702,20 +899,12 @@ export default function CheckoutPage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-[10px] uppercase tracking-wide text-blue-600/70 font-semibold">Credit365</p>
-                            <p className="text-sm font-bold text-blue-600">Credit rapid online</p>
+                            <p className="text-sm font-bold text-blue-600">{c365Step === 'done' ? '✅ Aprobat' : 'În așteptare'}</p>
                           </div>
-                          <a
-                            href="https://credit365.md/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition"
-                          >
-                            Aplică acum →
-                          </a>
+                          {c365Step !== 'done' && (
+                            <span className="text-xs text-blue-500">Completează formularul</span>
+                          )}
                         </div>
-                        <p className="text-[11px] text-blue-500 mt-2">
-                          Comanda va fi procesată după aprobarea creditului. 5 000 – 200 000 MDL, 3-24 luni.
-                        </p>
                       </div>
                     )}
                   </div>
