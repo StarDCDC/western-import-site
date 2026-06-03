@@ -7,6 +7,7 @@ import { useCartStore } from '@/lib/store';
 import { formatPrice } from '@/lib/api';
 import Link from 'next/link';
 import { CreditCard, Truck, MapPin, ShoppingBag, CheckCircle, Tag, AlertCircle, Loader2, Store, Package } from 'lucide-react';
+import { checkIdnp as c365CheckIdnp, submitLoanRequest as c365Submit, confirmRequest as c365Confirm, isCredit365Configured as c365IsConfigured } from '@/lib/credit365-client';
 
 interface FormData {
   customerName: string;
@@ -636,15 +637,10 @@ export default function CheckoutPage() {
                               if (form.c365_idnp.length < 13) { setC365Error('IDNP trebuie să aibă 13 cifre'); return; }
                               setC365Loading(true); setC365Error('');
                               try {
-                                const res = await fetch('/api/credit365/check-idnp', {
-                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ idnp: form.c365_idnp }),
-                                });
-                                const data = await res.json();
-                                if (!data.success) throw new Error(data.error || 'Eroare');
-                                setC365Terms(data.data.terms);
-                                setC365ProductId(data.data.productId);
-                                setC365UserId(data.data.userId);
+                                const data = await c365CheckIdnp(form.c365_idnp);
+                                setC365Terms(data.terms);
+                                setC365ProductId(data.productId);
+                                setC365UserId(data.userId);
                                 setC365Step('terms');
                               } catch (err) {
                                 setC365Error(err instanceof Error ? err.message : 'Eroare verificare IDNP');
@@ -726,26 +722,21 @@ export default function CheckoutPage() {
                               setC365Loading(true); setC365Error('');
                               try {
                                 const phoneNum = parseInt(form.phone.replace(/\D/g, ''));
-                                const res = await fetch('/api/credit365/submit', {
-                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                    idnp: form.c365_idnp,
-                                    lastName: form.c365_lastName,
-                                    firstName: form.c365_firstName,
-                                    phone: phoneNum,
-                                    email: form.email || null,
-                                    productId: c365ProductId,
-                                    amount: total,
-                                    duration: parseInt(form.c365_duration),
-                                    birthDate: form.c365_birthDate,
-                                    gender: parseInt(form.c365_gender),
-                                    commodityName: items.map(i => i.product.name).join(', ').slice(0, 100),
-                                    passportBase64: c365Passport,
-                                  }),
+                                const applicationId = await c365Submit({
+                                  idnp: form.c365_idnp,
+                                  lastName: form.c365_lastName,
+                                  firstName: form.c365_firstName,
+                                  phone: phoneNum,
+                                  email: form.email || null,
+                                  productId: c365ProductId!,
+                                  amount: total,
+                                  duration: parseInt(form.c365_duration),
+                                  birthDate: form.c365_birthDate,
+                                  gender: parseInt(form.c365_gender),
+                                  commodityName: items.map(i => i.product.name).join(', ').slice(0, 100),
+                                  passportBase64: c365Passport,
                                 });
-                                const data = await res.json();
-                                if (!data.success) throw new Error(data.error || 'Eroare');
-                                setC365ApplicationId(data.data.applicationId);
+                                setC365ApplicationId(applicationId);
                                 setC365Step('sms');
                               } catch (err) {
                                 setC365Error(err instanceof Error ? err.message : 'Eroare trimitere cerere');
@@ -779,12 +770,7 @@ export default function CheckoutPage() {
                               if (!c365SmsCode || !c365ApplicationId) return;
                               setC365Loading(true); setC365Error('');
                               try {
-                                const res = await fetch('/api/credit365/confirm', {
-                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ applicationId: c365ApplicationId, smsCode: c365SmsCode }),
-                                });
-                                const data = await res.json();
-                                if (!data.success) throw new Error(data.error || 'Cod invalid');
+                                await c365Confirm(c365ApplicationId!, c365SmsCode);
                                 setC365Step('done');
                               } catch (err) {
                                 setC365Error(err instanceof Error ? err.message : 'Eroare confirmare');

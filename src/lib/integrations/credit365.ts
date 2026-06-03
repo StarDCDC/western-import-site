@@ -17,6 +17,15 @@ const DEFAULT_CONFIG: Credit365Config = {
 
 let config: Credit365Config = { ...DEFAULT_CONFIG };
 
+// Browser-like headers to bypass Cloudflare
+const BROWSER_HEADERS: Record<string, string> = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+  'Accept': 'application/json, text/plain, */*',
+  'Accept-Language': 'ro-RO,ro;q=0.9,en-US;q=0.8,en;q=0.7',
+  'Origin': 'https://credit365.md',
+  'Referer': 'https://credit365.md/',
+};
+
 export function configureCredit365(userConfig: Partial<Credit365Config>): void {
   config = { ...DEFAULT_CONFIG, ...userConfig };
 }
@@ -37,7 +46,7 @@ interface AuthResponse {
 export async function authenticate(): Promise<string> {
   const res = await fetch(`${config.baseUrl}api/third-party/auth`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...BROWSER_HEADERS, 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: config.username, password: config.password }),
   });
 
@@ -94,7 +103,7 @@ export async function getPricelist(
 
   const res = await fetch(url.toString(), {
     method: 'GET',
-    headers: { 'Authorization': `Bearer ${token}` },
+    headers: { ...BROWSER_HEADERS, 'Authorization': `Bearer ${token}` },
   });
 
   if (!res.ok) throw new Error(`Credit365 pricelist failed: ${res.status}`);
@@ -223,7 +232,7 @@ export async function getRequestStatus(
     `${config.baseUrl}api/wallet/partner/wallet-loan-requests/${requestId}`,
     {
       method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` },
+      headers: { ...BROWSER_HEADERS, 'Authorization': `Bearer ${token}` },
     }
   );
 
@@ -240,7 +249,7 @@ export async function getLoanSchedule(
     `${config.baseUrl}api/wallet/partner/wallet-loan-requests/${requestId}/loan-schedule`,
     {
       method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` },
+      headers: { ...BROWSER_HEADERS, 'Authorization': `Bearer ${token}` },
     }
   );
 
