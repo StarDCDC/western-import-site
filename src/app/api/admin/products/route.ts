@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { translateToRu } from '@/lib/translate';
 import { requireAdmin } from '@/lib/auth';
-import { pushProductTo999, updateProductOn999, findAdvertByTitle, type Local999Product } from '@/lib/integrations/nineNineNineMd';
+import { pushProductTo999, updateProductOn999, findAdvertByTitle, hideAdvertOn999, type Local999Product } from '@/lib/integrations/nineNineNineMd';
 import { revalidate } from '@/lib/revalidate';
 
 const productSchema = z.object({
@@ -87,8 +87,20 @@ export async function DELETE(request: NextRequest) {
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ success: false, error: 'ID lipsă' }, { status: 400 });
 
+    // Obținem produsul înainte de ștergere (pentru numele folosit la căutare pe 999.md)
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { category: true, brand: true },
+    });
+
     await prisma.product.delete({ where: { id } });
     revalidate('products', 'categories');
+
+    // Ascundem advertul pe 999.md (API nu are DELETE, doar access_policy: private)
+    if (product) {
+      deleteFrom999(product).catch(e => console.error('[999.md] Auto-hide failed:', e?.message));
+    }
+
     return NextResponse.json({ success: true, message: 'Produs șters' });
   } catch (error) {
     console.error('Admin products DELETE error:', error);
@@ -212,6 +224,22 @@ async function syncProductTo999(product: any) {
     images = Array.isArray(product.images) ? product.images : JSON.parse(product.images || '[]');
   } catch { images = []; }
 
+  // Construim maparea de spec-uri
+  const specFields = ['display', 'storage', 'weight', 'refreshRate', 'ram', 'gpuModel', 'cpuModel', 'resolution', 'gpuSeries', 'cpuSeries', 'os', 'storageType', 'gpuType'] as const;
+  const specs: Record<string, string | null> = {};
+  if (product.spec) {
+    for (const f of specFields) {
+      if ((product.spec as any)[f]) specs[f] = (product.spec as any)[f];
+    }
+  }
+  // Dacă avem JSON specs generic
+  if (!Object.keys(specs).length && product.specs) {
+    try {
+      const parsed = typeof product.specs === 'string' ? JSON.parse(product.specs) : product.specs;
+      Object.assign(specs, parsed);
+    } catch { /* ignore */ }
+  }
+
   const mapped: Local999Product = {
     name: product.name,
     price: product.price,
@@ -223,6 +251,7 @@ async function syncProductTo999(product: any) {
     condition: product.condition,           // NEW | REFURBISHED | USED
     categorySlug: product.category?.slug ?? null,
     categoryName: product.category?.name ?? null,
+    specs: Object.keys(specs).length > 0 ? specs : undefined,
   };
 
   // Sync idempotent: dacă există deja un advert cu același titlu → update, altfel create
@@ -234,5 +263,14 @@ async function syncProductTo999(product: any) {
   } else {
     const { id, warnings } = await pushProductTo999(mapped);
     console.log(`[999.md] Advert #${id} creat pentru "${product.name}"`, warnings.length ? warnings : '');
+  }
+}
+
+// ─── 999.md Hide on Delete Helper ──────────────────────────────────
+async function deleteFrom999(product: any) {
+  const existingId = await findAdvertByTitle(product.name).catch(() => null);
+  if (existingId) {
+    await hideAdvertOn999(existingId);
+    console.log(`[999.md] Advert #${existingId} ascuns (private) pentru "${product.name}"`);
   }
 }

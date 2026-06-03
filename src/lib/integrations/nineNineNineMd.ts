@@ -253,6 +253,7 @@ export interface Local999Product {
   categorySlug?: string | null;
   categoryName?: string | null;
   region?: string;            // implicit Chișinău
+  specs?: Record<string, string | null>; // RAM, Storage, Display, CPU, GPU etc.
 }
 
 // Mapare categorie locală → taxonomie 999.md (category_id, subcategory_id).
@@ -309,6 +310,58 @@ function findOption(options: FeatureOption[] | undefined, ...candidates: string[
 }
 
 const titleMatches = (t: string, ...keys: string[]) => keys.some((k) => norm(t).includes(norm(k)));
+
+// ─── Spec matching helpers ─────────────────────────────────────────
+// Mapare între cheile de spec locale și cuvinte-cheie din titlurile 999.md
+const SPEC_KEYWORD_MAP: Record<string, string[]> = {
+  ram: ['ram', 'memorie', 'память', 'оперативн'],
+  storage: ['storage', 'stocare', 'память', 'накопит', 'hdd', 'ssd', 'диск'],
+  display: ['display', 'ecran', 'экран', 'диагонал', 'монитор'],
+  refreshRate: ['refresh', 'частот', 'герц', 'hz'],
+  gpuModel: ['placa video', 'gpu', 'видеокарт', 'графич'],
+  gpuSeries: ['serie video', 'gpu serie', 'графич'],
+  cpuModel: ['procesor', 'cpu', 'процессор'],
+  cpuSeries: ['serie procesor', 'cpu serie', 'процессор'],
+  resolution: ['rezolut', 'разрешен', 'resolution'],
+  os: ['sistem operare', 'os', 'операцион', 'os'],
+  storageType: ['tip stocare', 'storage type', 'тип накоп', 'ssd', 'hdd'],
+  gpuType: ['tip video', 'gpu type', 'тип видеокарт'],
+  weight: ['greutat', 'вес', 'weight', 'маса'],
+};
+
+function tryMatchSpec(featureTitle: string, specs?: Record<string, string | null>): string | null {
+  if (!specs) return null;
+  for (const [specKey, keywords] of Object.entries(SPEC_KEYWORD_MAP)) {
+    if (keywords.some((k) => norm(featureTitle).includes(norm(k)))) {
+      const val = specs[specKey];
+      if (val) return val;
+    }
+  }
+  return null;
+}
+
+function tryMatchSpecNumeric(featureTitle: string, specs?: Record<string, string | null>): string | undefined {
+  const textVal = tryMatchSpec(featureTitle, specs);
+  if (!textVal) return undefined;
+  // Extragem numărul din valoare (ex: "16 GB" → "16", "8" → "8")
+  const num = textVal.match(/\d+(?:\.\d+)?/);
+  return num ? num[0] : undefined;
+}
+
+function tryMatchSpecDropdown(
+  featureTitle: string,
+  options: FeatureOption[] | undefined,
+  specs?: Record<string, string | null>,
+  product?: Local999Product
+): string | undefined {
+  if (!specs && !product) return undefined;
+  const specVal = tryMatchSpec(featureTitle, specs);
+  if (specVal && options?.length) {
+    // Căutăm opțiunea care conține valoarea din spec
+    return findOption(options, specVal);
+  }
+  return undefined;
+}
 
 export interface BuiltAdvert {
   input: AdvertInput;
@@ -372,13 +425,29 @@ export async function buildAdvertFromProduct(
 
     if (type === 'textbox_text' || type === 'textarea' || type === 'textbox') {
       if (!titleAssigned && (titleMatches(f.title, 'head', 'titlu', 'заголов', 'denumire', 'nume') || f.required)) {
+        // Trimitem titlul bilingv dacă avem ambele limbi
+        const nameRu = product.name; // TODO: traducere dacă e necesar
         features.push({ id, value: product.name.slice(0, 100) });
         titleAssigned = true;
-      } else if (titleMatches(f.title, 'descri', 'описан')) {
-        const desc = (lang === 'ru' ? product.descriptionRu : product.descriptionRo) || product.descriptionRo || product.name;
-        if (desc) features.push({ id, value: String(desc).slice(0, 9000) });
+      } else if (titleMatches(f.title, 'descri', 'описан', 'body', 'text', 'continut', 'содержан', 'подробн')) {
+        // Descriere bilingvă: RO + RU
+        const descRo = product.descriptionRo || '';
+        const descRu = product.descriptionRu || '';
+        const desc = descRo || descRu || product.name;
+        if (descRo && descRu) {
+          // Trimitem bilingv conform documentației 999.md
+          features.push({ id, value: { ro: descRo.slice(0, 9000), ru: descRu.slice(0, 9000) } as any });
+        } else if (desc) {
+          features.push({ id, value: String(desc).slice(0, 9000) });
+        }
       } else if (f.required) {
-        warnings.push(`Câmp text obligatoriu necompletat: "${f.title}"`);
+        // Încercăm să potrivim spec-uri din produs
+        const specVal = tryMatchSpec(f.title, product.specs);
+        if (specVal) {
+          features.push({ id, value: specVal });
+        } else {
+          warnings.push(`Câmp text obligatoriu necompletat: "${f.title}"`);
+        }
       }
       continue;
     }
@@ -393,6 +462,9 @@ export async function buildAdvertFromProduct(
         if (!optId) optId = findOption(f.options, 'Altele', 'Другое', 'Other');
       } else if (titleMatches(f.title, 'stare', 'состоян', 'condit')) {
         optId = findOption(f.options, conditionText, product.condition === 'NEW' ? 'Nou' : 'Uzat', 'Folosit');
+      } else {
+        // Încercăm să potrivim spec-uri (RAM, storage, display etc.)
+        optId = tryMatchSpecDropdown(f.title, f.options, product.specs, product);
       }
 
       if (!optId && f.required) {
@@ -401,6 +473,17 @@ export async function buildAdvertFromProduct(
         if (optId) warnings.push(`Valoare implicită pentru "${f.title}" → "${f.options?.[0]?.title}"`);
       }
       if (optId) features.push({ id, value: optId });
+      continue;
+    }
+
+    // Numeric simplu (fără unități de măsură) — potrivire cu spec-uri
+    if (type === 'textbox_numeric') {
+      const specVal = tryMatchSpecNumeric(f.title, product.specs);
+      if (specVal !== undefined) {
+        features.push({ id, value: String(specVal) });
+      } else if (f.required) {
+        warnings.push(`Câmp numeric obligatoriu necompletat: "${f.title}"`);
+      }
       continue;
     }
 
@@ -449,4 +532,9 @@ export async function findAdvertByTitle(title: string): Promise<string | null> {
   const want = norm(title);
   const match = adverts.find((a) => norm(String(a.title ?? '')) === want);
   return match ? String(match.id) : null;
+}
+
+/** Ascunde un advert pe 999.md (setează access_policy = private). */
+export async function hideAdvertOn999(id: string | number): Promise<void> {
+  await setAccessPolicy(id, 'private');
 }
