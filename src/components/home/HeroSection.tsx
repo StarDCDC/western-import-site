@@ -49,7 +49,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ initialBanners }: HeroSectionProps) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const [banners, setBanners] = useState<Banner[]>(initialBanners ?? []);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -170,17 +170,17 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
                   {banner.badge || '🔥 Ofertă'}
                 </span>
                 <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight max-w-xl drop-shadow-lg">
-                  {banner.title}
+                  {(locale === 'ru' && banner.titleRu) ? banner.titleRu : banner.title}
                 </h1>
                 <p className="text-base md:text-lg opacity-90 mb-8 max-w-md drop-shadow-md">
-                  {banner.subtitle}
+                  {(locale === 'ru' && banner.subtitleRu) ? banner.subtitleRu : banner.subtitle}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => router.push(banner.link || '/catalog')}
                     className="px-7 py-3.5 bg-white text-primary rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-sm w-fit"
                   >
-                    {banner.buttonText || 'Vezi detalii'}
+                    {(locale === 'ru' && banner.buttonTextRu) ? banner.buttonTextRu : (banner.buttonText || 'Vezi detalii')}
                   </button>
                   <button
                     onClick={() => router.push('/catalog')}

@@ -29,17 +29,20 @@ export async function POST(request: NextRequest) {
     if (error === 'forbidden') return errorResponse('Acces interzis', 403);
 
     const body = await request.json();
-    const { title, subtitle, image, link, buttonText, position, order, isActive, startDate, endDate } = body;
+    const { title, titleRu, subtitle, subtitleRu, image, link, buttonText, buttonTextRu, position, order, isActive, startDate, endDate } = body;
 
     if (!title || !image) return errorResponse('Titlu și imagine sunt obligatorii');
 
     const banner = await prisma.banner.create({
       data: {
         title,
+        titleRu: titleRu || null,
         subtitle: subtitle || null,
+        subtitleRu: subtitleRu || null,
         image,
         link: link || null,
         buttonText: buttonText || null,
+        buttonTextRu: buttonTextRu || null,
         position: position || 'HERO',
         order: order || 0,
         isActive: isActive !== false,

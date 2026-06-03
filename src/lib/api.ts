@@ -330,10 +330,13 @@ export async function getCategories(): Promise<ApiCategory[]> {
 export interface Banner {
   id: string;
   title: string;
+  titleRu?: string;
   subtitle: string;
+  subtitleRu?: string;
   image: string;
   link?: string;
   buttonText?: string;
+  buttonTextRu?: string;
   position: string;
   order: number;
   isActive: boolean;

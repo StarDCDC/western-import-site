@@ -195,10 +195,13 @@ model ProductAttribute {
 model Banner {
   id         String  @id @default(cuid())
   title      String
+  titleRu    String?
   subtitle   String?
+  subtitleRu String?
   image      String
   link       String?
   buttonText String?
+  buttonTextRu String?
   position   String  @default("HERO") // HERO, SIDEBAR, FOOTER
   order      Int     @default(0)
   isActive   Boolean @default(true)

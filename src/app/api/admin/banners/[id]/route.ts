@@ -22,10 +22,13 @@ export async function PUT(
 
     const updateData: Record<string, unknown> = {};
     if (body.title !== undefined) updateData.title = body.title;
+    if (body.titleRu !== undefined) updateData.titleRu = body.titleRu;
     if (body.subtitle !== undefined) updateData.subtitle = body.subtitle;
+    if (body.subtitleRu !== undefined) updateData.subtitleRu = body.subtitleRu;
     if (body.image !== undefined) updateData.image = body.image;
     if (body.link !== undefined) updateData.link = body.link;
     if (body.buttonText !== undefined) updateData.buttonText = body.buttonText;
+    if (body.buttonTextRu !== undefined) updateData.buttonTextRu = body.buttonTextRu;
     if (body.position !== undefined) updateData.position = body.position;
     if (body.order !== undefined) updateData.order = body.order;
     if (body.isActive !== undefined) updateData.isActive = body.isActive;
