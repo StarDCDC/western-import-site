@@ -2,13 +2,31 @@ import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ContactForm from '@/components/contact/ContactForm';
+import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
   title: 'Contact — Western Import',
   description: 'Contactează-ne pentru orice întrebare sau comandă.',
 };
 
-export default function ContactPage() {
+async function getSettings() {
+  try {
+    const settings = await prisma.setting.findMany();
+    const map: Record<string, string> = {};
+    for (const s of settings) map[s.key] = s.value;
+    return map;
+  } catch {
+    return {};
+  }
+}
+
+export default async function ContactPage() {
+  const settings = await getSettings();
+  const phone = settings.phone || '+373 69 466 585';
+  const email = settings.email || 'info@westernimport.md';
+  const address = settings.address || 'str. Podgorenilor 17, Chișinău';
+  const schedule = settings.schedule || 'Lun-Sâm: 09:00 - 18:00';
+
   return (
     <>
       <Header />
@@ -37,7 +55,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-xs text-slate-400 font-medium">Telefon</p>
-                      <a href="tel:+37369466585" className="text-sm font-semibold text-slate-800 dark:text-white hover:text-primary">+373 69 466 585</a>
+                      <a href={`tel:${phone.replace(/\s/g, '')}`} className="text-sm font-semibold text-slate-800 dark:text-white hover:text-primary">{phone}</a>
                     </div>
                   </div>
 
@@ -47,7 +65,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-xs text-slate-400 font-medium">Email</p>
-                      <a href="mailto:info@westernimport.md" className="text-sm font-semibold text-slate-800 dark:text-white hover:text-primary">info@westernimport.md</a>
+                      <a href={`mailto:${email}`} className="text-sm font-semibold text-slate-800 dark:text-white hover:text-primary">{email}</a>
                     </div>
                   </div>
 
@@ -57,7 +75,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-xs text-slate-400 font-medium">Adresă</p>
-                      <p className="text-sm font-semibold text-slate-800 dark:text-white">str. Podgorenilor 17, Chișinău</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-white">{address}</p>
                     </div>
                   </div>
 
@@ -67,7 +85,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-xs text-slate-400 font-medium">Program</p>
-                      <p className="text-sm font-semibold text-slate-800 dark:text-white">Lun-Sâm: 09:00 - 18:00</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-white">{schedule}</p>
                     </div>
                   </div>
                 </div>

@@ -473,13 +473,12 @@ export async function buildAdvertFromProduct(
         features.push({ id, value: product.name.slice(0, 100) });
         titleAssigned = true;
       } else if (titleMatches(f.title, 'descri', 'описан', 'body', 'text', 'continut', 'содержан', 'подробн')) {
-        // Descriere bilingvă: RO + RU
+        // Descriere bilingvă: RO + RU — trimitem ca text concatenat
         const descRo = product.descriptionRo || '';
         const descRu = product.descriptionRu || '';
         const desc = descRo || descRu || product.name;
         if (descRo && descRu) {
-          // Trimitem bilingv conform documentației 999.md
-          features.push({ id, value: { ro: descRo.slice(0, 9000), ru: descRu.slice(0, 9000) } as any });
+          features.push({ id, value: `${descRo.slice(0, 4000)}\n\n---\n\n${descRu.slice(0, 4000)}` });
         } else if (desc) {
           features.push({ id, value: String(desc).slice(0, 9000) });
         }

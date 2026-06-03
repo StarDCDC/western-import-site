@@ -13,6 +13,7 @@ interface FormState {
   name: string;
   slug: string;
   descriptionRo: string;
+  descriptionRu: string;
   price: string;
   oldPrice: string;
   sku: string;
@@ -57,6 +58,7 @@ export default function NewProductPage() {
     name: "",
     slug: "",
     descriptionRo: "",
+    descriptionRu: "",
     price: "",
     oldPrice: "",
     sku: "",
@@ -173,6 +175,7 @@ export default function NewProductPage() {
         name: form.name,
         slug: form.slug || form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         descriptionRo: form.descriptionRo || form.name,
+        descriptionRu: form.descriptionRu || undefined,
         price: parseFloat(form.price),
         oldPrice: form.oldPrice ? parseFloat(form.oldPrice) : undefined,
         stock: 0,
@@ -259,6 +262,12 @@ export default function NewProductPage() {
         <div>
           <label className={labelClass}>Descriere (RO)</label>
           <textarea value={form.descriptionRo} onChange={(e) => set("descriptionRo", e.target.value)} rows={4} className={`${inputClass} resize-none`} placeholder="Descriere produs în română" />
+        </div>
+
+        <div>
+          <label className={labelClass}>Descriere (RU)</label>
+          <textarea value={form.descriptionRu} onChange={(e) => set("descriptionRu", e.target.value)} rows={4} className={`${inputClass} resize-none`} placeholder="Descrierea produsului în rusă" />
+          <p className="text-xs text-slate-400 mt-1">Dacă lași gol, se traduce automat din RO</p>
         </div>
 
         <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">

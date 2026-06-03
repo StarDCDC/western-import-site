@@ -217,62 +217,8 @@ export default function AdminSettingsPage() {
         <div><label className={labelCls}>Parolă</label><input type="password" value={form.smtpPass} onChange={(e) => set("smtpPass", e.target.value)} className={inputCls} /></div>
       </div>
 
-      {/* 999.md Integration */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">📦 Integrare 999.md</h2>
-        <div className="flex items-center justify-between py-2">
-          <label className={labelCls} style={{ margin: 0 }}>Activare</label>
-          <button type="button" onClick={() => set("nineNineMdActive", !form.nineNineMdActive)} className={`w-12 h-7 rounded-full p-1 transition-colors ${form.nineNineMdActive ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
-            <div className={`w-5 h-5 rounded-full bg-white transition-transform ${form.nineNineMdActive ? 'translate-x-5' : ''}`} />
-          </button>
-        </div>
-        {form.nineNineMdActive && (
-          <div className="space-y-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-2">
-            <div><label className={labelCls}>API Key</label><input value={form.nineNineMdApiKey} onChange={(e) => set("nineNineMdApiKey", e.target.value)} type="password" className={inputCls} /></div>
-            <div><label className={labelCls}>Endpoint URL</label><input value={form.nineNineMdEndpoint} onChange={(e) => set("nineNineMdEndpoint", e.target.value)} className={inputCls} /></div>
-            <button onClick={test999Connection} disabled={testing.nineNineMd} className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${testing.nineNineMd ? 'bg-slate-400 text-white' : 'bg-primary text-white hover:bg-primary-dark'}`}>
-              {testing.nineNineMd ? 'Testare...' : 'Test Connection'}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* IuteCredit Integration */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">💳 Integrare IuteCredit</h2>
-        <div className="flex items-center justify-between py-2">
-          <label className={labelCls} style={{ margin: 0 }}>Activare</label>
-          <button type="button" onClick={() => set("iuteCreditActive", !form.iuteCreditActive)} className={`w-12 h-7 rounded-full p-1 transition-colors ${form.iuteCreditActive ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
-            <div className={`w-5 h-5 rounded-full bg-white transition-transform ${form.iuteCreditActive ? 'translate-x-5' : ''}`} />
-          </button>
-        </div>
-        {form.iuteCreditActive && (
-          <div className="space-y-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-2">
-            <div><label className={labelCls}>API Key</label><input value={form.iuteCreditApiKey} onChange={(e) => set("iuteCreditApiKey", e.target.value)} type="password" className={inputCls} /></div>
-            <div><label className={labelCls}>Partner ID</label><input value={form.iuteCreditPartnerId} onChange={(e) => set("iuteCreditPartnerId", e.target.value)} className={inputCls} /></div>
-            <div><label className={labelCls}>Endpoint URL</label><input value={form.iuteCreditEndpoint} onChange={(e) => set("iuteCreditEndpoint", e.target.value)} className={inputCls} /></div>
-            <button onClick={testIuteConnection} disabled={testing.iuteCredit} className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${testing.iuteCredit ? 'bg-slate-400 text-white' : 'bg-primary text-white hover:bg-primary-dark'}`}>
-              {testing.iuteCredit ? 'Testare...' : 'Test Connection'}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Elfsight Widget */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">💬 Chatbot Elfsight</h2>
-        <div className="flex items-center justify-between py-2">
-          <label className={labelCls} style={{ margin: 0 }}>Activare</label>
-          <button type="button" onClick={() => set("elfsightActive", !form.elfsightActive)} className={`w-12 h-7 rounded-full p-1 transition-colors ${form.elfsightActive ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
-            <div className={`w-5 h-5 rounded-full bg-white transition-transform ${form.elfsightActive ? 'translate-x-5' : ''}`} />
-          </button>
-        </div>
-        {form.elfsightActive && (
-          <div className="space-y-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-2">
-            <div><label className={labelCls}>Widget ID</label><input value={form.elfsightWidgetId} onChange={(e) => set("elfsightWidgetId", e.target.value)} className={inputCls} /></div>
-          </div>
-        )}
-      </div>
+      {/* Integrări — mereu active, configurare ascunsă */}
+      {/* 999.md, IuteCredit și Elfsight sunt activate permanent — configurarea tehnică se face prin .env și cod */}
 
       {/* Program Magazin */}
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">

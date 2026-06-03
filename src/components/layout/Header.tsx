@@ -91,22 +91,19 @@ export default function Header() {
       >
         <div className="max-w-[1280px] mx-auto px-3 sm:px-5 flex items-center gap-2 sm:gap-5 py-2.5 sm:py-3">
           {/* Logo */}
-          {/* Desktop/Tablet Logo */}
+          {/* Desktop/Tablet Logo — logo mare */}
           <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
-            <div className="h-[36px] w-[36px] rounded-full overflow-hidden dark:overflow-visible">
-              <Image src="/logo-mobile-light.jpg" alt="Western Import" width={36} height={36} className="h-[36px] w-[36px] rounded-full object-cover scale-125 dark:hidden" priority />
-              <Image src="/logo-mobile-dark.jpg" alt="Western Import" width={36} height={36} className="h-[36px] w-[36px] rounded-full object-cover hidden dark:block" priority />
+            <div className="h-[44px] w-auto max-w-[180px] overflow-hidden dark:overflow-visible">
+              <Image src="/logo.jpg" alt="Western Import" width={180} height={44} className="h-[44px] w-auto object-contain dark:hidden" priority />
+              <Image src="/logo-dark.jpg" alt="Western Import" width={180} height={44} className="h-[44px] w-auto object-contain hidden dark:block" priority />
             </div>
-            <span className="text-lg font-bold tracking-tight text-slate-800 dark:text-white">
-              Western <span className="text-primary">Import</span>
-            </span>
           </Link>
 
-          {/* Mobile circular logo */}
+          {/* Mobile logo — logo mare compact */}
           <Link href="/" className="sm:hidden shrink-0">
-            <div className="h-[32px] w-[32px] rounded-full overflow-hidden dark:overflow-visible">
-              <Image src="/logo-mobile-light.jpg" alt="Western Import" width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover scale-125 dark:hidden" />
-              <Image src="/logo-mobile-dark.jpg" alt="Western Import" width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover hidden dark:block" />
+            <div className="h-[34px] w-auto max-w-[140px] overflow-hidden dark:overflow-visible">
+              <Image src="/logo.jpg" alt="Western Import" width={140} height={34} className="h-[34px] w-auto object-contain dark:hidden" />
+              <Image src="/logo-dark.jpg" alt="Western Import" width={140} height={34} className="h-[34px] w-auto object-contain hidden dark:block" />
             </div>
           </Link>
 
@@ -219,16 +216,17 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:block border-t border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar">
-          <div className="max-w-[1280px] mx-auto px-5 flex items-center whitespace-nowrap">
+          <div className="max-w-[1280px] mx-auto px-5 flex items-center whitespace-nowrap gap-1 py-1.5">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-1.5 px-3.5 py-3 text-[13px] font-medium transition-colors border-b-2 border-transparent ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-lg transition-all border border-transparent ${
                   item.highlight
-                    ? 'text-accent hover:text-red-700 hover:border-accent font-bold'
-                    : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary hover:border-primary'
-                }`}
+                    ? 'text-white bg-gradient-to-r from-accent to-red-600 hover:from-red-600 hover:to-accent shadow-sm shadow-accent/20 font-bold'
+                    : 'text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary dark:hover:text-primary hover:border-primary/20'
+                }`
+              }
               >
                 <span>{item.icon}</span>
                 {t(item.label)}

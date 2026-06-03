@@ -242,17 +242,26 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
                 <div className="flex gap-3 items-center">
                   <input
                     type="number"
-                    value={priceRange[0]}
-                    onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                    value={priceRange[0] || ''}
+                    onChange={(e) => {
+                      const v = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
+                      setPriceRange([v, Math.max(v, priceRange[1])]);
+                    }}
                     placeholder="Min"
+                    min={0}
                     className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
                   />
                   <span className="text-slate-500er">—</span>
                   <input
                     type="number"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                    value={priceRange[1] || ''}
+                    onChange={(e) => {
+                      const v = e.target.value === '' ? 30000 : Math.min(30000, Number(e.target.value));
+                      setPriceRange([Math.min(priceRange[0], v), v]);
+                    }}
                     placeholder="Max"
+                    min={0}
+                    max={30000}
                     className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
                   />
                 </div>
@@ -266,8 +275,8 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
                   className="w-full accent-primary"
                 />
                 <div className="flex justify-between text-xs text-slate-500er">
-                  <span>0 MDL</span>
-                  <span>30 000 MDL</span>
+                  <span>{priceRange[0].toLocaleString()} MDL</span>
+                  <span>{priceRange[1].toLocaleString()} MDL</span>
                 </div>
               </div>
             </motion.div>
