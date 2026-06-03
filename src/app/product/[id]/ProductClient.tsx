@@ -19,21 +19,78 @@ import { trackProductView } from '@/components/home/RecentlyViewed';
 // ─── Share Buttons Component ────────────────────────────────────
 function ShareButtons({ productName, locale }: { productName: string; locale: string }) {
   const [copied, setCopied] = useState(false);
+  const [toast, setToast] = useState('');
 
   if (typeof window === 'undefined') return null;
 
   const productUrl = window.location.href;
   const encodedUrl = encodeURIComponent(productUrl);
-  const shareText = encodeURIComponent(`${productName} — Western Import`);
-  const fullText = encodeURIComponent(`${productName} — Western Import\n${productUrl}`);
+  const shareText = `${productName} — Western Import`;
+  const fullText = `${shareText}\n${productUrl}`;
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 3000);
+  };
+
+  // Web Share API — available pe mobil (Android/iOS), deschide sheet nativ
+  const nativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: productName, text: shareText, url: productUrl });
+        return true;
+      } catch { /* user cancelled */ }
+    }
+    return false;
+  };
 
   const shareLinks = [
-    { label: 'Facebook', url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, color: '#1877F2', icon: '📘' },
-    { label: 'WhatsApp', url: `https://wa.me/?text=${fullText}`, color: '#25D366', icon: '💬' },
-    { label: 'Telegram', url: `https://t.me/share/url?url=${encodedUrl}&text=${shareText}`, color: '#26A5E4', icon: '✈️' },
-    { label: 'Viber', url: `viber://forward?text=${fullText}`, color: '#7360F2', icon: '📞' },
-    { label: 'Instagram', url: `https://www.instagram.com/`, color: '#E4405F', icon: '📷', note: 'Copiază link-ul și lipește-l în Instagram' },
-    { label: 'TikTok', url: `https://www.tiktok.com/`, color: '#000000', icon: '🎵', note: 'Copiază link-ul și lipește-l în TikTok' },
+    {
+      label: 'Facebook',
+      color: '#1877F2', icon: '📘',
+      action: () => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank'); },
+    },
+    {
+      label: 'WhatsApp',
+      color: '#25D366', icon: '💬',
+      action: () => { window.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank'); },
+    },
+    {
+      label: 'Telegram',
+      color: '#26A5E4', icon: '✈️',
+      action: () => { window.open(`https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(shareText)}`, '_blank'); },
+    },
+    {
+      label: 'Viber',
+      color: '#7360F2', icon: '📞',
+      action: () => { window.open(`viber://forward?text=${encodeURIComponent(fullText)}`, '_blank'); },
+    },
+    {
+      label: 'Instagram',
+      color: '#E4405F', icon: '📷',
+      action: async () => {
+        // Pe mobil: native share (deschide Instagram din sheet)
+        const shared = await nativeShare();
+        if (!shared) {
+          // Desktop: copiază link + deschide Instagram DM
+          navigator.clipboard.writeText(fullText);
+          showToast('✅ Link copiat! Deschide Instagram și lipește-l în DM');
+          window.open('https://www.instagram.com/direct/new/', '_blank');
+        }
+      },
+    },
+    {
+      label: 'TikTok',
+      color: '#000000', icon: '🎵',
+      action: async () => {
+        const shared = await nativeShare();
+        if (!shared) {
+          navigator.clipboard.writeText(fullText);
+          showToast('✅ Link copiat! Deschide TikTok și lipește-l în mesaje');
+          window.open('https://www.tiktok.com/', '_blank');
+        }
+      },
+    },
   ];
 
   const handleCopy = () => {
@@ -44,20 +101,24 @@ function ShareButtons({ productName, locale }: { productName: string; locale: st
 
   return (
     <div className="mb-6">
-      <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">🔗 {locale === 'ru' ? 'Поделиться' : 'Distribuie produsul'}</p>
+      <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">
+        🔗 {locale === 'ru' ? 'Поделиться' : 'Distribuie produsul'}
+      </p>
+      {toast && (
+        <div className="mb-2 px-3 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-xl">
+          {toast}
+        </div>
+      )}
       <div className="flex flex-wrap gap-2">
         {shareLinks.map(s => (
-          <a
+          <button
             key={s.label}
-            href={s.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={s.note || `Distribuie pe ${s.label}`}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-medium hover:opacity-80 transition-opacity"
+            onClick={s.action}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-medium hover:opacity-80 transition-opacity cursor-pointer"
             style={{ backgroundColor: s.color }}
           >
             <span>{s.icon}</span> {s.label}
-          </a>
+          </button>
         ))}
         <button
           onClick={handleCopy}
