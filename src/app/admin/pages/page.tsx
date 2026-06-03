@@ -143,7 +143,7 @@ export default function AdminPagesPage() {
             onClick={async () => {
               setSeeding(true);
               try {
-                const res = await fetch("/api/admin/pages/seed-about", { method: "POST" });
+                const res = await fetch("/api/admin/pages/seed-all", { method: "POST" });
                 const json = await res.json();
                 if (json.success) {
                   setSaved(true);
@@ -162,7 +162,7 @@ export default function AdminPagesPage() {
             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50 flex items-center gap-2"
           >
             {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : "🌱"}
-            {seeding ? "Seeding..." : "Seed Despre Noi"}
+            {seeding ? "Seeding..." : "Seed All Pages"}
           </button>
           {/* Save always visible */}
           <button
