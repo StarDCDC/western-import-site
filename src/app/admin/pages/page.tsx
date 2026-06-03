@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, Edit3, X, ExternalLink, Loader2 } from "lucide-react";
 
 interface Page {
   id: string;
@@ -22,11 +24,13 @@ export default function AdminPagesPage() {
   const [form, setForm] = useState<Page | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editMode, setEditMode] = useState(false);
   const [editContent, setEditContent] = useState("");
-  const [editModeRu, setEditModeRu] = useState(false);
   const [editContentRu, setEditContentRu] = useState("");
   const [activeTab, setActiveTab] = useState<"ro" | "ru">("ro");
+  const [viewMode, setViewMode] = useState<"preview" | "edit">("preview");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   const fetchPages = useCallback(async () => {
     try {
@@ -53,9 +57,46 @@ export default function AdminPagesPage() {
     if (p) {
       setSelectedId(id);
       setForm({ ...p });
-      setEditMode(false);
+      setViewMode("preview");
       setSaved(false);
+      prepareEditContent(p);
     }
+  };
+
+  const prepareEditContent = (p: Page) => {
+    // RO
+    const divRo = document.createElement("div");
+    divRo.innerHTML = p.contentRo || "";
+    const sectionsRo: string[] = [];
+    divRo.querySelectorAll("h1, h2, h3, p, li, blockquote").forEach((el) => {
+      const tag = el.tagName.toLowerCase();
+      const text = el.textContent?.trim() || "";
+      if (!text) return;
+      if (tag === "h1") sectionsRo.push(`# ${text}`);
+      else if (tag === "h2") sectionsRo.push(`## ${text}`);
+      else if (tag === "h3") sectionsRo.push(`### ${text}`);
+      else if (tag === "li") sectionsRo.push(`- ${text}`);
+      else if (tag === "blockquote") sectionsRo.push(`> ${text}`);
+      else sectionsRo.push(text);
+    });
+    setEditContent(sectionsRo.join("\n\n"));
+
+    // RU
+    const divRu = document.createElement("div");
+    divRu.innerHTML = p.contentRu || "";
+    const sectionsRu: string[] = [];
+    divRu.querySelectorAll("h1, h2, h3, p, li, blockquote").forEach((el) => {
+      const tag = el.tagName.toLowerCase();
+      const text = el.textContent?.trim() || "";
+      if (!text) return;
+      if (tag === "h1") sectionsRu.push(`# ${text}`);
+      else if (tag === "h2") sectionsRu.push(`## ${text}`);
+      else if (tag === "h3") sectionsRu.push(`### ${text}`);
+      else if (tag === "li") sectionsRu.push(`- ${text}`);
+      else if (tag === "blockquote") sectionsRu.push(`> ${text}`);
+      else sectionsRu.push(text);
+    });
+    setEditContentRu(sectionsRu.join("\n\n"));
   };
 
   const handleSave = async () => {
@@ -69,8 +110,8 @@ export default function AdminPagesPage() {
           id: form.id,
           titleRo: form.titleRo,
           titleRu: form.titleRu,
-          contentRo: editMode ? editContent : form.contentRo,
-          contentRu: editModeRu ? editContentRu : form.contentRu,
+          contentRo: form.contentRo,
+          contentRu: form.contentRu,
           metaTitle: form.metaTitle,
           metaDescription: form.metaDescription,
           isPublished: form.isPublished,
@@ -80,8 +121,8 @@ export default function AdminPagesPage() {
       if (json.success) {
         fetchPages();
         setSaved(true);
-        setEditMode(false);
-        setTimeout(() => setSaved(false), 2000);
+        setViewMode("preview");
+        setTimeout(() => setSaved(false), 3000);
       } else {
         alert(json.error || "Eroare la salvare");
       }
@@ -92,52 +133,68 @@ export default function AdminPagesPage() {
     }
   };
 
-  const startEdit = () => {
+  const applyEdit = () => {
     if (!form) return;
-    // Extract text from HTML for editing
-    const div = document.createElement("div");
-    div.innerHTML = form.contentRo || "";
-    const sections: string[] = [];
-    
-    // Parse HTML to structured sections
-    div.querySelectorAll("h2, h3, p, li").forEach((el) => {
-      const tag = el.tagName.toLowerCase();
-      const text = el.textContent?.trim() || "";
-      if (!text) return;
-      
-      if (tag === "h2") sections.push(`## ${text}`);
-      else if (tag === "h3") sections.push(`### ${text}`);
-      else if (tag === "li") sections.push(`- ${text}`);
-      else sections.push(text);
-    });
-    
-    setEditContent(sections.join("\n\n"));
-    setEditMode(true);
-  };
-
-  const saveEdit = () => {
-    if (!form) return;
-    // Convert markdown-ish to HTML
-    const html = editContent
+    const raw = activeTab === "ro" ? editContent : editContentRu;
+    const html = raw
       .split("\n\n")
       .map((block) => {
         const trimmed = block.trim();
         if (!trimmed) return "";
-        if (trimmed.startsWith("## "))
-          return `<h2>${trimmed.slice(3)}</h2>`;
-        if (trimmed.startsWith("### "))
-          return `<h3>${trimmed.slice(4)}</h3>`;
-        if (trimmed.startsWith("- "))
-          return trimmed
-            .split("\n")
-            .map((l) => `<li>${l.slice(2)}</li>`)
-            .join("");
+        if (trimmed.startsWith("# ")) return `<h1>${trimmed.slice(2)}</h1>`;
+        if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
+        if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
+        if (trimmed.startsWith("> ")) return `<blockquote>${trimmed.slice(2)}</blockquote>`;
+        if (trimmed.startsWith("- ")) {
+          const items = trimmed.split("\n").map((l) => `<li>${l.replace(/^- /, "")}</li>`).join("");
+          return `<ul>${items}</ul>`;
+        }
         return `<p>${trimmed}</p>`;
       })
       .join("\n");
-    
-    setForm({ ...form, contentRo: html });
-    setEditMode(false);
+
+    if (activeTab === "ro") {
+      setForm({ ...form, contentRo: html });
+    } else {
+      setForm({ ...form, contentRu: html });
+    }
+  };
+
+  // Parse HTML to a preview that looks like the site
+  const renderSitePreview = (html: string | null, title: string) => {
+    if (!html) {
+      return (
+        <div className="text-center py-16 text-slate-400">
+          <p className="text-lg mb-2">Pagină fără conținut</p>
+          <p className="text-sm">Apasă „Editează" pentru a adăuga conținut</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {/* Page title — styled like site */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-800">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h1>
+          <div className="w-16 h-1 bg-amber-500 rounded-full mb-8" />
+          <div
+            className="prose prose-slate dark:prose-invert max-w-none
+              prose-headings:text-slate-900 dark:prose-headings:text-white
+              prose-h1:text-3xl prose-h1:font-bold prose-h1:mb-4
+              prose-h2:text-xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4 prose-h2:flex prose-h2:items-center prose-h2:gap-2
+              prose-h3:text-lg prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3
+              prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-p:leading-relaxed
+              prose-a:text-amber-600 hover:prose-a:underline
+              prose-strong:text-slate-800 dark:prose-strong:text-slate-200
+              prose-li:text-slate-600 dark:prose-li:text-slate-400
+              prose-blockquote:border-l-amber-500 prose-blockquote:bg-amber-50 dark:prose-blockquote:bg-amber-900/10 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
+              prose-ul:my-2 prose-ol:my-2
+              prose-img:rounded-xl"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -148,11 +205,25 @@ export default function AdminPagesPage() {
     return <div className="text-center py-20 text-slate-400">Nu sunt pagini</div>;
   }
 
+  const currentContent = activeTab === "ro" ? form.contentRo : form.contentRu;
+  const currentTitle = activeTab === "ro" ? form.titleRo : form.titleRu;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Pagini Site</h1>
-        {saved && <span className="text-green-600 dark:text-green-400 text-sm font-medium">✓ Salvat cu succes!</span>}
+        <div className="flex items-center gap-3">
+          {saved && (
+            <motion.span
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-green-600 dark:text-green-400 text-sm font-medium flex items-center gap-1"
+            >
+              ✓ Salvat cu succes!
+            </motion.span>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -166,7 +237,7 @@ export default function AdminPagesPage() {
               <button
                 key={p.id}
                 onClick={() => selectPage(p.id)}
-                className={`w-full text-left px-4 py-3 text-sm border-b border-slate-100 dark:border-slate-700/50 transition ${
+                className={`w-full text-left px-4 py-3.5 text-sm border-b border-slate-100 dark:border-slate-700/50 transition ${
                   selectedId === p.id
                     ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 font-medium"
                     : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/30"
@@ -180,193 +251,166 @@ export default function AdminPagesPage() {
         </div>
 
         {/* Editor / Preview */}
-        <div className="lg:col-span-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{form.titleRo}</h2>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={form.isPublished}
-                  onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
-                  className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
-                />
-                <span className="text-slate-600 dark:text-slate-300">Publicat</span>
-              </label>
-            </div>
-            <div className="flex gap-2">
-              {!(activeTab === "ro" ? editMode : editModeRu) ? (
-                <button
-                  onClick={() => {
-                    if (activeTab === "ro") {
-                      if (!form) return;
-                      const div = document.createElement("div");
-                      div.innerHTML = form.contentRo || "";
-                      const sections: string[] = [];
-                      div.querySelectorAll("h2, h3, p, li").forEach((el) => {
-                        const tag = el.tagName.toLowerCase();
-                        const text = el.textContent?.trim() || "";
-                        if (!text) return;
-                        if (tag === "h2") sections.push(`## ${text}`);
-                        else if (tag === "h3") sections.push(`### ${text}`);
-                        else if (tag === "li") sections.push(`- ${text}`);
-                        else sections.push(text);
-                      });
-                      setEditContent(sections.join("\n\n"));
-                      setEditMode(true);
-                    } else {
-                      if (!form) return;
-                      const div = document.createElement("div");
-                      div.innerHTML = form.contentRu || "";
-                      const sections: string[] = [];
-                      div.querySelectorAll("h2, h3, p, li").forEach((el) => {
-                        const tag = el.tagName.toLowerCase();
-                        const text = el.textContent?.trim() || "";
-                        if (!text) return;
-                        if (tag === "h2") sections.push(`## ${text}`);
-                        else if (tag === "h3") sections.push(`### ${text}`);
-                        else if (tag === "li") sections.push(`- ${text}`);
-                        else sections.push(text);
-                      });
-                      setEditContentRu(sections.join("\n\n"));
-                      setEditModeRu(true);
-                    }
-                  }}
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition"
-                >
-                  ✏️ Editează
-                </button>
-              ) : (
-                <>
+        <div className="lg:col-span-3 space-y-4">
+          {/* Toolbar */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              {/* Left: page title + status */}
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{form.titleRo}</h2>
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.isPublished}
+                    onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+                    className="rounded border-slate-300 text-amber-500 focus:ring-amber-500"
+                  />
+                  <span className={`text-xs font-medium ${form.isPublished ? "text-green-600" : "text-slate-400"}`}>
+                    {form.isPublished ? "Publicat" : "Draft"}
+                  </span>
+                </label>
+              </div>
+
+              {/* Right: tabs + actions */}
+              <div className="flex items-center gap-2">
+                {/* RO / RU */}
+                <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
                   <button
-                    onClick={() => { activeTab === "ro" ? setEditMode(false) : setEditModeRu(false); }}
-                    className="px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                    onClick={() => setActiveTab("ro")}
+                    className={`px-3 py-1.5 text-xs font-medium transition ${
+                      activeTab === "ro"
+                        ? "bg-amber-500 text-white"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    RO
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("ru")}
+                    className={`px-3 py-1.5 text-xs font-medium transition ${
+                      activeTab === "ru"
+                        ? "bg-amber-500 text-white"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    RU
+                  </button>
+                </div>
+
+                {/* View / Edit toggle */}
+                <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                  <button
+                    onClick={() => setViewMode("preview")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
+                      viewMode === "preview"
+                        ? "bg-blue-500 text-white"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    <Eye className="w-3.5 h-3.5" /> Preview
+                  </button>
+                  <button
+                    onClick={() => setViewMode("edit")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
+                      viewMode === "edit"
+                        ? "bg-amber-500 text-white"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Editează
+                  </button>
+                </div>
+
+                {/* Open on site */}
+                <a
+                  href={`${siteUrl}/${form.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" /> Site
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Content area */}
+          <AnimatePresence mode="wait">
+            {viewMode === "preview" ? (
+              <motion.div
+                key="preview"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="bg-slate-50 dark:bg-slate-950 rounded-xl p-6 min-h-[500px] border border-slate-200 dark:border-slate-800"
+              >
+                {renderSitePreview(currentContent, currentTitle)}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="edit"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-5"
+              >
+                {/* Title edit */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Titlu pagină ({activeTab === "ro" ? "RO" : "RU"})
+                  </label>
+                  <input
+                    value={activeTab === "ro" ? form.titleRo : form.titleRu}
+                    onChange={(e) => setForm({ ...form, [activeTab === "ro" ? "titleRo" : "titleRu"]: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                </div>
+
+                {/* Content edit */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Conținut ({activeTab === "ro" ? "RO" : "RU"}) — Markdown
+                  </label>
+                  <textarea
+                    value={activeTab === "ro" ? editContent : editContentRu}
+                    onChange={(e) => activeTab === "ro" ? setEditContent(e.target.value) : setEditContentRu(e.target.value)}
+                    rows={22}
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono leading-relaxed"
+                    placeholder={"# Titlu principal\n\n## Subtitlu\n\nParagraf text\n\n- List item\n\n> Citat"}
+                  />
+                  <p className="text-xs text-slate-400 mt-1.5">
+                    Folosește Markdown: <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded"># h1</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">## h2</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">### h3</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">- listă</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">&gt; citat</code>
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { applyEdit(); setViewMode("preview"); }}
+                    className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition flex items-center gap-1.5"
+                  >
+                    <Eye className="w-4 h-4" /> Aplică & Preview
+                  </button>
+                  <button
+                    onClick={() => setViewMode("preview")}
+                    className="px-5 py-2.5 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                   >
                     Anulează
                   </button>
-                  <button
-                    onClick={() => {
-                      const html = (activeTab === "ro" ? editContent : editContentRu)
-                        .split("\n\n")
-                        .map((block) => {
-                          const trimmed = block.trim();
-                          if (!trimmed) return "";
-                          if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
-                          if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
-                          if (trimmed.startsWith("- ")) return trimmed.split("\n").map((l) => `<li>${l.slice(2)}</li>`).join("");
-                          return `<p>${trimmed}</p>`;
-                        }).join("\n");
-                      if (activeTab === "ro") {
-                        setForm({ ...form!, contentRo: html });
-                        setEditMode(false);
-                      } else {
-                        setForm({ ...form!, contentRu: html });
-                        setEditModeRu(false);
-                      }
-                    }}
-                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition"
-                  >
-                    ✓ Aplică modificările
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Tab RO / RU */}
-          <div className="flex gap-2 border-b border-slate-200 dark:border-slate-700 pb-3">
-            <button
-              onClick={() => setActiveTab("ro")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition ${activeTab === "ro" ? "bg-amber-500 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"}`}
-            >
-              🇷🇴 Română
-            </button>
-            <button
-              onClick={() => setActiveTab("ru")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition ${activeTab === "ru" ? "bg-amber-500 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"}`}
-            >
-              🇷🇺 Русская
-            </button>
-          </div>
-
-          {/* Titlu RO */}
-          {activeTab === "ro" && (
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Titlu pagină (RO)</label>
-              <input
-                value={form.titleRo || ""}
-                onChange={(e) => setForm({ ...form, titleRo: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-              />
-            </div>
-          )}
-
-          {/* Titlu RU */}
-          {activeTab === "ru" && (
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Titlu pagină (RU)</label>
-              <input
-                value={form.titleRu || ""}
-                onChange={(e) => setForm({ ...form, titleRu: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-              />
-            </div>
-          )}
-
-          {/* Preview or Editor RO */}
-          {activeTab === "ro" && (
-            editMode ? (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Editează conținutul RO (Markdown)</label>
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  rows={20}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono"
-                  placeholder="## Titlu\n\nParagraf text\n\n- List item"
-                />
-              </div>
-            ) : (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preview RO</label>
-                <div
-                  className="prose prose-slate dark:prose-invert max-w-none border border-slate-200 dark:border-slate-700 rounded-lg p-6 min-h-[300px]"
-                  dangerouslySetInnerHTML={{ __html: form.contentRo || "<p class='text-slate-400'>Pagină fără conținut</p>" }}
-                />
-              </div>
-            )
-          )}
-
-          {/* Preview or Editor RU */}
-          {activeTab === "ru" && (
-            editModeRu ? (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Editează conținutul RU (Markdown)</label>
-                <textarea
-                  value={editContentRu}
-                  onChange={(e) => setEditContentRu(e.target.value)}
-                  rows={20}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono"
-                  placeholder="## Заголовок\n\nТекст параграфа\n\n- Пункт списка"
-                />
-              </div>
-            ) : (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preview RU</label>
-                <div
-                  className="prose prose-slate dark:prose-invert max-w-none border border-slate-200 dark:border-slate-700 rounded-lg p-6 min-h-[300px]"
-                  dangerouslySetInnerHTML={{ __html: form.contentRu || "<p class='text-slate-400'>Нет контента на русском</p>" }}
-                />
-              </div>
-            )
-          )}
-
-          {/* SEO */}
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">SEO</h3>
+          {/* SEO — always visible */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-1.5">
+              🔍 SEO
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Meta Title</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Meta Title</label>
                 <input
                   value={form.metaTitle || ""}
                   onChange={(e) => setForm({ ...form, metaTitle: e.target.value })}
@@ -374,7 +418,7 @@ export default function AdminPagesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Meta Description</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Meta Description</label>
                 <input
                   value={form.metaDescription || ""}
                   onChange={(e) => setForm({ ...form, metaDescription: e.target.value })}
@@ -384,13 +428,15 @@ export default function AdminPagesPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 pt-2">
+          {/* Save */}
+          <div className="flex items-center gap-3">
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50"
+              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50 flex items-center gap-2"
             >
-              {saving ? "Se salvează..." : "💾 Salvează pagina"}
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "💾"}
+              {saving ? "Se salvează..." : "Salvează pagina"}
             </button>
           </div>
         </div>
