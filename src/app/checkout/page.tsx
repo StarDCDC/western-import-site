@@ -18,7 +18,7 @@ interface FormData {
   strada: string;
   codPostal: string;
   deliveryMethod: 'PICKUP' | 'COURIER_CHISINAU' | 'COURIER_NATIONAL';
-  paymentMethod: 'CASH' | 'CARD' | 'CREDIT';
+  paymentMethod: 'CASH' | 'CARD' | 'CREDIT' | 'CREDIT_365';
   notes: string;
   couponCode: string;
   terms: boolean;
@@ -265,6 +265,13 @@ export default function CheckoutPage() {
           }
         }
 
+        // Credit365 — redirect to credit application
+        if (form.paymentMethod === 'CREDIT_365') {
+          setStep('success');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+
         setStep('success');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
@@ -505,6 +512,7 @@ export default function CheckoutPage() {
                     {[
                       { id: 'CASH' as const, label: 'Cash la livrare', desc: 'Plătești la primirea comenzii', icon: '💵' },
                       { id: 'CREDIT' as const, label: 'Credit IuteCredit', desc: 'Rate fără dobândă până la 12 luni', icon: '🏦' },
+                      { id: 'CREDIT_365' as const, label: 'Credit Credit365', desc: 'Credit rapid online, 5 000 – 200 000 MDL', icon: '💳' },
                     ].map((m) => (
                       <button
                         key={m.id}
@@ -530,7 +538,7 @@ export default function CheckoutPage() {
                     ))}
                   </div>
 
-                  {/* Installment plan — shown only when CREDIT selected */}
+                  {/* Installment plan — shown when any credit selected */}
                   {form.paymentMethod === 'CREDIT' && total >= 1000 && (
                     <div className="mt-4 p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-100 dark:border-orange-800/30">
                       <p className="text-xs font-bold text-orange-700 dark:text-orange-400 mb-3 uppercase tracking-wide">
@@ -562,6 +570,45 @@ export default function CheckoutPage() {
                         <svg className="w-3.5 h-3.5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
                         <span className="text-[11px] font-bold text-green-700 dark:text-green-400">0% — fără supraplată!</span>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Credit365 info */}
+                  {form.paymentMethod === 'CREDIT_365' && (
+                    <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-lg">💳</span>
+                        <p className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide">
+                          Credit365 — Credit rapid online
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
+                          <p className="text-[10px] text-blue-600/60">Suma</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-white">{formatPrice(total)}</p>
+                        </div>
+                        <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
+                          <p className="text-[10px] text-blue-600/60">Perioada</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-white">3-24 luni</p>
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 text-xs text-blue-600 dark:text-blue-400 mb-3">
+                        <p>✅ Credit doar cu buletinul</p>
+                        <p>✅ Aprobare în 2-10 minute</p>
+                        <p>✅ 5 000 – 200 000 MDL</p>
+                        <p>✅ Fără gaj</p>
+                      </div>
+                      <a
+                        href="https://credit365.md/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition"
+                      >
+                        Aplică pe credit365.md →
+                      </a>
+                      <p className="text-[10px] text-blue-500/70 text-center mt-2">
+                        Comanda va fi procesată după aprobarea creditului.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -646,6 +693,29 @@ export default function CheckoutPage() {
                             <p className="text-sm font-bold text-green-600">Fără supraplată</p>
                           </div>
                         </div>
+                      </div>
+                    )}
+
+                    {/* Credit365 summary */}
+                    {form.paymentMethod === 'CREDIT_365' && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 mt-3 border border-blue-100 dark:border-blue-800/30">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wide text-blue-600/70 font-semibold">Credit365</p>
+                            <p className="text-sm font-bold text-blue-600">Credit rapid online</p>
+                          </div>
+                          <a
+                            href="https://credit365.md/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition"
+                          >
+                            Aplică acum →
+                          </a>
+                        </div>
+                        <p className="text-[11px] text-blue-500 mt-2">
+                          Comanda va fi procesată după aprobarea creditului. 5 000 – 200 000 MDL, 3-24 luni.
+                        </p>
                       </div>
                     )}
                   </div>

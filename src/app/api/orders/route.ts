@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const paymentMethod = (sanitized.paymentMethod as string) || 'CASH';
     const deliveryMethod = (sanitized.deliveryMethod as string) || 'PICKUP';
 
-    if (!['CASH', 'CARD', 'CREDIT'].includes(paymentMethod)) {
+    if (!['CASH', 'CARD', 'CREDIT', 'CREDIT_365'].includes(paymentMethod)) {
       return errorResponse('Metodă de plată invalidă');
     }
     if (!['PICKUP', 'COURIER_CHISINAU', 'COURIER_NATIONAL'].includes(deliveryMethod)) {
