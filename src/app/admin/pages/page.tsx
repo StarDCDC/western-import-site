@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Edit3, X, ExternalLink, Loader2 } from "lucide-react";
+import { Eye, Edit3, ExternalLink, Loader2 } from "lucide-react";
+import BlockEditor from "@/components/admin/BlockEditor";
+import { parseBlocks, serializeBlocks } from "@/lib/blocks";
+import type { PageBlock } from "@/lib/blocks";
 
 interface Page {
   id: string;
@@ -24,11 +27,13 @@ export default function AdminPagesPage() {
   const [form, setForm] = useState<Page | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editContent, setEditContent] = useState("");
-  const [editContentRu, setEditContentRu] = useState("");
   const [activeTab, setActiveTab] = useState<"ro" | "ru">("ro");
   const [viewMode, setViewMode] = useState<"preview" | "edit">("preview");
   const [iframeKey, setIframeKey] = useState(0);
+
+  // Block state for each language
+  const [blocksRo, setBlocksRo] = useState<PageBlock[]>([]);
+  const [blocksRu, setBlocksRu] = useState<PageBlock[]>([]);
 
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -41,6 +46,7 @@ export default function AdminPagesPage() {
         if (json.data?.length && !selectedId) {
           setSelectedId(json.data[0].id);
           setForm(json.data[0]);
+          loadBlocks(json.data[0]);
         }
       }
     } catch (err) {
@@ -50,7 +56,14 @@ export default function AdminPagesPage() {
     }
   }, [selectedId]);
 
-  useEffect(() => { fetchPages(); }, [fetchPages]);
+  useEffect(() => {
+    fetchPages();
+  }, [fetchPages]);
+
+  const loadBlocks = (p: Page) => {
+    setBlocksRo(parseBlocks(p.contentRo));
+    setBlocksRu(parseBlocks(p.contentRu));
+  };
 
   const selectPage = (id: string) => {
     const p = pages.find((x) => x.id === id);
@@ -59,44 +72,8 @@ export default function AdminPagesPage() {
       setForm({ ...p });
       setViewMode("preview");
       setSaved(false);
-      prepareEditContent(p);
+      loadBlocks(p);
     }
-  };
-
-  const prepareEditContent = (p: Page) => {
-    // RO
-    const divRo = document.createElement("div");
-    divRo.innerHTML = p.contentRo || "";
-    const sectionsRo: string[] = [];
-    divRo.querySelectorAll("h1, h2, h3, p, li, blockquote").forEach((el) => {
-      const tag = el.tagName.toLowerCase();
-      const text = el.textContent?.trim() || "";
-      if (!text) return;
-      if (tag === "h1") sectionsRo.push(`# ${text}`);
-      else if (tag === "h2") sectionsRo.push(`## ${text}`);
-      else if (tag === "h3") sectionsRo.push(`### ${text}`);
-      else if (tag === "li") sectionsRo.push(`- ${text}`);
-      else if (tag === "blockquote") sectionsRo.push(`> ${text}`);
-      else sectionsRo.push(text);
-    });
-    setEditContent(sectionsRo.join("\n\n"));
-
-    // RU
-    const divRu = document.createElement("div");
-    divRu.innerHTML = p.contentRu || "";
-    const sectionsRu: string[] = [];
-    divRu.querySelectorAll("h1, h2, h3, p, li, blockquote").forEach((el) => {
-      const tag = el.tagName.toLowerCase();
-      const text = el.textContent?.trim() || "";
-      if (!text) return;
-      if (tag === "h1") sectionsRu.push(`# ${text}`);
-      else if (tag === "h2") sectionsRu.push(`## ${text}`);
-      else if (tag === "h3") sectionsRu.push(`### ${text}`);
-      else if (tag === "li") sectionsRu.push(`- ${text}`);
-      else if (tag === "blockquote") sectionsRu.push(`> ${text}`);
-      else sectionsRu.push(text);
-    });
-    setEditContentRu(sectionsRu.join("\n\n"));
   };
 
   const handleSave = async () => {
@@ -110,8 +87,8 @@ export default function AdminPagesPage() {
           id: form.id,
           titleRo: form.titleRo,
           titleRu: form.titleRu,
-          contentRo: form.contentRo,
-          contentRu: form.contentRu,
+          contentRo: serializeBlocks(blocksRo),
+          contentRu: serializeBlocks(blocksRu),
           metaTitle: form.metaTitle,
           metaDescription: form.metaDescription,
           isPublished: form.isPublished,
@@ -121,7 +98,6 @@ export default function AdminPagesPage() {
       if (json.success) {
         fetchPages();
         setSaved(true);
-        setViewMode("preview");
         setTimeout(() => setSaved(false), 3000);
       } else {
         alert(json.error || "Eroare la salvare");
@@ -133,35 +109,10 @@ export default function AdminPagesPage() {
     }
   };
 
-  const applyEdit = () => {
-    if (!form) return;
-    const raw = activeTab === "ro" ? editContent : editContentRu;
-    const html = raw
-      .split("\n\n")
-      .map((block) => {
-        const trimmed = block.trim();
-        if (!trimmed) return "";
-        if (trimmed.startsWith("# ")) return `<h1>${trimmed.slice(2)}</h1>`;
-        if (trimmed.startsWith("## ")) return `<h2>${trimmed.slice(3)}</h2>`;
-        if (trimmed.startsWith("### ")) return `<h3>${trimmed.slice(4)}</h3>`;
-        if (trimmed.startsWith("> ")) return `<blockquote>${trimmed.slice(2)}</blockquote>`;
-        if (trimmed.startsWith("- ")) {
-          const items = trimmed.split("\n").map((l) => `<li>${l.replace(/^- /, "")}</li>`).join("");
-          return `<ul>${items}</ul>`;
-        }
-        return `<p>${trimmed}</p>`;
-      })
-      .join("\n");
-
-    if (activeTab === "ro") {
-      setForm({ ...form, contentRo: html });
-    } else {
-      setForm({ ...form, contentRu: html });
-    }
-  };
-
   const pageSlug = form ? (activeTab === "ru" ? `ru/${form.slug}` : form.slug) : "";
   const previewSrc = `${siteUrl}/${pageSlug}`;
+  const currentBlocks = activeTab === "ro" ? blocksRo : blocksRu;
+  const currentSetBlocks = activeTab === "ro" ? setBlocksRo : setBlocksRu;
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent" /></div>;
@@ -170,8 +121,6 @@ export default function AdminPagesPage() {
   if (!form) {
     return <div className="text-center py-20 text-slate-400">Nu sunt pagini</div>;
   }
-
-
 
   return (
     <div className="space-y-6">
@@ -299,6 +248,20 @@ export default function AdminPagesPage() {
             </div>
           </div>
 
+          {/* Title edit (always visible in edit mode) */}
+          {viewMode === "edit" && (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Titlu pagină ({activeTab === "ro" ? "RO" : "RU"})
+              </label>
+              <input
+                value={activeTab === "ro" ? form.titleRo : form.titleRu}
+                onChange={(e) => setForm({ ...form, [activeTab === "ro" ? "titleRo" : "titleRu"]: e.target.value })}
+                className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+              />
+            </div>
+          )}
+
           {/* Content area */}
           <AnimatePresence mode="wait">
             {viewMode === "preview" ? (
@@ -343,51 +306,17 @@ export default function AdminPagesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-5"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6"
               >
-                {/* Title edit */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Titlu pagină ({activeTab === "ro" ? "RO" : "RU"})
-                  </label>
-                  <input
-                    value={activeTab === "ro" ? form.titleRo : form.titleRu}
-                    onChange={(e) => setForm({ ...form, [activeTab === "ro" ? "titleRo" : "titleRu"]: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                  />
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Blocuri conținut ({activeTab === "ro" ? "RO" : "RU"})
+                  </h3>
+                  <span className="text-xs text-slate-400">
+                    {currentBlocks.length} bloc{currentBlocks.length === 1 ? "" : "uri"}
+                  </span>
                 </div>
-
-                {/* Content edit */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Conținut ({activeTab === "ro" ? "RO" : "RU"}) — Markdown
-                  </label>
-                  <textarea
-                    value={activeTab === "ro" ? editContent : editContentRu}
-                    onChange={(e) => activeTab === "ro" ? setEditContent(e.target.value) : setEditContentRu(e.target.value)}
-                    rows={22}
-                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none font-mono leading-relaxed"
-                    placeholder={"# Titlu principal\n\n## Subtitlu\n\nParagraf text\n\n- List item\n\n> Citat"}
-                  />
-                  <p className="text-xs text-slate-400 mt-1.5">
-                    Folosește Markdown: <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded"># h1</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">## h2</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">### h3</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">- listă</code> <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">&gt; citat</code>
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => { applyEdit(); setViewMode("preview"); }}
-                    className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition flex items-center gap-1.5"
-                  >
-                    <Eye className="w-4 h-4" /> Aplică & Preview
-                  </button>
-                  <button
-                    onClick={() => setViewMode("preview")}
-                    className="px-5 py-2.5 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-                  >
-                    Anulează
-                  </button>
-                </div>
+                <BlockEditor blocks={currentBlocks} onChange={currentSetBlocks} />
               </motion.div>
             )}
           </AnimatePresence>
