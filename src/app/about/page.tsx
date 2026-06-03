@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AboutPage() {
   const pageData = await getPageContent("about");
   const title = pageData?.titleRo || "Despre Noi";

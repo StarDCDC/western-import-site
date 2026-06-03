@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ShippingRuPage() {
   const pageData = await getPageContent("shipping");
 

@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "Политика конфиденциальности Western Import. Информация о сборе, использовании и защите персональных данных в соответствии с GDPR.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function PrivacyRuPage() {
   const pageData = await getPageContent("privacy");
 

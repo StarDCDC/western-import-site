@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     "Условия и положения использования сайта Western Import. Информация о заказах, оплате, доставке, возврате и правах потребителя.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function TermsRuPage() {
   const pageData = await getPageContent("terms");
 

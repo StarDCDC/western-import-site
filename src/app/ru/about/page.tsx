@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "О Western Import — история, миссия, ценности и команда магазина премиальной электроники в Кишинёве.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AboutRuPage() {
   const pageData = await getPageContent("about");
   const title = pageData?.titleRu || pageData?.titleRo || "О нас";
