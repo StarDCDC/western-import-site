@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Edit3, ExternalLink, Loader2 } from "lucide-react";
 import BlockEditor from "@/components/admin/BlockEditor";
+import PageBlocks from "@/components/public/PageBlocks";
 import { parseBlocks, serializeBlocks } from "@/lib/blocks";
 import type { PageBlock } from "@/lib/blocks";
 
@@ -28,10 +29,9 @@ export default function AdminPagesPage() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"ro" | "ru">("ro");
-  const [viewMode, setViewMode] = useState<"preview" | "edit">("preview");
+  const [viewMode, setViewMode] = useState<"preview" | "edit">("edit");
   const [iframeKey, setIframeKey] = useState(0);
 
-  // Block state for each language
   const [blocksRo, setBlocksRo] = useState<PageBlock[]>([]);
   const [blocksRu, setBlocksRu] = useState<PageBlock[]>([]);
 
@@ -56,9 +56,7 @@ export default function AdminPagesPage() {
     }
   }, [selectedId]);
 
-  useEffect(() => {
-    fetchPages();
-  }, [fetchPages]);
+  useEffect(() => { fetchPages(); }, [fetchPages]);
 
   const loadBlocks = (p: Page) => {
     setBlocksRo(parseBlocks(p.contentRo));
@@ -70,7 +68,7 @@ export default function AdminPagesPage() {
     if (p) {
       setSelectedId(id);
       setForm({ ...p });
-      setViewMode("preview");
+      setViewMode("edit");
       setSaved(false);
       loadBlocks(p);
     }
@@ -113,6 +111,7 @@ export default function AdminPagesPage() {
   const previewSrc = `${siteUrl}/${pageSlug}`;
   const currentBlocks = activeTab === "ro" ? blocksRo : blocksRu;
   const currentSetBlocks = activeTab === "ro" ? setBlocksRo : setBlocksRu;
+  const currentTitle = form ? (activeTab === "ro" ? form.titleRo : form.titleRu) : "";
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent" /></div>;
@@ -124,6 +123,7 @@ export default function AdminPagesPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Pagini Site</h1>
         <div className="flex items-center gap-3">
@@ -137,6 +137,15 @@ export default function AdminPagesPage() {
               ✓ Salvat cu succes!
             </motion.span>
           )}
+          {/* Save always visible */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50 flex items-center gap-2"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "💾"}
+            {saving ? "Se salvează..." : "Salvează"}
+          </button>
         </div>
       </div>
 
@@ -164,14 +173,18 @@ export default function AdminPagesPage() {
           </div>
         </div>
 
-        {/* Editor / Preview */}
+        {/* Main content */}
         <div className="lg:col-span-3 space-y-4">
           {/* Toolbar */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
-              {/* Left: page title + status */}
               <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{form.titleRo}</h2>
+                {/* Inline title edit */}
+                <input
+                  value={activeTab === "ro" ? form.titleRo : form.titleRu}
+                  onChange={(e) => setForm({ ...form, [activeTab === "ro" ? "titleRo" : "titleRu"]: e.target.value })}
+                  className="text-lg font-semibold text-slate-900 dark:text-white bg-transparent border-b border-transparent hover:border-slate-300 focus:border-amber-500 outline-none px-1 py-0.5 transition"
+                />
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
                     type="checkbox"
@@ -185,57 +198,47 @@ export default function AdminPagesPage() {
                 </label>
               </div>
 
-              {/* Right: tabs + actions */}
               <div className="flex items-center gap-2">
                 {/* RO / RU */}
                 <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
                   <button
                     onClick={() => setActiveTab("ro")}
                     className={`px-3 py-1.5 text-xs font-medium transition ${
-                      activeTab === "ro"
-                        ? "bg-amber-500 text-white"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      activeTab === "ro" ? "bg-amber-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                     }`}
                   >
-                    RO
+                    🇷🇴 RO
                   </button>
                   <button
                     onClick={() => setActiveTab("ru")}
                     className={`px-3 py-1.5 text-xs font-medium transition ${
-                      activeTab === "ru"
-                        ? "bg-amber-500 text-white"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      activeTab === "ru" ? "bg-amber-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                     }`}
                   >
-                    RU
+                    🇷🇺 RU
                   </button>
                 </div>
 
-                {/* View / Edit toggle */}
+                {/* View / Edit */}
                 <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                  <button
+                    onClick={() => setViewMode("edit")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
+                      viewMode === "edit" ? "bg-amber-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                    }`}
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Editare
+                  </button>
                   <button
                     onClick={() => setViewMode("preview")}
                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
-                      viewMode === "preview"
-                        ? "bg-blue-500 text-white"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      viewMode === "preview" ? "bg-blue-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                     }`}
                   >
                     <Eye className="w-3.5 h-3.5" /> Preview
                   </button>
-                  <button
-                    onClick={() => setViewMode("edit")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
-                      viewMode === "edit"
-                        ? "bg-amber-500 text-white"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
-                    }`}
-                  >
-                    <Edit3 className="w-3.5 h-3.5" /> Editează
-                  </button>
                 </div>
 
-                {/* Open on site */}
                 <a
                   href={`${siteUrl}/${form.slug}`}
                   target="_blank"
@@ -248,23 +251,29 @@ export default function AdminPagesPage() {
             </div>
           </div>
 
-          {/* Title edit (always visible in edit mode) */}
-          {viewMode === "edit" && (
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Titlu pagină ({activeTab === "ro" ? "RO" : "RU"})
-              </label>
-              <input
-                value={activeTab === "ro" ? form.titleRo : form.titleRu}
-                onChange={(e) => setForm({ ...form, [activeTab === "ro" ? "titleRo" : "titleRu"]: e.target.value })}
-                className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-              />
-            </div>
-          )}
-
-          {/* Content area */}
+          {/* Content */}
           <AnimatePresence mode="wait">
-            {viewMode === "preview" ? (
+            {viewMode === "edit" ? (
+              <motion.div
+                key="edit"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-8 min-h-[500px]"
+              >
+                {/* Page title like on site */}
+                <div className="mb-8">
+                  <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                    {currentTitle || "Titlu pagină"}
+                  </h1>
+                  <div className="w-16 h-1 bg-amber-500 rounded-full" />
+                </div>
+
+                {/* Inline block editor — renders exactly like site */}
+                <BlockEditor blocks={currentBlocks} onChange={currentSetBlocks} />
+              </motion.div>
+            ) : (
               <motion.div
                 key="preview"
                 initial={{ opacity: 0, y: 8 }}
@@ -286,7 +295,7 @@ export default function AdminPagesPage() {
                   <button
                     onClick={() => setIframeKey((k) => k + 1)}
                     className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition"
-                    title="Reîncarcă preview"
+                    title="Reîncarcă"
                   >
                     ↻
                   </button>
@@ -299,34 +308,15 @@ export default function AdminPagesPage() {
                   title={`Preview /${pageSlug}`}
                 />
               </motion.div>
-            ) : (
-              <motion.div
-                key="edit"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Blocuri conținut ({activeTab === "ro" ? "RO" : "RU"})
-                  </h3>
-                  <span className="text-xs text-slate-400">
-                    {currentBlocks.length} bloc{currentBlocks.length === 1 ? "" : "uri"}
-                  </span>
-                </div>
-                <BlockEditor blocks={currentBlocks} onChange={currentSetBlocks} />
-              </motion.div>
             )}
           </AnimatePresence>
 
-          {/* SEO — always visible */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-1.5">
+          {/* SEO */}
+          <details className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <summary className="p-4 cursor-pointer text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 select-none hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-xl transition">
               🔍 SEO
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            </summary>
+            <div className="px-5 pb-5 pt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Meta Title</label>
                 <input
@@ -344,19 +334,7 @@ export default function AdminPagesPage() {
                 />
               </div>
             </div>
-          </div>
-
-          {/* Save */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50 flex items-center gap-2"
-            >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "💾"}
-              {saving ? "Se salvează..." : "Salvează pagina"}
-            </button>
-          </div>
+          </details>
         </div>
       </div>
     </div>

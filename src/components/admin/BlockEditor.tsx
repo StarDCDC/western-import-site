@@ -2,566 +2,524 @@
 
 import { useState } from "react";
 import {
-  Star,
-  Target,
-  Heart,
-  Shield,
-  Award,
-  TrendingUp,
-  Users,
-  Package,
-  Clock,
-  Zap,
-  Globe,
-  Truck,
-  Headphones,
-  CheckCircle,
-  XCircle,
-  Plus,
-  Trash2,
-  ChevronUp,
-  ChevronDown,
-  Type,
-  AlignLeft,
-  Quote,
-  ImageIcon,
-  BarChart3,
-  LayoutGrid,
-  UserCircle,
+  Star, Target, Heart, Shield, Award, TrendingUp, Users, Package, Clock,
+  Zap, Globe, Truck, Headphones, CheckCircle, XCircle,
+  Plus, Trash2, ChevronUp, ChevronDown, Type, AlignLeft, Quote,
+  ImageIcon, BarChart3, LayoutGrid, UserCircle, GripVertical,
 } from "lucide-react";
 import type {
-  PageBlock,
-  IconName,
-  ColorOption,
-  GradientOption,
-  HeadingBlock,
-  ParagraphBlock,
-  QuoteBlock,
-  ImageBlock,
-  StatsBlock,
-  CardsBlock,
-  TeamBlock,
+  PageBlock, IconName, HeadingBlock, ParagraphBlock, QuoteBlock,
+  ImageBlock, StatsBlock, CardsBlock, TeamBlock,
 } from "@/lib/blocks";
-import {
-  ICON_NAMES,
-  COLOR_OPTIONS,
-  GRADIENT_OPTIONS,
-} from "@/lib/blocks";
+import { ICON_NAMES, COLOR_OPTIONS, GRADIENT_OPTIONS } from "@/lib/blocks";
 
-// ─── Icon component for editor ─────────────────────────────────────
-
+// ─── Icon map ──────────────────────────────────────────────────────
 const lucideIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  star: Star,
-  target: Target,
-  heart: Heart,
-  shield: Shield,
-  award: Award,
-  "trending-up": TrendingUp,
-  users: Users,
-  package: Package,
-  clock: Clock,
-  zap: Zap,
-  globe: Globe,
-  truck: Truck,
-  headphones: Headphones,
-  "check-circle": CheckCircle,
-  "x-circle": XCircle,
+  star: Star, target: Target, heart: Heart, shield: Shield, award: Award,
+  "trending-up": TrendingUp, users: Users, package: Package, clock: Clock,
+  zap: Zap, globe: Globe, truck: Truck, headphones: Headphones,
+  "check-circle": CheckCircle, "x-circle": XCircle,
 };
 
-function LucideIcon({ name, size = 16, className }: { name: string; size?: number; className?: string }) {
-  const Comp = lucideIcons[name];
-  if (!Comp) return <Star size={size} className={className} />;
+function LucideIcon({ name, size = 20, className }: { name: string; size?: number; className?: string }) {
+  const Comp = lucideIcons[name] || Star;
   return <Comp size={size} className={className} />;
 }
 
-// ─── Block type config ─────────────────────────────────────────────
+// ─── Color helpers ─────────────────────────────────────────────────
+const colorBg: Record<string, string> = {
+  blue: "bg-blue-100 dark:bg-blue-900/30", green: "bg-green-100 dark:bg-green-900/30",
+  purple: "bg-purple-100 dark:bg-purple-900/30", amber: "bg-amber-100 dark:bg-amber-900/30",
+  red: "bg-red-100 dark:bg-red-900/30", primary: "bg-amber-500/10",
+};
+const colorText: Record<string, string> = {
+  blue: "text-blue-600 dark:text-blue-400", green: "text-green-600 dark:text-green-400",
+  purple: "text-purple-600 dark:text-purple-400", amber: "text-amber-600 dark:text-amber-400",
+  red: "text-red-600 dark:text-red-400", primary: "text-amber-600",
+};
 
-const BLOCK_TYPES = [
-  { type: "heading", label: "Heading", icon: Type },
-  { type: "paragraph", label: "Paragraph", icon: AlignLeft },
-  { type: "quote", label: "Quote", icon: Quote },
-  { type: "image", label: "Image", icon: ImageIcon },
-  { type: "stats", label: "Stats", icon: BarChart3 },
-  { type: "cards", label: "Cards", icon: LayoutGrid },
-  { type: "team", label: "Team", icon: UserCircle },
-] as const;
-
-function defaultBlock(type: PageBlock["type"]): PageBlock {
-  switch (type) {
-    case "heading":
-      return { type: "heading", text: "", icon: "star" };
-    case "paragraph":
-      return { type: "paragraph", text: "" };
-    case "quote":
-      return { type: "quote", text: "" };
-    case "image":
-      return { type: "image", src: "", alt: "" };
-    case "stats":
-      return { type: "stats", items: [{ icon: "users", value: "", label: "" }] };
-    case "cards":
-      return { type: "cards", columns: 2, items: [{ icon: "star", color: "primary", title: "", text: "" }] };
-    case "team":
-      return { type: "team", items: [{ initials: "", name: "", role: "", gradient: GRADIENT_OPTIONS[0] }] };
-  }
-}
-
-function blockLabel(block: PageBlock): string {
-  switch (block.type) {
-    case "heading":
-      return block.text || "Heading";
-    case "paragraph":
-      return block.text ? block.text.slice(0, 50) : "Paragraph";
-    case "quote":
-      return block.text ? block.text.slice(0, 50) : "Quote";
-    case "image":
-      return block.alt || "Image";
-    case "stats":
-      return `${block.items.length} stat(s)`;
-    case "cards":
-      return `${block.items.length} card(s)`;
-    case "team":
-      return `${block.items.length} member(s)`;
-  }
-}
-
-// ─── Shared form field styles ──────────────────────────────────────
-
-const inputCls =
-  "w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none";
-
-const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
-
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
+// ─── Inline editable text ──────────────────────────────────────────
+function Editable({
+  value, onChange, className, placeholder, multiline = false, tag: Tag = "span",
 }: {
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
+  value: string; onChange: (v: string) => void; className?: string;
+  placeholder?: string; multiline?: boolean; tag?: "span" | "p" | "h2" | "h3" | "div";
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+
+  const start = () => { setDraft(value); setEditing(true); };
+  const commit = () => { setEditing(false); if (draft !== value) onChange(draft); };
+  const cancel = () => { setEditing(false); setDraft(value); };
+
+  if (editing) {
+    if (multiline) {
+      return (
+        <textarea
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => { if (e.key === "Escape") cancel(); }}
+          autoFocus
+          rows={4}
+          className={`${className} !bg-white dark:!bg-slate-700 !ring-2 !ring-amber-400 !outline-none rounded-lg p-1 w-full resize-y border border-amber-300`}
+          placeholder={placeholder}
+        />
+      );
+    }
+    return (
+      <input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => { if (e.key === "Enter") commit(); if (e.key === "Escape") cancel(); }}
+        autoFocus
+        className={`${className} !bg-white dark:!bg-slate-700 !ring-2 !ring-amber-400 !outline-none rounded px-1 w-full border border-amber-300`}
+        placeholder={placeholder}
+      />
+    );
+  }
+
+  return (
+    <Tag
+      className={`${className} cursor-text hover:ring-2 hover:ring-amber-300/50 hover:rounded rounded transition-all ${!value ? "text-slate-300 italic" : ""}`}
+      onClick={start}
+      title="Click pentru editare"
+    >
+      {value || placeholder || "Click pentru editare"}
+    </Tag>
+  );
+}
+
+// ─── Inline select (icon/color/gradient) ───────────────────────────
+function InlineSelect({
+  value, options, onChange, renderOption,
+}: {
+  value: string; options: readonly string[];
   onChange: (v: string) => void;
+  renderOption?: (v: string) => React.ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div>
-      <label className={labelCls}>{label}</label>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-// ─── Block-specific editors ────────────────────────────────────────
-
-function HeadingEditor({
-  block,
-  onChange,
-}: {
-  block: HeadingBlock;
-  onChange: (b: HeadingBlock) => void;
-}) {
-  return (
-    <div className="space-y-3">
-      <div>
-        <label className={labelCls}>Text</label>
-        <input
-          value={block.text}
-          onChange={(e) => onChange({ ...block, text: e.target.value })}
-          className={inputCls}
-          placeholder="Heading text..."
-        />
-      </div>
-      <SelectField
-        label="Icon"
-        value={block.icon || "star"}
-        options={ICON_NAMES.map((n) => ({ value: n, label: n }))}
-        onChange={(v) => onChange({ ...block, icon: v as IconName })}
-      />
-    </div>
-  );
-}
-
-function ParagraphEditor({
-  block,
-  onChange,
-}: {
-  block: ParagraphBlock;
-  onChange: (b: ParagraphBlock) => void;
-}) {
-  return (
-    <div>
-      <label className={labelCls}>Text</label>
-      <textarea
-        value={block.text}
-        onChange={(e) => onChange({ ...block, text: e.target.value })}
-        rows={6}
-        className={inputCls}
-        placeholder="Paragraph text..."
-      />
-    </div>
-  );
-}
-
-function QuoteEditor({
-  block,
-  onChange,
-}: {
-  block: QuoteBlock;
-  onChange: (b: QuoteBlock) => void;
-}) {
-  return (
-    <div>
-      <label className={labelCls}>Text</label>
-      <textarea
-        value={block.text}
-        onChange={(e) => onChange({ ...block, text: e.target.value })}
-        rows={4}
-        className={inputCls}
-        placeholder="Quote text..."
-      />
-    </div>
-  );
-}
-
-function ImageEditor({
-  block,
-  onChange,
-}: {
-  block: ImageBlock;
-  onChange: (b: ImageBlock) => void;
-}) {
-  return (
-    <div className="space-y-3">
-      <div>
-        <label className={labelCls}>URL</label>
-        <input
-          value={block.src}
-          onChange={(e) => onChange({ ...block, src: e.target.value })}
-          className={inputCls}
-          placeholder="https://..."
-        />
-      </div>
-      <div>
-        <label className={labelCls}>Alt text</label>
-        <input
-          value={block.alt}
-          onChange={(e) => onChange({ ...block, alt: e.target.value })}
-          className={inputCls}
-          placeholder="Image description"
-        />
-      </div>
-      <div>
-        <label className={labelCls}>Caption (optional)</label>
-        <input
-          value={block.caption || ""}
-          onChange={(e) => onChange({ ...block, caption: e.target.value })}
-          className={inputCls}
-          placeholder="Image caption..."
-        />
-      </div>
-      {block.src && (
-        <div className="mt-2 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={block.src} alt={block.alt} className="max-h-48 mx-auto" />
-        </div>
+    <div className="relative inline-block">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1 px-2 py-1 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs hover:border-amber-400 transition"
+        title="Schimbă"
+      >
+        {renderOption ? renderOption(value) : value}
+        <span className="text-slate-400">▾</span>
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute z-20 top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg max-h-48 overflow-y-auto min-w-[120px]">
+            {options.map((opt) => (
+              <button
+                key={opt}
+                onClick={() => { onChange(opt); setOpen(false); }}
+                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-amber-50 dark:hover:bg-amber-900/20 transition flex items-center gap-2 ${opt === value ? "bg-amber-50 dark:bg-amber-900/20 font-medium" : ""}`}
+              >
+                {renderOption ? renderOption(opt) : opt}
+              </button>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
 }
 
-function StatsEditor({
-  block,
-  onChange,
-}: {
-  block: StatsBlock;
-  onChange: (b: StatsBlock) => void;
-}) {
-  const updateItem = (idx: number, field: string, value: string) => {
-    const items = [...block.items];
-    items[idx] = { ...items[idx], [field]: value };
-    onChange({ ...block, items });
-  };
-  const addItem = () =>
-    onChange({ ...block, items: [...block.items, { icon: "star", value: "", label: "" }] });
-  const removeItem = (idx: number) => {
-    const items = block.items.filter((_, i) => i !== idx);
-    onChange({ ...block, items });
-  };
+// ─── Block type config ─────────────────────────────────────────────
+const BLOCK_TYPES = [
+  { type: "heading" as const, label: "Titlu", icon: Type },
+  { type: "paragraph" as const, label: "Paragraf", icon: AlignLeft },
+  { type: "quote" as const, label: "Citat", icon: Quote },
+  { type: "image" as const, label: "Imagine", icon: ImageIcon },
+  { type: "stats" as const, label: "Statistici", icon: BarChart3 },
+  { type: "cards" as const, label: "Carduri", icon: LayoutGrid },
+  { type: "team" as const, label: "Echipă", icon: UserCircle },
+];
 
-  return (
-    <div className="space-y-4">
-      {block.items.map((item, i) => (
-        <div key={i} className="p-3 border border-slate-200 dark:border-slate-600 rounded-lg space-y-2 relative">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-slate-500">Stat #{i + 1}</span>
-            <button
-              onClick={() => removeItem(i)}
-              className="text-red-400 hover:text-red-600 transition"
-              title="Remove"
-            >
-              <Trash2 size={14} />
-            </button>
-          </div>
-          <SelectField
-            label="Icon"
-            value={item.icon}
-            options={ICON_NAMES.map((n) => ({ value: n, label: n }))}
-            onChange={(v) => updateItem(i, "icon", v)}
-          />
-          <div>
-            <label className={labelCls}>Value</label>
-            <input
-              value={item.value}
-              onChange={(e) => updateItem(i, "value", e.target.value)}
-              className={inputCls}
-              placeholder="1000+"
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Label</label>
-            <input
-              value={item.label}
-              onChange={(e) => updateItem(i, "label", e.target.value)}
-              className={inputCls}
-              placeholder="Clienți mulțumiți"
-            />
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={addItem}
-        className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 font-medium transition"
-      >
-        <Plus size={14} /> Add stat
-      </button>
-    </div>
-  );
+function defaultBlock(type: PageBlock["type"]): PageBlock {
+  switch (type) {
+    case "heading": return { type: "heading", text: "", icon: "star" };
+    case "paragraph": return { type: "paragraph", text: "" };
+    case "quote": return { type: "quote", text: "" };
+    case "image": return { type: "image", src: "", alt: "" };
+    case "stats": return { type: "stats", items: [{ icon: "users", value: "", label: "" }] };
+    case "cards": return { type: "cards", columns: 2, items: [{ icon: "star", color: "primary", title: "", text: "" }] };
+    case "team": return { type: "team", items: [{ initials: "AB", name: "", role: "", gradient: GRADIENT_OPTIONS[0] }] };
+  }
 }
 
-function CardsEditor({
-  block,
-  onChange,
-}: {
-  block: CardsBlock;
-  onChange: (b: CardsBlock) => void;
-}) {
-  const updateItem = (idx: number, field: string, value: string) => {
-    const items = [...block.items];
-    items[idx] = { ...items[idx], [field]: value };
-    onChange({ ...block, items });
-  };
-  const addItem = () =>
-    onChange({
-      ...block,
-      items: [...block.items, { icon: "star", color: "primary", title: "", text: "" }],
-    });
-  const removeItem = (idx: number) => {
-    const items = block.items.filter((_, i) => i !== idx);
-    onChange({ ...block, items });
-  };
+// ─── Block renderers with inline editing ───────────────────────────
 
+function HeadingEdit({ block, onChange }: { block: HeadingBlock; onChange: (b: HeadingBlock) => void }) {
   return (
-    <div className="space-y-4">
-      <div>
-        <label className={labelCls}>Section title (optional)</label>
-        <input
-          value={block.title || ""}
-          onChange={(e) => onChange({ ...block, title: e.target.value })}
-          className={inputCls}
-          placeholder="Title..."
-        />
-      </div>
-      <SelectField
-        label="Columns"
-        value={String(block.columns)}
-        options={[
-          { value: "2", label: "2 columns" },
-          { value: "3", label: "3 columns" },
-        ]}
-        onChange={(v) => onChange({ ...block, columns: parseInt(v) })}
+    <div className="mb-4 flex items-center gap-3 group">
+      <InlineSelect
+        value={block.icon || "star"}
+        options={ICON_NAMES}
+        onChange={(v) => onChange({ ...block, icon: v as IconName })}
+        renderOption={(v) => (
+          <span className="flex items-center gap-1">
+            <LucideIcon name={v} size={14} className="text-amber-500" />
+          </span>
+        )}
       />
-      {block.items.map((item, i) => (
-        <div key={i} className="p-3 border border-slate-200 dark:border-slate-600 rounded-lg space-y-2 relative">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-slate-500">Card #{i + 1}</span>
-            <button
-              onClick={() => removeItem(i)}
-              className="text-red-400 hover:text-red-600 transition"
-              title="Remove"
-            >
-              <Trash2 size={14} />
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <SelectField
-              label="Icon"
-              value={item.icon}
-              options={ICON_NAMES.map((n) => ({ value: n, label: n }))}
-              onChange={(v) => updateItem(i, "icon", v)}
-            />
-            <SelectField
-              label="Color"
-              value={item.color}
-              options={COLOR_OPTIONS.map((c) => ({ value: c, label: c }))}
-              onChange={(v) => updateItem(i, "color", v)}
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Title</label>
-            <input
-              value={item.title}
-              onChange={(e) => updateItem(i, "title", e.target.value)}
-              className={inputCls}
-              placeholder="Card title"
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Text</label>
-            <textarea
-              value={item.text}
-              onChange={(e) => updateItem(i, "text", e.target.value)}
-              rows={3}
-              className={inputCls}
-              placeholder="Card description..."
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Image URL (optional)</label>
-            <input
-              value={item.imageUrl || ""}
-              onChange={(e) => updateItem(i, "imageUrl", e.target.value)}
-              className={inputCls}
-              placeholder="https://..."
-            />
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={addItem}
-        className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 font-medium transition"
-      >
-        <Plus size={14} /> Add card
-      </button>
+      <Editable
+        value={block.text}
+        onChange={(v) => onChange({ ...block, text: v })}
+        className="text-xl font-bold text-slate-900 dark:text-white flex-1"
+        placeholder="Titlu secțiune..."
+      />
     </div>
   );
 }
 
-function TeamEditor({
-  block,
-  onChange,
-}: {
-  block: TeamBlock;
-  onChange: (b: TeamBlock) => void;
-}) {
-  const updateItem = (idx: number, field: string, value: string) => {
+function ParagraphEdit({ block, onChange }: { block: ParagraphBlock; onChange: (b: ParagraphBlock) => void }) {
+  return (
+    <div className="mb-3">
+      <Editable
+        value={block.text}
+        onChange={(v) => onChange({ ...block, text: v })}
+        className="text-slate-600 dark:text-slate-400 leading-relaxed w-full"
+        placeholder="Scrie paragraful aici..."
+        multiline
+        tag="div"
+      />
+    </div>
+  );
+}
+
+function QuoteEdit({ block, onChange }: { block: QuoteBlock; onChange: (b: QuoteBlock) => void }) {
+  return (
+    <div className="p-5 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 mb-6">
+      <Editable
+        value={block.text}
+        onChange={(v) => onChange({ ...block, text: v })}
+        className="text-slate-700 dark:text-slate-300 text-lg italic w-full"
+        placeholder="Citat..."
+        multiline
+        tag="div"
+      />
+    </div>
+  );
+}
+
+function ImageEdit({ block, onChange }: { block: ImageBlock; onChange: (b: ImageBlock) => void }) {
+  return (
+    <div className="mb-6 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+      {block.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={block.src} alt={block.alt} className="w-full" />
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 dark:bg-slate-800 text-slate-400">
+          <ImageIcon size={48} className="mb-2 opacity-30" />
+          <p className="text-sm">Click pe URL pentru a adăuga imagine</p>
+        </div>
+      )}
+      <div className="p-3 space-y-2 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-400 w-10 shrink-0">URL</span>
+          <Editable
+            value={block.src}
+            onChange={(v) => onChange({ ...block, src: v })}
+            className="text-xs text-slate-600 dark:text-slate-300 flex-1"
+            placeholder="https://..."
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-400 w-10 shrink-0">Alt</span>
+          <Editable
+            value={block.alt}
+            onChange={(v) => onChange({ ...block, alt: v })}
+            className="text-xs text-slate-600 dark:text-slate-300 flex-1"
+            placeholder="Descriere imagine"
+          />
+        </div>
+        {block.caption !== undefined && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 w-10 shrink-0">Text</span>
+            <Editable
+              value={block.caption}
+              onChange={(v) => onChange({ ...block, caption: v })}
+              className="text-xs text-slate-600 dark:text-slate-300 flex-1"
+              placeholder="Caption (opțional)"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatsEdit({ block, onChange }: { block: StatsBlock; onChange: (b: StatsBlock) => void }) {
+  const updateItem = (i: number, field: string, val: string) => {
     const items = [...block.items];
-    items[idx] = { ...items[idx], [field]: value };
+    items[i] = { ...items[i], [field]: val };
     onChange({ ...block, items });
   };
-  const addItem = () =>
-    onChange({
-      ...block,
-      items: [...block.items, { initials: "", name: "", role: "", gradient: GRADIENT_OPTIONS[0] }],
-    });
-  const removeItem = (idx: number) => {
-    const items = block.items.filter((_, i) => i !== idx);
-    onChange({ ...block, items });
-  };
+  const addItem = () => onChange({ ...block, items: [...block.items, { icon: "star", value: "", label: "" }] });
+  const removeItem = (i: number) => onChange({ ...block, items: block.items.filter((_, j) => j !== i) });
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className={labelCls}>Section title (optional)</label>
-        <input
-          value={block.title || ""}
-          onChange={(e) => onChange({ ...block, title: e.target.value })}
-          className={inputCls}
-          placeholder="Title..."
-        />
-      </div>
-      {block.items.map((item, i) => (
-        <div key={i} className="p-3 border border-slate-200 dark:border-slate-600 rounded-lg space-y-2 relative">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-slate-500">Member #{i + 1}</span>
+    <div className="mb-10">
+      <div className="grid grid-cols-3 gap-4">
+        {block.items.map((item, i) => (
+          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-slate-800 rounded-xl relative group">
+            {/* Remove button */}
             <button
               onClick={() => removeItem(i)}
-              className="text-red-400 hover:text-red-600 transition"
-              title="Remove"
+              className="absolute top-2 right-2 p-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 opacity-0 group-hover:opacity-100 transition"
+              title="Șterge"
             >
-              <Trash2 size={14} />
+              <Trash2 size={12} />
             </button>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className={labelCls}>Initials</label>
-              <input
-                value={item.initials}
-                onChange={(e) => updateItem(i, "initials", e.target.value)}
-                className={inputCls}
-                placeholder="VI"
-                maxLength={3}
+            {/* Icon */}
+            <div className="flex justify-center mb-2">
+              <InlineSelect
+                value={item.icon}
+                options={ICON_NAMES}
+                onChange={(v) => updateItem(i, "icon", v)}
+                renderOption={(v) => <LucideIcon name={v} size={24} className="text-amber-500" />}
               />
             </div>
-            <SelectField
-              label="Gradient"
-              value={item.gradient}
-              options={GRADIENT_OPTIONS.map((g) => ({ value: g, label: g }))}
-              onChange={(v) => updateItem(i, "gradient", v)}
+            {/* Value */}
+            <Editable
+              value={item.value}
+              onChange={(v) => updateItem(i, "value", v)}
+              className="text-3xl font-extrabold text-slate-900 dark:text-white"
+              placeholder="1000+"
+            />
+            {/* Label */}
+            <Editable
+              value={item.label}
+              onChange={(v) => updateItem(i, "label", v)}
+              className="text-sm text-slate-600 dark:text-slate-400"
+              placeholder="Descriere"
             />
           </div>
-          <div>
-            <label className={labelCls}>Name</label>
-            <input
-              value={item.name}
-              onChange={(e) => updateItem(i, "name", e.target.value)}
-              className={inputCls}
-              placeholder="Full name"
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Role</label>
-            <input
-              value={item.role}
-              onChange={(e) => updateItem(i, "role", e.target.value)}
-              className={inputCls}
-              placeholder="Role"
-            />
-          </div>
-        </div>
-      ))}
-      <button
-        onClick={addItem}
-        className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 font-medium transition"
-      >
-        <Plus size={14} /> Add member
+        ))}
+      </div>
+      <button onClick={addItem} className="mt-3 flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 font-medium transition mx-auto">
+        <Plus size={12} /> Adaugă stat
       </button>
     </div>
   );
 }
 
-// ─── Block type icon for the sidebar list ──────────────────────────
+function CardsEdit({ block, onChange }: { block: CardsBlock; onChange: (b: CardsBlock) => void }) {
+  const updateItem = (i: number, field: string, val: string) => {
+    const items = [...block.items];
+    items[i] = { ...items[i], [field]: val };
+    onChange({ ...block, items });
+  };
+  const addItem = () => onChange({ ...block, items: [...block.items, { icon: "star", color: "primary", title: "", text: "" }] });
+  const removeItem = (i: number) => onChange({ ...block, items: block.items.filter((_, j) => j !== i) });
+  const cols = block.columns === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
 
-function BlockTypeIcon({ type }: { type: PageBlock["type"] }) {
-  const cfg = BLOCK_TYPES.find((b) => b.type === type);
-  if (!cfg) return null;
-  const Comp = cfg.icon;
-  return <Comp size={16} className="text-slate-400" />;
+  return (
+    <div className="mb-10">
+      {/* Columns selector */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-xs text-slate-400">Coloane:</span>
+        <InlineSelect
+          value={String(block.columns)}
+          options={["2", "3"]}
+          onChange={(v) => onChange({ ...block, columns: parseInt(v) })}
+        />
+      </div>
+      <div className={`grid grid-cols-1 ${cols} gap-4`}>
+        {block.items.map((item, i) => (
+          <div key={i} className="p-5 border border-slate-200 dark:border-slate-700 rounded-xl relative group">
+            {/* Remove */}
+            <button
+              onClick={() => removeItem(i)}
+              className="absolute top-2 right-2 p-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 opacity-0 group-hover:opacity-100 transition"
+              title="Șterge"
+            >
+              <Trash2 size={12} />
+            </button>
+            {/* Icon + Color */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className={`w-12 h-12 rounded-xl ${colorBg[item.color] || colorBg.primary} flex items-center justify-center`}>
+                <InlineSelect
+                  value={item.icon}
+                  options={ICON_NAMES}
+                  onChange={(v) => updateItem(i, "icon", v)}
+                  renderOption={(v) => <LucideIcon name={v} size={24} className={colorText[item.color] || colorText.primary} />}
+                />
+              </div>
+              <InlineSelect
+                value={item.color}
+                options={COLOR_OPTIONS}
+                onChange={(v) => updateItem(i, "color", v)}
+                renderOption={(v) => (
+                  <span className="flex items-center gap-1.5">
+                    <span className={`w-3 h-3 rounded-full ${colorBg[v] || "bg-slate-200"}`} />
+                    <span className="capitalize">{v}</span>
+                  </span>
+                )}
+              />
+            </div>
+            {/* Title */}
+            <Editable
+              value={item.title}
+              onChange={(v) => updateItem(i, "title", v)}
+              className="font-bold text-slate-900 dark:text-white mb-2"
+              placeholder="Titlu card"
+            />
+            {/* Text */}
+            <Editable
+              value={item.text}
+              onChange={(v) => updateItem(i, "text", v)}
+              className="text-sm text-slate-600 dark:text-slate-400"
+              placeholder="Descriere card..."
+              multiline
+              tag="div"
+            />
+          </div>
+        ))}
+      </div>
+      <button onClick={addItem} className="mt-3 flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 font-medium transition mx-auto">
+        <Plus size={12} /> Adaugă card
+      </button>
+    </div>
+  );
+}
+
+function TeamEdit({ block, onChange }: { block: TeamBlock; onChange: (b: TeamBlock) => void }) {
+  const updateItem = (i: number, field: string, val: string) => {
+    const items = [...block.items];
+    items[i] = { ...items[i], [field]: val };
+    onChange({ ...block, items });
+  };
+  const addItem = () => onChange({ ...block, items: [...block.items, { initials: "AB", name: "", role: "", gradient: GRADIENT_OPTIONS[0] }] });
+  const removeItem = (i: number) => onChange({ ...block, items: block.items.filter((_, j) => j !== i) });
+
+  return (
+    <div className="mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {block.items.map((item, i) => (
+          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-slate-800 rounded-xl relative group">
+            {/* Remove */}
+            <button
+              onClick={() => removeItem(i)}
+              className="absolute top-2 right-2 p-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 opacity-0 group-hover:opacity-100 transition"
+              title="Șterge"
+            >
+              <Trash2 size={12} />
+            </button>
+            {/* Avatar */}
+            <div className="flex justify-center mb-3">
+              <InlineSelect
+                value={item.gradient}
+                options={GRADIENT_OPTIONS}
+                onChange={(v) => updateItem(i, "gradient", v)}
+                renderOption={(v) => (
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${v} flex items-center justify-center text-white font-bold text-xl`}>
+                    <Editable
+                      value={item.initials}
+                      onChange={(val) => updateItem(i, "initials", val)}
+                      className="!text-white font-bold text-xl bg-transparent text-center w-full"
+                      placeholder="VI"
+                    />
+                  </div>
+                )}
+              />
+            </div>
+            {/* Name */}
+            <Editable
+              value={item.name}
+              onChange={(v) => updateItem(i, "name", v)}
+              className="font-bold text-slate-900 dark:text-white"
+              placeholder="Nume complet"
+            />
+            {/* Role */}
+            <Editable
+              value={item.role}
+              onChange={(v) => updateItem(i, "role", v)}
+              className="text-sm text-slate-600 dark:text-slate-400"
+              placeholder="Rol"
+            />
+          </div>
+        ))}
+      </div>
+      <button onClick={addItem} className="mt-3 flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 font-medium transition mx-auto">
+        <Plus size={12} /> Adaugă membru
+      </button>
+    </div>
+  );
+}
+
+// ─── Block wrapper with controls ───────────────────────────────────
+function BlockWrapper({
+  children, index, total, onMoveUp, onMoveDown, onRemove, blockType,
+}: {
+  children: React.ReactNode; index: number; total: number;
+  onMoveUp: () => void; onMoveDown: () => void; onRemove: () => void;
+  blockType: string;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const cfg = BLOCK_TYPES.find((b) => b.type === blockType);
+  const IconComp = cfg?.icon || Type;
+
+  return (
+    <div
+      className="relative group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Floating controls */}
+      {hovered && (
+        <div className="absolute -left-12 top-2 flex flex-col gap-1 z-10">
+          <div className="flex items-center bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200 dark:border-slate-600 overflow-hidden">
+            <div className="px-1.5 py-1 border-r border-slate-200 dark:border-slate-600 flex items-center justify-center" title={cfg?.label}>
+              <IconComp size={12} className="text-amber-500" />
+            </div>
+            <button
+              onClick={onMoveUp}
+              disabled={index === 0}
+              className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white disabled:opacity-30 transition"
+              title="Mută sus"
+            >
+              <ChevronUp size={14} />
+            </button>
+            <button
+              onClick={onMoveDown}
+              disabled={index === total - 1}
+              className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white disabled:opacity-30 transition"
+              title="Mută jos"
+            >
+              <ChevronDown size={14} />
+            </button>
+            <button
+              onClick={onRemove}
+              className="p-1 text-red-400 hover:text-red-600 transition"
+              title="Șterge bloc"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Dashed outline on hover */}
+      <div className={`${hovered ? "ring-2 ring-amber-300/50 ring-offset-2 rounded-xl" : ""} transition-all`}>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 // ─── Main component ────────────────────────────────────────────────
-
 interface BlockEditorProps {
   blocks: PageBlock[];
   onChange: (blocks: PageBlock[]) => void;
 }
 
 export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
 
   const updateBlock = (idx: number, block: PageBlock) => {
@@ -572,18 +530,12 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
 
   const addBlock = (type: PageBlock["type"]) => {
     const newBlock = defaultBlock(type);
-    const next = [...blocks, newBlock];
-    onChange(next);
-    setSelectedIdx(next.length - 1);
+    onChange([...blocks, newBlock]);
     setShowAddMenu(false);
   };
 
   const removeBlock = (idx: number) => {
-    if (!confirm("Ștergi acest bloc?")) return;
-    const next = blocks.filter((_, i) => i !== idx);
-    onChange(next);
-    if (selectedIdx === idx) setSelectedIdx(null);
-    else if (selectedIdx !== null && selectedIdx > idx) setSelectedIdx(selectedIdx - 1);
+    onChange(blocks.filter((_, i) => i !== idx));
   };
 
   const moveUp = (idx: number) => {
@@ -591,7 +543,6 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
     const next = [...blocks];
     [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
     onChange(next);
-    setSelectedIdx(idx - 1);
   };
 
   const moveDown = (idx: number) => {
@@ -599,144 +550,54 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
     const next = [...blocks];
     [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
     onChange(next);
-    setSelectedIdx(idx + 1);
   };
 
-  const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] : null;
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      {/* Block list */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Blocks ({blocks.length})
-          </h3>
-        </div>
-        {blocks.map((block, i) => (
-          <div
-            key={i}
-            onClick={() => setSelectedIdx(i)}
-            className={`flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition group border ${
-              selectedIdx === i
-                ? "border-amber-400 bg-amber-50 dark:bg-amber-900/20"
-                : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-700/30"
-            }`}
-          >
-            <BlockTypeIcon type={block.type} />
-            <span className="flex-1 text-sm text-slate-700 dark:text-slate-300 truncate">
-              {blockLabel(block)}
-            </span>
-            <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition">
-              <button
-                onClick={(e) => { e.stopPropagation(); moveUp(i); }}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                disabled={i === 0}
-                title="Move up"
-              >
-                <ChevronUp size={14} />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); moveDown(i); }}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                disabled={i === blocks.length - 1}
-                title="Move down"
-              >
-                <ChevronDown size={14} />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); removeBlock(i); }}
-                className="p-1 text-red-400 hover:text-red-600"
-                title="Delete"
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          </div>
-        ))}
+    <div className="pl-14">
+      {blocks.map((block, i) => (
+        <BlockWrapper
+          key={i}
+          index={i}
+          total={blocks.length}
+          onMoveUp={() => moveUp(i)}
+          onMoveDown={() => moveDown(i)}
+          onRemove={() => removeBlock(i)}
+          blockType={block.type}
+        >
+          {block.type === "heading" && <HeadingEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+          {block.type === "paragraph" && <ParagraphEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+          {block.type === "quote" && <QuoteEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+          {block.type === "image" && <ImageEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+          {block.type === "stats" && <StatsEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+          {block.type === "cards" && <CardsEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+          {block.type === "team" && <TeamEdit block={block} onChange={(b) => updateBlock(i, b)} />}
+        </BlockWrapper>
+      ))}
 
-        {/* Add block */}
-        <div className="relative">
-          <button
-            onClick={() => setShowAddMenu(!showAddMenu)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-500 hover:text-amber-600 hover:border-amber-400 transition"
-          >
-            <Plus size={14} /> Add block
-          </button>
-          {showAddMenu && (
-            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg z-10 overflow-hidden">
+      {/* Add block */}
+      <div className="relative mt-4">
+        <button
+          onClick={() => setShowAddMenu(!showAddMenu)}
+          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-400 hover:text-amber-600 hover:border-amber-400 transition"
+        >
+          <Plus size={16} /> Adaugă bloc nou
+        </button>
+        {showAddMenu && (
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setShowAddMenu(false)} />
+            <div className="absolute left-0 right-0 bottom-full mb-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 overflow-hidden">
               {BLOCK_TYPES.map((bt) => (
                 <button
                   key={bt.type}
                   onClick={() => addBlock(bt.type)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition"
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition"
                 >
                   <bt.icon size={16} className="text-slate-400" />
                   {bt.label}
                 </button>
               ))}
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Block editor */}
-      <div className="lg:col-span-2">
-        {selectedBlock && selectedIdx !== null ? (
-          <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
-              <BlockTypeIcon type={selectedBlock.type} />
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 capitalize">
-                {selectedBlock.type} block
-              </span>
-            </div>
-            {selectedBlock.type === "heading" && (
-              <HeadingEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-            {selectedBlock.type === "paragraph" && (
-              <ParagraphEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-            {selectedBlock.type === "quote" && (
-              <QuoteEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-            {selectedBlock.type === "image" && (
-              <ImageEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-            {selectedBlock.type === "stats" && (
-              <StatsEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-            {selectedBlock.type === "cards" && (
-              <CardsEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-            {selectedBlock.type === "team" && (
-              <TeamEditor
-                block={selectedBlock}
-                onChange={(b) => updateBlock(selectedIdx, b)}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-48 text-slate-400 text-sm border border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
-            Select a block to edit
-          </div>
+          </>
         )}
       </div>
     </div>
