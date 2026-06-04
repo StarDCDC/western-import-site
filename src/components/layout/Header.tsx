@@ -17,7 +17,7 @@ const navItems: { label: string; icon: string; href: string; highlight?: boolean
   { label: 'nav.telefoane', icon: '', href: '/catalog?category=telefoane' },
   { label: 'nav.tablete', icon: '', href: '/catalog?category=tablete' },
   { label: 'nav.miniPc', icon: '', href: '/catalog?category=mini-pc' },
-  { label: 'nav.reduceri', icon: '', href: '/catalog?discount=true', highlight: true },
+  { label: 'nav.reduceri', icon: '', href: '/catalog?discount=true' },
   { label: 'nav.livrare', icon: '', href: '/shipping' },
   { label: 'nav.about', icon: '', href: '/about' },
 ];
@@ -58,7 +58,7 @@ export default function Header() {
 
       {/* Header */}
       <header
-        className={`sticky top-1 z-[100] bg-slate-900/95 backdrop-blur-xl transition-all duration-300 rounded-2xl mx-2 sm:mx-4 lg:mx-6 shadow-sm dark:bg-white/95 ${
+        className={`sticky top-1 z-[100] bg-slate-900/95 backdrop-blur-xl transition-all duration-300 rounded-2xl mx-2 sm:mx-4 lg:mx-6 shadow-sm dark:bg-slate-800/95 ${
           scrolled ? 'shadow-lg' : ''
         } ${!headerVisible ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'}`}
       >

@@ -77,7 +77,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) || 'popular');
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [perPage, setPerPage] = useState(12);
+  const [perPage, setPerPage] = useState(20);
   // searchQuery is LOCAL ONLY to this component. We write it to URL only via debounce.
   // We NEVER read search from URL into searchQuery — that was causing the input reset loop.
   const [searchQuery, setSearchQuery] = useState('');
@@ -435,7 +435,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     </div>
   );
 
-  const ProductCardSmall = ({ product }: { product: Product }) => {
+  const ProductCardSmall = ({ product, listMode = false }: { product: Product; listMode?: boolean }) => {
     const discount = product.oldPrice ? getDiscount(product.oldPrice, product.price) : null;
     const badgeText = product.condition === 'nou' ? t('product.nou') : discount ? `-${discount}%` : t('product.refurbished');
     const badgeClass = product.condition === 'nou' ? 'bg-emerald-600' : discount ? 'bg-accent' : 'bg-indigo-500';
@@ -463,7 +463,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     return (
       <div
         /* No entrance animation — cards must paint from SSR HTML before hydration. */
-        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0"
+        className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row ${listMode ? 'lg:flex-row' : 'sm:flex-col'} gap-2 sm:gap-0`}
       >
         {/* Badge */}
         <span className={`absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-2 rounded text-[9px] sm:text-[11px] font-bold text-white z-10 ${badgeClass}`}>
@@ -695,7 +695,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
             <div className="flex-1">
               {loading ? (
-                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3"}>
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3 list-mode"}>
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 animate-pulse">
                       <div className="h-36 bg-slate-200 dark:bg-slate-700 rounded-xl mb-3" />
@@ -706,9 +706,9 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                   ))}
                 </div>
               ) : (
-                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3"}>
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3 list-mode"}>
                   {filteredProducts.map((p, i) => (
-                    <ProductCardSmall key={`${p.id}-${i}`} product={p} />
+                    <ProductCardSmall key={`${p.id}-${i}`} product={p} listMode={viewMode === 'list'} />
                   ))}
                 </div>
               )}

@@ -17,9 +17,8 @@ import InstallmentCalculator from '@/components/product/InstallmentCalculator';
 import { trackProductView } from '@/components/home/RecentlyViewed';
 
 // ─── Share Buttons Component ────────────────────────────────────
-function ShareButtons({ productName, locale }: { productName: string; locale: string }) {
+function SharePopup({ productName, locale, onClose }: { productName: string; locale: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
-  const [toast, setToast] = useState('');
 
   if (typeof window === 'undefined') return null;
 
@@ -28,105 +27,98 @@ function ShareButtons({ productName, locale }: { productName: string; locale: st
   const shareText = `${productName} — Western Import`;
   const fullText = `${shareText}\n${productUrl}`;
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 3000);
-  };
-
-  // Web Share API — available pe mobil (Android/iOS), deschide sheet nativ
-  const nativeShare = async () => {
+  const nativeShare = async (): Promise<boolean> => {
     if (navigator.share) {
-      try {
-        await navigator.share({ title: productName, text: shareText, url: productUrl });
-        return true;
-      } catch { /* user cancelled */ }
+      try { await navigator.share({ title: productName, text: shareText, url: productUrl }); return true; } catch {}
     }
     return false;
   };
 
-  const shareLinks = [
-    {
-      label: 'Facebook',
-      color: '#1877F2', icon: '📘',
-      action: () => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank'); },
-    },
-    {
-      label: 'WhatsApp',
-      color: '#25D366', icon: '💬',
-      action: () => { window.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank'); },
-    },
-    {
-      label: 'Telegram',
-      color: '#26A5E4', icon: '✈️',
-      action: () => { window.open(`https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(shareText)}`, '_blank'); },
-    },
-    {
-      label: 'Viber',
-      color: '#7360F2', icon: '📞',
-      action: () => { window.open(`viber://forward?text=${encodeURIComponent(fullText)}`, '_blank'); },
-    },
-    {
-      label: 'Instagram',
-      color: '#E4405F', icon: '📷',
-      action: async () => {
-        // Pe mobil: native share (deschide Instagram din sheet)
-        const shared = await nativeShare();
-        if (!shared) {
-          // Desktop: copiază link + deschide Instagram DM
-          navigator.clipboard.writeText(fullText);
-          showToast('✅ Link copiat! Deschide Instagram și lipește-l în DM');
-          window.open('https://www.instagram.com/direct/new/', '_blank');
-        }
-      },
-    },
-    {
-      label: 'TikTok',
-      color: '#000000', icon: '🎵',
-      action: async () => {
-        const shared = await nativeShare();
-        if (!shared) {
-          navigator.clipboard.writeText(fullText);
-          showToast('✅ Link copiat! Deschide TikTok și lipește-l în mesaje');
-          window.open('https://www.tiktok.com/', '_blank');
-        }
-      },
-    },
+  const networks = [
+    { label: 'Facebook', color: '#1877F2', logo: '/social-facebook.svg', action: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank') },
+    { label: 'WhatsApp', color: '#25D366', logo: '/social-whatsapp.svg', action: () => window.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank') },
+    { label: 'Telegram', color: '#26A5E4', logo: '/social-telegram.svg', action: () => window.open(`https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(shareText)}`, '_blank') },
+    { label: 'Viber', color: '#7360F2', logo: '/social-viber.svg', action: () => window.open(`viber://forward?text=${encodeURIComponent(fullText)}`, '_blank') },
+    { label: 'Instagram', color: '#E4405F', logo: '/social-instagram.svg', action: async () => { const ok = await nativeShare(); if (!ok) { await navigator.clipboard.writeText(fullText); window.open('https://www.instagram.com/direct/new/', '_blank'); } onClose(); } },
+    { label: 'TikTok', color: '#000000', logo: '/social-tiktok.svg', action: async () => { const ok = await nativeShare(); if (!ok) { await navigator.clipboard.writeText(fullText); window.open('https://www.tiktok.com/', '_blank'); } onClose(); } },
   ];
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(productUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <div className="mb-6">
-      <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">
-        🔗 {locale === 'ru' ? 'Поделиться' : 'Distribuie produsul'}
-      </p>
-      {toast && (
-        <div className="mb-2 px-3 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-xl">
-          {toast}
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-[90vw] max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">{locale === 'ru' ? 'Поделиться' : 'Distribuie'}</h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl">✕</button>
         </div>
-      )}
-      <div className="flex flex-wrap gap-2">
-        {shareLinks.map(s => (
-          <button
-            key={s.label}
-            onClick={s.action}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-medium hover:opacity-80 transition-opacity cursor-pointer"
-            style={{ backgroundColor: s.color }}
-          >
-            <span>{s.icon}</span> {s.label}
-          </button>
-        ))}
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
-        >
+        <div className="grid grid-cols-3 gap-3">
+          {networks.map(n => (
+            <button key={n.label} onClick={n.action} className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: n.color }}>
+                <img src={n.logo} alt={n.label} className="w-6 h-6" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class=\"text-white text-lg font-bold\">${n.label[0]}</span>`; }} />
+              </div>
+              <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300">{n.label}</span>
+            </button>
+          ))}
+        </div>
+        <button onClick={() => { navigator.clipboard.writeText(productUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="w-full mt-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
           {copied ? '✅ Copiat!' : '📋 Copiază link'}
         </button>
       </div>
+    </div>
+  );
+}
+
+function ShareButtons({ productName, locale }: { productName: string; locale: string }) {
+  const [showPopup, setShowPopup] = useState(false);
+  return (
+    <div className="mb-6">
+      <button onClick={() => setShowPopup(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+        📤 {locale === 'ru' ? 'Поделиться' : 'Distribuie produsul'}
+      </button>
+      {showPopup && <SharePopup productName={productName} locale={locale} onClose={() => setShowPopup(false)} />}
+    </div>
+  );
+}
+
+function ReviewForm({ productId, locale }: { productId: string; locale: string }) {
+  const [rating, setRating] = useState(5);
+  const [name, setName] = useState('');
+  const [text, setText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!name.trim() || !text.trim()) return;
+    setSubmitting(true);
+    try {
+      await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, author: name, rating, text }),
+      });
+      setSubmitted(true);
+    } catch {} finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (submitted) return <p className="text-sm text-emerald-600">{locale === 'ru' ? '✅ Спасибо за отзыв!' : '✅ Mulțumim pentru review!'}</p>;
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-slate-500">{locale === 'ru' ? 'Оценка' : 'Rating'}:</span>
+        {Array.from({ length: 5 }, (_, i) => (
+          <button key={i} onClick={() => setRating(i + 1)} className="cursor-pointer">
+            <Star className={`w-5 h-5 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'}`} />
+          </button>
+        ))}
+      </div>
+      <input value={name} onChange={e => setName(e.target.value)} placeholder={locale === 'ru' ? 'Ваше имя' : 'Numele tău'} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary" />
+      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={locale === 'ru' ? 'Напишите отзыв...' : 'Scrie review-ul tău...'} rows={3} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary resize-none" />
+      <button onClick={handleSubmit} disabled={submitting || !name.trim() || !text.trim()} className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-colors disabled:opacity-40">
+        {submitting ? '...' : (locale === 'ru' ? 'Отправить' : 'Trimite')}
+      </button>
     </div>
   );
 }
@@ -302,6 +294,29 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 )}
               </div>
 
+              {/* Quantity + Cart + Favorite + Share — right under price */}
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">−</button>
+                  <span className="px-4 py-2 text-sm font-semibold border-x border-slate-200 dark:border-slate-700">{qty}</span>
+                  <button onClick={() => setQty(Math.min(99, qty + 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
+                </div>
+                <button
+                  onClick={() => { for (let i = 0; i < qty; i++) addToCart(product); }}
+                  className="flex-1 bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+                >
+                  <ShoppingCart className="w-4 h-4" /> {locale === 'ru' ? 'В корзину' : 'Adaugă în coș'}
+                </button>
+                <button
+                  onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)}
+                  className={`p-2.5 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-accent hover:border-accent'}`}
+                >
+                  <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
+                </button>
+              </div>
+
+              <ShareButtons productName={product.name} locale={locale} />
+
               {/* ─── IutePay — calculator rate ────── */}
               {product.price >= 1000 && (
                 <InstallmentCalculator price={product.price} />
@@ -360,36 +375,6 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 })()}
               </div>
 
-              {/* Quantity + Actions */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
-                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">−</button>
-                  <span className="px-4 py-2 text-sm font-semibold border-x border-slate-200 dark:border-slate-700">{qty}</span>
-                  <button onClick={() => setQty(Math.min(99, qty + 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
-                </div>
-                <button
-                  onClick={() => { for (let i = 0; i < qty; i++) addToCart(product); }}
-                  className="flex-1 bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
-                >
-                  <ShoppingCart className="w-4 h-4" /> {locale === 'ru' ? 'В корзину' : 'Adaugă în coș'}
-                </button>
-              </div>
-
-              <div className="flex gap-2 mb-6">
-                <button
-                  onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)}
-                  className={`p-2.5 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-accent hover:border-accent'}`}
-                >
-                  <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
-                </button>
-                <button className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-primary hover:border-primary transition-colors">
-                  <BarChart3 className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Share Buttons */}
-              <ShareButtons productName={product.name} locale={locale} />
-
               {/* Benefits */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
@@ -433,6 +418,12 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{review.text}</p>
                 </div>
               ))}
+            </div>
+
+            {/* Add Review Form */}
+            <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-3">{locale === 'ru' ? 'Оставить отзыв' : 'Scrie un review'}</h3>
+              <ReviewForm productId={product.id} locale={locale} />
             </div>
           </div>
 
@@ -497,23 +488,31 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 {similar.map((sp, i) => {
                   const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
                   return (
-                    <Link key={`sim-${sp.id}-${i}`} href={`/product/${sp.id}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0">
-                      <div className="flex-shrink-0 w-[100px] h-[100px] sm:w-full sm:h-32 sm:flex sm:items-center sm:justify-center overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 sm:mb-3">
-                        {imgUrl ? (
-                          <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover sm:max-h-28 sm:w-auto sm:object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
-                            <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
-                          </div>
-                        )}
-                      </div>
+                    <div key={`sim-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0 relative">
+                      <Link href={`/product/${sp.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
+                        <div className="w-[100px] h-[100px] sm:w-full sm:h-32 sm:flex sm:items-center sm:justify-center overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 sm:mb-3">
+                          {imgUrl ? (
+                            <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover sm:max-h-28 sm:w-auto sm:object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+                              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4>
+                        <Link href={`/product/${sp.id}`}><h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4></Link>
                         <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
                         <div className="flex-1 min-h-1" />
-                        <p className="text-xs sm:text-base font-extrabold text-primary-dark dark:text-primary mt-1 sm:mt-2">{formatPrice(sp.price)}</p>
+                        <div className="flex items-center justify-between mt-1 sm:mt-2">
+                          <p className="text-xs sm:text-base font-extrabold text-primary-dark dark:text-primary">{formatPrice(sp.price)}</p>
+                          <div className="flex gap-1">
+                            <button onClick={() => addToCart(sp)} className="p-1.5 sm:p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors" title="Adaugă în coș"><ShoppingCart className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => isInWishlist(sp.id) ? removeWishlist(sp.id) : toggleWishlist(sp)} className={`p-1.5 sm:p-2 rounded-lg transition-colors ${isInWishlist(sp.id) ? 'text-accent' : 'text-slate-400 hover:text-accent'}`} title="Favorite"><Heart className={`w-3.5 h-3.5 ${isInWishlist(sp.id) ? 'fill-accent' : ''}`} /></button>
+                          </div>
+                        </div>
                       </div>
-                    </Link>
+                    </div>
                   );
                 })}
               </div>
