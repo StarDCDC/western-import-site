@@ -1,7 +1,7 @@
 // src/lib/credit365-client.ts — Client-side Credit365 API
-// All requests go directly from browser to Aventus API (bypasses Cloudflare server blocking)
+// All requests go through local Next.js proxy to avoid CORS issues
 
-const BASE_URL = process.env.NEXT_PUBLIC_CREDIT365_BASE_URL || 'https://preprod.aventus.md/';
+const PROXY_BASE = '/api/credit365/proxy/';
 const USERNAME = process.env.NEXT_PUBLIC_CREDIT365_USERNAME || '';
 const PASSWORD = process.env.NEXT_PUBLIC_CREDIT365_PASSWORD || '';
 const PRODUCT_TYPE = 'credit365';
@@ -11,7 +11,7 @@ let cachedToken: string | null = null;
 async function getToken(): Promise<string> {
   if (cachedToken) return cachedToken;
   
-  const res = await fetch(`${BASE_URL}api/third-party/auth`, {
+  const res = await fetch(`${PROXY_BASE}api/third-party/auth`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: USERNAME, password: PASSWORD }),
@@ -34,7 +34,7 @@ export async function checkIdnp(idnp: string): Promise<Credit365Terms> {
   const token = await getToken();
 
   // Check IDNP and get products
-  const checkRes = await fetch(`${BASE_URL}api/third-party/check-idnp`, {
+  const checkRes = await fetch(`${PROXY_BASE}api/third-party/check-idnp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -54,10 +54,7 @@ export async function checkIdnp(idnp: string): Promise<Credit365Terms> {
   const productId = product.id;
 
   // Get pricelist
-  const priceUrl = new URL(`${BASE_URL}api/wallet/partner/products/${productId}/prices`);
-  if (userId) priceUrl.searchParams.set('user_id', String(userId));
-
-  const priceRes = await fetch(priceUrl.toString(), {
+  const priceRes = await fetch(`${PROXY_BASE}api/wallet/partner/products/${productId}/prices${userId ? '?user_id=' + userId : ''}`, {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` },
   });
@@ -92,7 +89,7 @@ export async function submitLoanRequest(params: {
 }): Promise<number> {
   const token = await getToken();
 
-  const res = await fetch(`${BASE_URL}api/wallet/partner/wallet-loan-requests`, {
+  const res = await fetch(`${PROXY_BASE}api/wallet/partner/wallet-loan-requests`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -125,7 +122,7 @@ export async function submitLoanRequest(params: {
 
   // Upload passport if provided
   if (params.passportBase64 && data.ApplicationId) {
-    await fetch(`${BASE_URL}api/wallet/partner/wallet-loan-requests/${data.ApplicationId}/document`, {
+    await fetch(`${PROXY_BASE}api/wallet/partner/wallet-loan-requests/${data.ApplicationId}/document`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -145,7 +142,7 @@ export async function submitLoanRequest(params: {
 export async function confirmRequest(applicationId: number, smsCode: string): Promise<void> {
   const token = await getToken();
 
-  const res = await fetch(`${BASE_URL}api/wallet/partner/wallet-loan-requests/${applicationId}/confirm-request`, {
+  const res = await fetch(`${PROXY_BASE}api/wallet/partner/wallet-loan-requests/${applicationId}/confirm-request`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -163,7 +160,7 @@ export async function confirmRequest(applicationId: number, smsCode: string): Pr
 export async function getRequestStatus(applicationId: number): Promise<Record<string, unknown>> {
   const token = await getToken();
 
-  const res = await fetch(`${BASE_URL}api/wallet/partner/wallet-loan-requests/${applicationId}`, {
+  const res = await fetch(`${PROXY_BASE}api/wallet/partner/wallet-loan-requests/${applicationId}`, {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` },
   });
