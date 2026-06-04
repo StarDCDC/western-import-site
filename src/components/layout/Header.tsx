@@ -95,7 +95,7 @@ export default function Header() {
 
       {/* Header */}
       <header
-        className={`sticky top-0 z-[100] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 transition-all duration-300 rounded-b-2xl ${
+        className={`sticky top-0 z-[100] bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl transition-all duration-300 rounded-b-2xl mx-2 sm:mx-4 lg:mx-6 mt-0.5 shadow-sm ${
           scrolled ? 'shadow-lg' : ''
         } ${!headerVisible ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'}`}
       >
@@ -225,18 +225,17 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:block border-t border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar">
-          <div className="max-w-[1280px] mx-auto px-5 flex items-center whitespace-nowrap gap-1 py-1.5">
+        <nav className="hidden lg:block overflow-x-auto no-scrollbar">
+          <div className="max-w-[1280px] mx-auto px-5 flex items-center whitespace-nowrap gap-1.5 py-2">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-lg transition-all ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-xl transition-all ${
                   item.highlight
-                    ? 'text-white bg-gradient-to-r from-accent to-red-600 hover:from-red-600 hover:to-accent shadow-sm shadow-accent/20 font-bold'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary dark:hover:text-primary'
-                }`
-              }
+                    ? 'text-white bg-red-600 hover:bg-red-700 shadow-sm shadow-red-500/30 font-bold'
+                    : 'text-slate-700 dark:text-slate-300 bg-slate-100/70 dark:bg-slate-800/60 hover:bg-primary/10 hover:text-primary dark:hover:text-primary'
+                }`}
               >
                 <span>{item.icon}</span>
                 {t(item.label)}
