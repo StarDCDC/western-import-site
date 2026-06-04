@@ -106,7 +106,7 @@ export default function CartPage() {
                         className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex gap-4"
                       >
                         <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 shrink-0 relative">
-                          {(typeof item.product?.brand === 'string' ? item.product.brand : item.product?.brand?.name)?.slice(0, 2).toUpperCase() || 'WI'}
+                          {(item.product?.brand?.name || item.product?.brand || 'WI').toString().slice(0, 2).toUpperCase()}
                           {hasDiscount && (
                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">REDUCERE</span>
                           )}
