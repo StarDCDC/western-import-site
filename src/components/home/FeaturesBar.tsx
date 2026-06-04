@@ -61,7 +61,7 @@ export default function FeaturesBar() {
             <motion.div
               key={feature.titleKey}
               variants={itemVariants}
-              className="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all hover:shadow-md hover:-translate-y-0.5"
+              className="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all hover:shadow-md hover:-translate-y-0.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700"
             >
               <div className="shrink-0 w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
                 {feature.icon}

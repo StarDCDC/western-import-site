@@ -12,21 +12,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SearchBar from '@/components/ui/SearchBar';
 
 const navItems: { label: string; icon: string; href: string; highlight?: boolean }[] = [
-  { label: 'nav.laptopuri', icon: '💻', href: '/catalog?category=laptopuri' },
-  { label: 'nav.telefoane', icon: '📱', href: '/catalog?category=telefoane' },
-  { label: 'nav.tablete', icon: '📋', href: '/catalog?category=tablete' },
-  { label: 'nav.miniPc', icon: '🖥️', href: '/catalog?category=mini-pc' },
-  { label: 'nav.reduceri', icon: '🏷️', href: '/catalog?discount=true', highlight: true },
-
-  { label: 'nav.livrare', icon: '🚚', href: '/shipping' },
-
-  { label: 'nav.about', icon: 'ℹ️', href: '/about' },
+  { label: 'nav.home', icon: '', href: '/' },
+  { label: 'nav.laptopuri', icon: '', href: '/catalog?category=laptopuri' },
+  { label: 'nav.telefoane', icon: '', href: '/catalog?category=telefoane' },
+  { label: 'nav.tablete', icon: '', href: '/catalog?category=tablete' },
+  { label: 'nav.miniPc', icon: '', href: '/catalog?category=mini-pc' },
+  { label: 'nav.reduceri', icon: '', href: '/catalog?discount=true', highlight: true },
+  { label: 'nav.livrare', icon: '', href: '/shipping' },
+  { label: 'nav.about', icon: '', href: '/about' },
 ];
 
 export default function Header() {
   const { locale, setLocale, t } = useLanguage();
   const { theme, toggle } = useTheme();
   const [scrolled, setScrolled] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [headerVisible, setHeaderVisible] = useState(true);
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [session, setSession] = useState<{ user?: { name?: string; email?: string; role?: string } } | null>(null);
@@ -37,16 +38,25 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true);
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      setScrolled(currentY > 10);
+      if (currentY > lastScrollY && currentY > 80) {
+        setHeaderVisible(false);
+      } else {
+        setHeaderVisible(true);
+      }
+      setLastScrollY(currentY);
+    };
     window.addEventListener('scroll', onScroll);
     fetch('/api/auth/session').then(r => r.json()).then(s => setSession(s)).catch(() => setSession(null));
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [lastScrollY]);
 
   return (
     <>
       {/* Topbar */}
-      <div className="bg-[#091f4a] text-white text-xs py-2">
+      <div className={`bg-[#091f4a] text-white text-xs py-2 transition-all duration-300 ${!headerVisible ? 'opacity-0 h-0 py-0 overflow-hidden' : 'opacity-100'}`}>
         <div className="max-w-[1280px] mx-auto px-5 flex justify-between items-center">
           <div className="flex gap-5 items-center">
             <span className="flex items-center gap-1 text-sky-300">
@@ -85,9 +95,9 @@ export default function Header() {
 
       {/* Header */}
       <header
-        className={`sticky top-0 z-[100] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 transition-shadow ${
-          scrolled ? 'shadow-md' : ''
-        }`}
+        className={`sticky top-0 z-[100] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 transition-all duration-300 rounded-b-2xl ${
+          scrolled ? 'shadow-lg' : ''
+        } ${!headerVisible ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'}`}
       >
         <div className="max-w-[1280px] mx-auto px-3 sm:px-5 flex items-center gap-2 sm:gap-5 py-2.5 sm:py-3">
           {/* Logo */}
@@ -221,10 +231,10 @@ export default function Header() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-lg transition-all border border-transparent ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-lg transition-all ${
                   item.highlight
                     ? 'text-white bg-gradient-to-r from-accent to-red-600 hover:from-red-600 hover:to-accent shadow-sm shadow-accent/20 font-bold'
-                    : 'text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary dark:hover:text-primary hover:border-primary/20'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary dark:hover:text-primary'
                 }`
               }
               >

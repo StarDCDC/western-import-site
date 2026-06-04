@@ -39,13 +39,13 @@ export default function BrandCarousel() {
               rel="noopener noreferrer"
               title={brand.name}
               aria-label={brand.name}
-              className="flex items-center justify-center min-w-[150px] px-6 py-4"
+              className="flex items-center justify-center min-w-[180px] px-6 py-5"
             >
-              <div className="flex items-center justify-center h-16 w-32 rounded-xl bg-white shadow-sm border border-slate-100 px-4 transition-all hover:scale-105 hover:shadow-md">
+              <div className="flex items-center justify-center h-20 w-40 rounded-xl bg-white shadow-sm border border-slate-100 px-5 transition-all hover:scale-105 hover:shadow-md">
                 <img
                   src={`/brands/${brand.slug}.svg`}
                   alt={brand.name}
-                  className="max-h-8 max-w-full w-auto object-contain"
+                  className="max-h-12 max-w-full w-auto object-contain"
                   loading="lazy"
                 />
               </div>

@@ -642,7 +642,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
             <div className="flex-1">
               {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 animate-pulse">
                       <div className="h-36 bg-slate-200 dark:bg-slate-700 rounded-xl mb-3" />
@@ -653,7 +653,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {filteredProducts.map((p, i) => (
                     <ProductCardSmall key={`${p.id}-${i}`} product={p} />
                   ))}

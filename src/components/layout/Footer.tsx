@@ -67,11 +67,14 @@ export default function Footer() {
           <div>
             <h4 className="text-white text-sm font-bold mb-4">{t('footer.payment')}</h4>
             {/* Payment — official brand logos */}
-            <div className="flex gap-2 flex-wrap items-center mb-5">
-              <img src="/payment-visa.svg" alt="Visa" width={48} height={30} className="h-7 w-auto rounded" />
-              <img src="/payment-mastercard.svg" alt="Mastercard" width={48} height={30} className="h-7 w-auto rounded" />
-              <img src="/payment-applepay.svg" alt="Apple Pay" width={48} height={30} className="h-7 w-auto rounded" />
-              <img src="/payment-googlepay.svg" alt="Google Pay" width={48} height={30} className="h-7 w-auto rounded" />
+            <div className="flex gap-3 flex-wrap items-center justify-start mb-5">
+              <img src="/payment-visa.svg" alt="Visa" width={56} height={35} className="h-8 w-auto rounded" />
+              <img src="/payment-mastercard.svg" alt="Mastercard" width={56} height={35} className="h-8 w-auto rounded" />
+              <img src="/payment-applepay.svg" alt="Apple Pay" width={56} height={35} className="h-8 w-auto rounded" />
+              <img src="/payment-googlepay.svg" alt="Google Pay" width={56} height={35} className="h-8 w-auto rounded" />
+              <a href={tiktok} target="_blank" rel="noopener noreferrer" title="TikTok" className="hover:scale-110 transition-transform">
+                <img src="/social-tiktok.svg" alt="TikTok" width={35} height={35} className="h-8 w-auto rounded" />
+              </a>
             </div>
             <div className="flex gap-3">
               <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
