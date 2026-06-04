@@ -76,6 +76,8 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   const [priceMax, setPriceMax] = useState(Number(searchParams.get('maxPrice')) || 50000);
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) || 'popular');
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [perPage, setPerPage] = useState(12);
   // searchQuery is LOCAL ONLY to this component. We write it to URL only via debounce.
   // We NEVER read search from URL into searchQuery — that was causing the input reset loop.
   const [searchQuery, setSearchQuery] = useState('');
@@ -112,7 +114,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   // Skip the first client product fetch only if the server actually provided a list;
   // if SSR returned empty (e.g. DB hiccup), let the client fetch as a fallback.
   const firstProductsLoad = useRef(initial.products.length > 0);
-  const perPage = 12;
+  const perPageRef = perPage;
 
   // Spec filters state
   const [specFilters, setSpecFilters] = useState<Record<string, string>>({});
@@ -241,39 +243,19 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
         });
         setFilteredProducts(result.products);
         setAllLoadedProducts(result.products);
+        setTotalProducts(result.total);
+        setTotalPages(result.totalPages);
       } catch {} finally {
         setLoading(false);
       }
     }
     loadProducts();
-  }, [selectedCategories, selectedBrands, selectedConditions, debouncedPriceMin, debouncedPriceMax, sort, searchQuery, specFilters]);
+  }, [selectedCategories, selectedBrands, selectedConditions, debouncedPriceMin, debouncedPriceMax, sort, page, searchQuery, specFilters, perPage]);
 
-  // Separate effect for page changes — append to existing
+  // Reset page when perPage changes
   useEffect(() => {
-    if (page <= 1) return;
-    async function loadMoreProducts() {
-      setIsLoadingMore(true);
-      try {
-        const result = await getProducts({
-          category: selectedCategories.length > 0 ? selectedCategories.join(',') : undefined,
-          brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
-          condition: selectedConditions.length > 0 ? selectedConditions.join(',') : undefined,
-          minPrice: debouncedPriceMin > 0 ? debouncedPriceMin : undefined,
-          maxPrice: debouncedPriceMax < 50000 ? debouncedPriceMax : undefined,
-          sort,
-          page,
-          limit: perPage,
-          search: searchQuery || undefined,
-          ...specFilters,
-        });
-        setAllLoadedProducts(prev => [...prev, ...result.products]);
-        setFilteredProducts(prev => [...prev, ...result.products]);
-      } catch {} finally {
-        setIsLoadingMore(false);
-      }
-    }
-    loadMoreProducts();
-  }, [page]);
+    setPage(1);
+  }, [perPage]);
 
   useEffect(() => {
     updateURL({
@@ -459,23 +441,24 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     const badgeClass = product.condition === 'nou' ? 'bg-emerald-600' : discount ? 'bg-accent' : 'bg-indigo-500';
     const isPhone = product.category === 'telefoane';
 
-    // Parse product image
-    const getImageUrl = (): string | null => {
+    // Parse product images
+    const getImages = (): string[] => {
       const rawImg = product.images;
-      if (Array.isArray(rawImg)) return rawImg[0] || null;
-      if (typeof rawImg === 'string') {
-        let s = rawImg.trim();
+      const parseOne = (s: string): string[] => {
+        s = s.trim();
         if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
         s = s.replace(/\"/g, '"');
-        if (s.startsWith('[')) { try { const a = JSON.parse(s); return a[0] || null; } catch { return null; } }
-        if (s.startsWith('http')) return s;
-        if (s.includes(',')) { const p = s.split(','); return p.find(x => x.trim().startsWith('http') || x.trim().startsWith('/')) || p[0].trim() || null; }
-        if (s.startsWith('/')) return s;
-        return s || null;
-      }
-      return null;
+        if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } }
+        if (s.includes(',')) return s.split(',').map(x => x.trim()).filter(Boolean);
+        return s ? [s] : [];
+      };
+      if (Array.isArray(rawImg)) return rawImg as string[];
+      if (typeof rawImg === 'string') return parseOne(rawImg);
+      return [];
     };
-    const imgUrl = getImageUrl();
+    const images = getImages();
+    const imgUrl = images[0] || null;
+    const img2Url = images[1] || null;
 
     return (
       <div
@@ -489,16 +472,28 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
         {/* Image — fixed size square on mobile, full width on desktop */}
         <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
-          <div className="relative w-[100px] h-[100px] sm:w-full sm:aspect-[4/3] sm:h-auto overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 mb-0 sm:mb-3">
+          <div className="relative w-[100px] h-[100px] sm:w-full sm:aspect-[4/3] sm:h-auto overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 mb-0 sm:mb-3 group/img">
             {imgUrl ? (
-              <img
-                src={imgUrl}
-                alt={product.name}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+              <>
+                <img
+                  src={imgUrl}
+                  alt={product.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover/img:opacity-0"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+                {img2Url && (
+                  <img
+                    src={img2Url}
+                    alt={product.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover/img:opacity-100"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                )}
+              </>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
@@ -578,7 +573,36 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               <span className="text-sm text-slate-500">({totalProducts} {t('catalog.found')})</span>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Per Page selector */}
+              <select
+                value={perPage}
+                onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
+                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium focus:outline-none focus:border-primary"
+              >
+                {[12, 18, 24].map(n => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+
+              {/* View mode toggle */}
+              <div className="hidden sm:flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}
+                  title="Grilă"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z"/></svg>
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}
+                  title="Listă"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" d="M2.5 12a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/></svg>
+                </button>
+              </div>
+
               <div className="relative">
                 <button onClick={() => setShowSortDropdown(!showSortDropdown)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium hover:border-primary transition-colors">
                   <ArrowUpDown className="w-4 h-4" />
@@ -671,7 +695,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
             <div className="flex-1">
               {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3"}>
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 animate-pulse">
                       <div className="h-36 bg-slate-200 dark:bg-slate-700 rounded-xl mb-3" />
@@ -682,7 +706,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3"}>
                   {filteredProducts.map((p, i) => (
                     <ProductCardSmall key={`${p.id}-${i}`} product={p} />
                   ))}
@@ -700,21 +724,22 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                 </div>
               )}
 
-              {page < totalPages && !loading && (
-                <div ref={loadMoreRef} className="flex justify-center mt-8">
-                  <button
-                    onClick={() => setPage(p => p + 1)}
-                    disabled={isLoadingMore}
-                    className="px-8 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
-                  >
-                    {isLoadingMore ? (
-                      <span className="flex items-center gap-2">
-                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                        Se încarcă...
-                      </span>
+              {totalPages > 1 && !loading && (
+                <div className="flex justify-center items-center gap-1.5 mt-8">
+                  <button onClick={() => { setPage(Math.max(1, page - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === 1} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary">
+                    ‹
+                  </button>
+                  {getPageNumbers().map((p, i) =>
+                    typeof p === 'string' ? (
+                      <span key={`dots-${i}`} className="px-2 text-slate-400">…</span>
                     ) : (
-                      `${t('catalog.loadMore') || 'Arată mai multe'} (${totalProducts - filteredProducts.length} ${locale === 'ru' ? 'осталось' : 'rămase'})`
-                    )}
+                      <button key={p} onClick={() => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`w-10 h-10 rounded-xl font-semibold text-sm transition-colors ${page === p ? 'bg-primary text-white' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary'}`}>
+                        {p}
+                      </button>
+                    )
+                  )}
+                  <button onClick={() => { setPage(Math.min(totalPages, page + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === totalPages} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary">
+                    ›
                   </button>
                 </div>
               )}

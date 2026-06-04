@@ -110,7 +110,7 @@ export default function RecentlyViewed() {
                   className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <Link href={`/product/${product.id}`}>
-                    <div className="flex items-center justify-center h-24 mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden">
+                    <div className="flex items-center justify-center aspect-square mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden">
                       {(() => {
                         let imgs: string[] = [];
                         if (typeof product.images === 'string') {
@@ -134,7 +134,7 @@ export default function RecentlyViewed() {
                             alt={product.name}
                             loading="lazy"
                             decoding="async"
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover"
                             onError={(e) => {
                               (e.target as HTMLImageElement).style.display = 'none';
                             }}

@@ -1,6 +1,7 @@
 // src/components/home/BrandCarousel.tsx
 'use client';
 
+import Link from 'next/link';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 
 const BRANDS = [
@@ -41,14 +42,17 @@ export default function BrandCarousel() {
               aria-label={brand.name}
               className="flex items-center justify-center min-w-[180px] px-6 py-5"
             >
-              <div className="flex items-center justify-center h-20 w-40 rounded-xl bg-white shadow-sm border border-slate-100 px-5 transition-all hover:scale-105 hover:shadow-md">
+              <Link
+                href={`/catalog?brand=${brand.slug}`}
+                className="flex items-center justify-center h-20 w-40 rounded-xl bg-white shadow-sm border border-slate-100 px-5 transition-all hover:scale-105 hover:shadow-md"
+              >
                 <img
                   src={`/brands/${brand.slug}.svg`}
                   alt={brand.name}
                   className="max-h-12 max-w-full w-auto object-contain"
                   loading="lazy"
                 />
-              </div>
+              </Link>
             </a>
           ))}
         </div>

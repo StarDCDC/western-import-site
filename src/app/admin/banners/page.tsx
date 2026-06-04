@@ -24,7 +24,7 @@ export default function AdminBannersPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ title: "", titleRu: "", subtitle: "", subtitleRu: "", image: "", link: "", buttonText: "", buttonTextRu: "", position: "HERO", order: 0, startDate: "", endDate: "", isActive: true });
+  const [form, setForm] = useState({ title: "", titleRu: "", subtitle: "", subtitleRu: "", image: "", imageRu: "", link: "", buttonText: "", buttonTextRu: "", position: "HERO", order: 0, startDate: "", endDate: "", isActive: true });
   const [saving, setSaving] = useState(false);
 
   // Image upload handler
@@ -55,7 +55,7 @@ export default function AdminBannersPage() {
 
   useEffect(() => { fetchBanners(); }, [fetchBanners]);
 
-  const resetForm = () => setForm({ title: "", titleRu: "", subtitle: "", subtitleRu: "", image: "", link: "", buttonText: "", buttonTextRu: "", position: "HERO", order: 0, startDate: "", endDate: "", isActive: true });
+  const resetForm = () => setForm({ title: "", titleRu: "", subtitle: "", subtitleRu: "", image: "", imageRu: "", link: "", buttonText: "", buttonTextRu: "", position: "HERO", order: 0, startDate: "", endDate: "", isActive: true });
   const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleAdd = async () => {
@@ -88,6 +88,7 @@ export default function AdminBannersPage() {
       subtitle: b.subtitle || "",
       subtitleRu: b.subtitleRu || "",
       image: b.image,
+      imageRu: (b as any).imageRu || "",
       link: b.link || "",
       buttonText: b.buttonText || "",
       buttonTextRu: b.buttonTextRu || "",
@@ -166,6 +167,7 @@ export default function AdminBannersPage() {
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">🇷🇴 Subtitlu</label><input value={form.subtitle} onChange={(e) => set("subtitle", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">🇷🇺 Subtitlu (RU)</label><input value={form.subtitleRu} onChange={(e) => set("subtitleRu", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Subtitlu în rusă" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Imagine (URL sau încarcă) *</label><div className="flex gap-2"><input value={form.image} onChange={(e) => set("image", e.target.value)} className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" placeholder="https://... sau lasă gol și folosește butonul" /><label className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer flex items-center gap-1"><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, (v) => set("image", v))} />Încarcă</label></div>{form.image && <img src={form.image} alt="preview" className="mt-2 h-20 rounded-lg object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}</div>
+            <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Imagine RU (URL sau încarcă)</label><div className="flex gap-2"><input value={form.imageRu} onChange={(e) => set("imageRu", e.target.value)} className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" placeholder="https://... imagine pentru versiunea RU" /><label className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer flex items-center gap-1"><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, (v) => set("imageRu", v))} />Încarcă</label></div>{form.imageRu && <img src={form.imageRu} alt="preview RU" className="mt-2 h-20 rounded-lg object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />}</div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Link</label><input value={form.link} onChange={(e) => set("link", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">🇷🇴 Buton CTA</label><input value={form.buttonText} onChange={(e) => set("buttonText", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" /></div>
             <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">🇷🇺 Buton CTA (RU)</label><input value={form.buttonTextRu} onChange={(e) => set("buttonTextRu", e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Текст кнопки" /></div>

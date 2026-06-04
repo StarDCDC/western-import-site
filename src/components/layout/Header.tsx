@@ -58,7 +58,7 @@ export default function Header() {
 
       {/* Header */}
       <header
-        className={`sticky top-0 z-[100] bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl transition-all duration-300 rounded-b-2xl mx-2 sm:mx-4 lg:mx-6 mt-0.5 shadow-sm ${
+        className={`sticky top-1 z-[100] bg-slate-900/95 backdrop-blur-xl transition-all duration-300 rounded-2xl mx-2 sm:mx-4 lg:mx-6 shadow-sm dark:bg-white/95 ${
           scrolled ? 'shadow-lg' : ''
         } ${!headerVisible ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'}`}
       >
@@ -91,12 +91,12 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors"
                 >
                   <div className="w-[18px] h-[18px] bg-primary rounded-full flex items-center justify-center">
                     <span className="text-white text-[10px] font-bold">{session.user.name?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase() || 'U'}</span>
                   </div>
-                  <span className="text-[10px] text-slate-600 dark:text-slate-400 hidden lg:block">{session.user.name || session.user.email?.split('@')[0]}</span>
+                  <span className="text-[10px] text-slate-300 dark:text-slate-600 hidden lg:block">{session.user.name || session.user.email?.split('@')[0]}</span>
                   <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform hidden lg:block ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence>
@@ -128,16 +128,16 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
-                <User className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-                <span className="text-[10px] text-slate-500 group-hover:text-primary">Cont</span>
+              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group">
+                <User className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
+                <span className="text-[10px] text-slate-500 group-hover:text-sky-400 dark:group-hover:text-primary">Cont</span>
               </Link>
             )}
             <Link
               href="/wishlist"
-              className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+              className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
             >
-              <Heart className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
+              <Heart className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
               {mounted && wishlistCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">
                   {wishlistCount}
@@ -146,9 +146,9 @@ export default function Header() {
             </Link>
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+              className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
             >
-              <ShoppingCart className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
+              <ShoppingCart className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
               {mounted && cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">
                   {cartCount}
@@ -157,10 +157,10 @@ export default function Header() {
             </button>
             <Link
               href="/contact"
-              className="hidden md:flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+              className="hidden md:flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
             >
-              <Phone className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-              <span className="text-[10px] text-slate-500 group-hover:text-primary">Contact</span>
+              <Phone className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
+              <span className="text-[10px] text-slate-500 group-hover:text-sky-400 dark:group-hover:text-primary">Contact</span>
             </Link>
             {/* Language + Theme toggle (desktop) */}
             <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-slate-200 dark:border-slate-700">
@@ -178,7 +178,7 @@ export default function Header() {
               >RU</button>
               <button
                 onClick={toggle}
-                className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
+                className="p-1.5 rounded-md text-slate-400 hover:bg-white/10 dark:hover:bg-slate-100 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
                 title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -190,9 +190,9 @@ export default function Header() {
           <div className="flex sm:hidden items-center gap-2 ml-auto">
             <button
               onClick={() => setCartOpen(true)}
-              className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="relative p-2 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors"
             >
-              <ShoppingCart className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+              <ShoppingCart className="w-5 h-5 text-slate-300 dark:text-slate-600" />
               {mounted && cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-white text-[10px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center">
                   {cartCount}
@@ -201,7 +201,7 @@ export default function Header() {
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="p-2 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -218,7 +218,7 @@ export default function Header() {
                 className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-xl transition-all ${
                   item.highlight
                     ? 'text-white bg-red-600 hover:bg-red-700 shadow-sm shadow-red-500/30 font-bold'
-                    : 'text-slate-700 dark:text-slate-300 bg-slate-100/70 dark:bg-slate-800/60 hover:bg-primary/10 hover:text-primary dark:hover:text-primary'
+                    : 'text-slate-300 dark:text-slate-700 bg-white/10 dark:bg-slate-100/70 hover:bg-primary/10 hover:text-primary dark:hover:text-primary'
                 }`}
               >
                 <span>{item.icon}</span>
@@ -260,7 +260,7 @@ export default function Header() {
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-2 py-2.5 text-sm font-medium ${
-                      item.highlight ? 'text-accent font-bold' : 'text-slate-700 dark:text-slate-300'
+                      item.highlight ? 'text-accent font-bold' : 'text-slate-300 dark:text-slate-700'
                     }`}
                   >
                     <span>{item.icon}</span>

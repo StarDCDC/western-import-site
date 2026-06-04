@@ -212,7 +212,7 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
           <div className="flex justify-between items-center mb-5">
             <div className="h-7 w-48 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 animate-pulse flex flex-row sm:flex-col gap-2 sm:gap-0">
                 <div className="w-[110px] h-[110px] sm:w-full sm:h-36 bg-slate-200 dark:bg-slate-700 rounded-lg sm:rounded-xl sm:mb-3" />
@@ -245,7 +245,7 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
         </div>
 
         {/* Mobile: single column (horizontal cards), Desktop: 3 columns (vertical cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
           {productList.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

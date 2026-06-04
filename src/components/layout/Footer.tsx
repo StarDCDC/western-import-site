@@ -21,7 +21,7 @@ export default function Footer() {
   const tiktok = settings.tiktok || 'https://tiktok.com';
 
   return (
-    <footer className="bg-[#091f4a] text-slate-400 mt-10">
+    <footer className="bg-slate-900 dark:bg-white text-slate-400 dark:text-slate-500 mt-10">
       <div className="max-w-[1280px] mx-auto px-5 pt-12 pb-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-10">
           {/* Brand + Social */}
@@ -51,21 +51,21 @@ export default function Footer() {
 
           {/* Company & Support */}
           <div>
-            <h4 className="text-white text-sm font-bold mb-4">{t('footer.company')}</h4>
+            <h4 className="text-slate-100 dark:text-slate-800 text-sm font-bold mb-4">{t('footer.company')}</h4>
             <ul className="space-y-2">
-              <li><Link href={lp("/about")} className="text-sm hover:text-white transition-colors">{t('footer.aboutUs')}</Link></li>
-              <li><Link href={lp("/contact")} className="text-sm hover:text-white transition-colors">{t('footer.contact')}</Link></li>
-              <li><Link href={lp("/blog")} className="text-sm hover:text-white transition-colors">{t('footer.blog')}</Link></li>
-              <li><Link href={lp("/terms")} className="text-sm hover:text-white transition-colors">{t('footer.terms')}</Link></li>
-              <li><Link href={lp("/shipping")} className="text-sm hover:text-white transition-colors">{t('footer.shipping')}</Link></li>
-              <li><Link href={lp("/warranty")} className="text-sm hover:text-white transition-colors">{t('footer.warranty')}</Link></li>
-              <li><Link href={lp("/faq")} className="text-sm hover:text-white transition-colors">{t('footer.faq')}</Link></li>
+              <li><Link href={lp("/about")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.aboutUs')}</Link></li>
+              <li><Link href={lp("/contact")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.contact')}</Link></li>
+              <li><Link href={lp("/blog")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.blog')}</Link></li>
+              <li><Link href={lp("/terms")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.terms')}</Link></li>
+              <li><Link href={lp("/shipping")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.shipping')}</Link></li>
+              <li><Link href={lp("/warranty")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.warranty')}</Link></li>
+              <li><Link href={lp("/faq")} className="text-sm hover:text-slate-100 dark:text-slate-800 transition-colors">{t('footer.faq')}</Link></li>
             </ul>
           </div>
 
           {/* Payment & Contact */}
           <div>
-            <h4 className="text-white text-sm font-bold mb-4">{t('footer.payment')}</h4>
+            <h4 className="text-slate-100 dark:text-slate-800 text-sm font-bold mb-4">{t('footer.payment')}</h4>
             {/* Payment — official brand logos */}
             <div className="flex gap-3 flex-wrap items-center justify-start mb-5">
               <img src="/payment-visa.svg" alt="Visa" width={56} height={35} className="h-8 w-auto rounded" />
@@ -74,13 +74,13 @@ export default function Footer() {
               <img src="/payment-googlepay.svg" alt="Google Pay" width={56} height={35} className="h-8 w-auto rounded" />
             </div>
             <div className="flex gap-3">
-              <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
+              <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-slate-100 dark:text-slate-800 transition-colors">
                 <Phone className="w-4 h-4" />
               </a>
-              <a href={`mailto:${email}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
+              <a href={`mailto:${email}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-slate-100 dark:text-slate-800 transition-colors">
                 <Mail className="w-4 h-4" />
               </a>
-              <a href="https://maps.google.com/?q=Strada+Podgorenilor+17+Chisinau" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">
+              <a href="https://maps.google.com/?q=Strada+Podgorenilor+17+Chisinau" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-slate-100 dark:text-slate-800 transition-colors">
                 <MapPin className="w-4 h-4" />
               </a>
             </div>
@@ -88,7 +88,7 @@ export default function Footer() {
 
           {/* Map */}
           <div>
-            <h4 className="text-white text-sm font-bold mb-4">{t('footer.location')}</h4>
+            <h4 className="text-slate-100 dark:text-slate-800 text-sm font-bold mb-4">{t('footer.location')}</h4>
             <div className="rounded-2xl overflow-hidden h-[180px] bg-slate-800">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2727.5!2d28.85!3d47.02!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c33b9e0f8e7%3A0x0!2sStrada%20Podgorenilor%2017%2C%20Chi%C8%99in%C4%83u%2C%20Moldova!5e0!3m2!1sro!2s!4v1700000000000!5m2!1sro!2s"
