@@ -83,6 +83,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   const searchChangeSource = useRef<'input' | 'url' | null>(null);
   const urlUpdateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const priceDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const [debouncedPriceMin, setDebouncedPriceMin] = useState(priceMin);
   const [debouncedPriceMax, setDebouncedPriceMax] = useState(priceMax);
   const [mobileFilters, setMobileFilters] = useState(false);
@@ -102,6 +103,8 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   const [categoryList, setCategoryList] = useState<ApiCategory[]>(initial.categories);
   const [brandList, setBrandList] = useState<Brand[]>(initial.brands);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(initial.products);
+  const [allLoadedProducts, setAllLoadedProducts] = useState<Product[]>(initial.products);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [totalProducts, setTotalProducts] = useState(initial.total);
   const [totalPages, setTotalPages] = useState(initial.totalPages);
   const [loading, setLoading] = useState(false);
@@ -237,14 +240,40 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           ...specFilters,
         });
         setFilteredProducts(result.products);
-        setTotalProducts(result.total);
-        setTotalPages(result.totalPages);
+        setAllLoadedProducts(result.products);
       } catch {} finally {
         setLoading(false);
       }
     }
     loadProducts();
-  }, [selectedCategories, selectedBrands, selectedConditions, debouncedPriceMin, debouncedPriceMax, sort, page, searchQuery, specFilters]);
+  }, [selectedCategories, selectedBrands, selectedConditions, debouncedPriceMin, debouncedPriceMax, sort, searchQuery, specFilters]);
+
+  // Separate effect for page changes — append to existing
+  useEffect(() => {
+    if (page <= 1) return;
+    async function loadMoreProducts() {
+      setIsLoadingMore(true);
+      try {
+        const result = await getProducts({
+          category: selectedCategories.length > 0 ? selectedCategories.join(',') : undefined,
+          brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
+          condition: selectedConditions.length > 0 ? selectedConditions.join(',') : undefined,
+          minPrice: debouncedPriceMin > 0 ? debouncedPriceMin : undefined,
+          maxPrice: debouncedPriceMax < 50000 ? debouncedPriceMax : undefined,
+          sort,
+          page,
+          limit: perPage,
+          search: searchQuery || undefined,
+          ...specFilters,
+        });
+        setAllLoadedProducts(prev => [...prev, ...result.products]);
+        setFilteredProducts(prev => [...prev, ...result.products]);
+      } catch {} finally {
+        setIsLoadingMore(false);
+      }
+    }
+    loadMoreProducts();
+  }, [page]);
 
   useEffect(() => {
     updateURL({
@@ -671,22 +700,21 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                 </div>
               )}
 
-              {totalPages > 1 && !loading && (
-                <div className="flex justify-center items-center gap-1.5 mt-8">
-                  <button onClick={() => { setPage(Math.max(1, page - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === 1} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary">
-                    ‹
-                  </button>
-                  {getPageNumbers().map((p, i) =>
-                    typeof p === 'string' ? (
-                      <span key={`dots-${i}`} className="px-2 text-slate-400">…</span>
+              {page < totalPages && !loading && (
+                <div ref={loadMoreRef} className="flex justify-center mt-8">
+                  <button
+                    onClick={() => setPage(p => p + 1)}
+                    disabled={isLoadingMore}
+                    className="px-8 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  >
+                    {isLoadingMore ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        Se încarcă...
+                      </span>
                     ) : (
-                      <button key={p} onClick={() => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`w-10 h-10 rounded-xl font-semibold text-sm transition-colors ${page === p ? 'bg-primary text-white' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary'}`}>
-                        {p}
-                      </button>
-                    )
-                  )}
-                  <button onClick={() => { setPage(Math.min(totalPages, page + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === totalPages} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary">
-                    ›
+                      `${t('catalog.loadMore') || 'Arată mai multe'} (${totalProducts - filteredProducts.length} ${locale === 'ru' ? 'осталось' : 'rămase'})`
+                    )}
                   </button>
                 </div>
               )}

@@ -198,15 +198,15 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
             <>
               <button
                 onClick={() => setCurrentSlide(prev => (prev - 1 + banners.length) % banners.length)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur rounded-full flex items-center justify-center text-white transition"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/10 hover:bg-white/30 backdrop-blur rounded-full flex items-center justify-center text-white/60 hover:text-white transition"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setCurrentSlide(prev => (prev + 1) % banners.length)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur rounded-full flex items-center justify-center text-white transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/10 hover:bg-white/30 backdrop-blur rounded-full flex items-center justify-center text-white/60 hover:text-white transition"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
 
               {/* Dots */}

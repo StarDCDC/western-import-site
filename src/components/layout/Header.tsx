@@ -55,43 +55,6 @@ export default function Header() {
 
   return (
     <>
-      {/* Topbar */}
-      <div className={`bg-[#091f4a] text-white text-xs py-2 transition-all duration-300 ${!headerVisible ? 'opacity-0 h-0 py-0 overflow-hidden' : 'opacity-100'}`}>
-        <div className="max-w-[1280px] mx-auto px-5 flex justify-between items-center">
-          <div className="flex gap-5 items-center">
-            <span className="flex items-center gap-1 text-sky-300">
-              <i className="fas fa-truck"></i> {t('topbar.freeShipping')}
-            </span>
-            <span className="hidden sm:flex items-center gap-1 text-sky-300">
-              <i className="fas fa-shield-halved"></i> {t('topbar.certifiedService')}
-            </span>
-            <span className="hidden md:flex items-center gap-1 text-sky-300">
-              <i className="fas fa-rotate-left"></i> {t('topbar.returns14')}
-            </span>
-          </div>
-          <div className="flex gap-1 items-center">
-            <button
-              onClick={() => setLocale('ro')}
-              className={`px-2.5 py-0.5 rounded-md text-xs font-semibold transition ${
-                locale === 'ro' ? 'bg-white/25 text-white' : 'text-sky-300 hover:bg-white/15'
-              }`}
-            >RO</button>
-            <button
-              onClick={() => setLocale('ru')}
-              className={`px-2.5 py-0.5 rounded-md text-xs font-semibold transition ${
-                locale === 'ru' ? 'bg-white/25 text-white' : 'text-sky-300 hover:bg-white/15'
-              }`}
-            >RU</button>
-            <button
-              onClick={toggle}
-              className="ml-1 p-1.5 rounded-md text-sky-300 hover:bg-white/15 transition-colors"
-              title={theme === 'dark' ? 'Comută pe light mode' : 'Comută pe dark mode'}
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Header */}
       <header
@@ -199,7 +162,28 @@ export default function Header() {
               <Phone className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400 group-hover:text-primary" />
               <span className="text-[10px] text-slate-500 group-hover:text-primary">Contact</span>
             </Link>
-
+            {/* Language + Theme toggle (desktop) */}
+            <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-slate-200 dark:border-slate-700">
+              <button
+                onClick={() => setLocale('ro')}
+                className={`px-2 py-1 rounded-md text-[11px] font-semibold transition ${
+                  locale === 'ro' ? 'bg-primary/10 text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                }`}
+              >RO</button>
+              <button
+                onClick={() => setLocale('ru')}
+                className={`px-2 py-1 rounded-md text-[11px] font-semibold transition ${
+                  locale === 'ru' ? 'bg-primary/10 text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                }`}
+              >RU</button>
+              <button
+                onClick={toggle}
+                className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
+                title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           {/* Mobile Actions (sm and below) - only logo circle + hamburger with badges */}
@@ -283,6 +267,28 @@ export default function Header() {
                     {t(item.label)}
                   </Link>
                 ))}
+                {/* Mobile Language + Theme */}
+                <div className="flex items-center gap-2 pt-3 mt-2 border-t border-slate-200 dark:border-slate-700">
+                  <button
+                    onClick={() => setLocale('ro')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                      locale === 'ro' ? 'bg-primary/10 text-primary' : 'text-slate-400 bg-slate-100 dark:bg-slate-700'
+                    }`}
+                  >RO</button>
+                  <button
+                    onClick={() => setLocale('ru')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                      locale === 'ru' ? 'bg-primary/10 text-primary' : 'text-slate-400 bg-slate-100 dark:bg-slate-700'
+                    }`}
+                  >RU</button>
+                  <button
+                    onClick={toggle}
+                    className="ml-auto px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 bg-slate-100 dark:bg-slate-700 transition-colors flex items-center gap-1.5"
+                  >
+                    {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+                    {theme === 'dark' ? 'Light' : 'Dark'}
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}

@@ -72,9 +72,6 @@ export default function Footer() {
               <img src="/payment-mastercard.svg" alt="Mastercard" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-applepay.svg" alt="Apple Pay" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-googlepay.svg" alt="Google Pay" width={56} height={35} className="h-8 w-auto rounded" />
-              <a href={tiktok} target="_blank" rel="noopener noreferrer" title="TikTok" className="hover:scale-110 transition-transform">
-                <img src="/social-tiktok.svg" alt="TikTok" width={35} height={35} className="h-8 w-auto rounded" />
-              </a>
             </div>
             <div className="flex gap-3">
               <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition-colors">

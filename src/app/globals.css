@@ -57,6 +57,11 @@ button:disabled {
 .animate-scroll-left {
   animation: scroll-left 30s linear infinite;
 }
+@media (max-width: 640px) {
+  .animate-scroll-left {
+    animation-duration: 15s;
+  }
+}
 .animate-scroll-left:hover {
   animation-play-state: paused;
 }
