@@ -65,7 +65,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                       className="flex gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"
                     >
                       <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 shrink-0">
-                        {(item.product.brand?.name || item.product.brand || 'WI').toString().slice(0, 2).toUpperCase()}
+                        {((item.product.brand as any)?.name || item.product.brand || 'WI').toString().slice(0, 2).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-semibold text-slate-800 dark:text-white truncate">{item.product.name}</h4>
