@@ -57,8 +57,14 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
   // Filters are comma-separated in the URL (e.g. ?category=id1,id2) — split into
   // arrays so multiple selections survive a URL round-trip (was collapsing to one).
+  // Resolve slug-based values (from header links) to category IDs so sidebar checkboxes match.
+  const resolveCategoryTokens = (tokens: string[]): string[] =>
+    tokens.map(t => {
+      const bySlug = initial.categories.find(c => c.slug === t);
+      return bySlug?.id || t;
+    });
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    searchParams.get('category') ? searchParams.get('category')!.split(',') : []
+    searchParams.get('category') ? resolveCategoryTokens(searchParams.get('category')!.split(',')) : []
   );
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.get('brand') ? searchParams.get('brand')!.split(',') : []
@@ -141,7 +147,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
   useEffect(() => {
     const cat = searchParams.get('category');
-    const newCats = cat ? cat.split(',') : [];
+    const newCats = cat ? resolveCategoryTokens(cat.split(',')) : [];
     if (JSON.stringify(selectedCategories) !== JSON.stringify(newCats)) {
       setSelectedCategories(newCats);
     }
