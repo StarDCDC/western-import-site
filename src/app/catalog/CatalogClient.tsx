@@ -76,7 +76,22 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchChangeSource = useRef<'input' | 'url' | null>(null);
   const urlUpdateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const priceDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [debouncedPriceMin, setDebouncedPriceMin] = useState(priceMin);
+  const [debouncedPriceMax, setDebouncedPriceMax] = useState(priceMax);
   const [mobileFilters, setMobileFilters] = useState(false);
+  // Collapsible filter sections
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    search: true,
+    category: true,
+    brand: true,
+    condition: true,
+    price: true,
+  });
+
+  const toggleSection = (key: string) => {
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const [categoryList, setCategoryList] = useState<ApiCategory[]>(initial.categories);
   const [brandList, setBrandList] = useState<Brand[]>(initial.brands);
@@ -184,6 +199,16 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     loadSpecFilters();
   }, [selectedCategories, selectedBrands, selectedConditions, priceMin, priceMax, searchQuery]);
 
+  // Debounce price changes so we only fetch after user stops dragging
+  useEffect(() => {
+    if (priceDebounce.current) clearTimeout(priceDebounce.current);
+    priceDebounce.current = setTimeout(() => {
+      setDebouncedPriceMin(priceMin);
+      setDebouncedPriceMax(priceMax);
+    }, 400);
+    return () => { if (priceDebounce.current) clearTimeout(priceDebounce.current); };
+  }, [priceMin, priceMax]);
+
   // Fetch products when filters change (the first run is skipped — SSR provided it).
   useEffect(() => {
     if (firstProductsLoad.current) {
@@ -197,8 +222,8 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           category: selectedCategories.length > 0 ? selectedCategories.join(',') : undefined,
           brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
           condition: selectedConditions.length > 0 ? selectedConditions.join(',') : undefined,
-          minPrice: priceMin > 0 ? priceMin : undefined,
-          maxPrice: priceMax < 50000 ? priceMax : undefined,
+          minPrice: debouncedPriceMin > 0 ? debouncedPriceMin : undefined,
+          maxPrice: debouncedPriceMax < 50000 ? debouncedPriceMax : undefined,
           sort,
           page,
           limit: perPage,
@@ -213,20 +238,20 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
       }
     }
     loadProducts();
-  }, [selectedCategories, selectedBrands, selectedConditions, priceMin, priceMax, sort, page, searchQuery, specFilters]);
+  }, [selectedCategories, selectedBrands, selectedConditions, debouncedPriceMin, debouncedPriceMax, sort, page, searchQuery, specFilters]);
 
   useEffect(() => {
     updateURL({
       category: selectedCategories,
       brand: selectedBrands,
       condition: selectedConditions,
-      minPrice: priceMin,
-      maxPrice: priceMax,
+      minPrice: debouncedPriceMin,
+      maxPrice: debouncedPriceMax,
       sort,
       page,
       search: searchQuery,
     });
-  }, [selectedCategories, selectedBrands, selectedConditions, priceMin, priceMax, sort, page, updateURL]);
+  }, [selectedCategories, selectedBrands, selectedConditions, debouncedPriceMin, debouncedPriceMax, sort, page, updateURL]);
 
   const handleSearchChange = (q: string) => {
     setSearchQuery(q);
@@ -275,10 +300,24 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     selectedConditions.length > 0 || priceMin > 0 || priceMax < 50000 || searchQuery.length > 0 ||
     Object.keys(specFilters).length > 0;
 
+  const FilterSection = ({ sectionKey, title, children }: { sectionKey: string; title: string; children: React.ReactNode }) => (
+    <div className="border-b border-slate-100 dark:border-slate-700 pb-4">
+      <button
+        onClick={() => toggleSection(sectionKey)}
+        className="w-full flex items-center justify-between py-2 text-sm font-bold text-slate-800 dark:text-white"
+      >
+        <span>{title}</span>
+        <ChevronDown className={`w-4 h-4 transition-transform ${openSections[sectionKey] ? 'rotate-180' : ''}`} />
+      </button>
+      {openSections[sectionKey] && (
+        <div className="mt-1">{children}</div>
+      )}
+    </div>
+  );
+
   const FilterSidebar = () => (
-    <div className="space-y-6">
-      <div>
-        <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-3">{t('catalog.search')}</h3>
+    <div className="space-y-1">
+      <FilterSection sectionKey="search" title={t('catalog.search')}>
         <input
           type="text"
           placeholder={t('catalog.searchPlaceholder')}
@@ -286,10 +325,9 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           onChange={(e) => handleSearchChange(e.target.value)}
           className="w-full py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:border-primary"
         />
-      </div>
+      </FilterSection>
 
-      <div>
-        <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-3">{t('catalog.category')}</h3>
+      <FilterSection sectionKey="category" title={t('catalog.category')}>
         <div className="space-y-2">
           {categoryList.map((cat) => (
             <label key={cat.id} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
@@ -303,10 +341,9 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
             </label>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
-      <div>
-        <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-3">{t('catalog.brand')}</h3>
+      <FilterSection sectionKey="brand" title={t('catalog.brand')}>
         <div className="space-y-2 max-h-48 overflow-y-auto">
           {brandList.map((b) => (
             <label key={b.id} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
@@ -320,10 +357,9 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
             </label>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
-      <div>
-        <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-3">{t('catalog.condition')}</h3>
+      <FilterSection sectionKey="condition" title={t('catalog.condition')}>
         <div className="space-y-2">
           {[{ val: 'nou', labelKey: 'catalog.new' }, { val: 'refurbished', labelKey: 'catalog.refurbished' }, { val: 'folosit', labelKey: 'catalog.used' }].map((c) => (
             <label key={c.val} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
@@ -332,15 +368,14 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
             </label>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
       {/* Spec filters */}
       {!loadingSpecFilters && SPEC_FILTER_FIELDS.map(({ key, label }) => {
         const options = specFilterOptions[key];
         if (!options || Object.keys(options).length === 0) return null;
         return (
-          <div key={key}>
-            <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-2">{label}</h3>
+          <FilterSection key={key} sectionKey={`spec_${key}`} title={label}>
             <div className="space-y-1 max-h-40 overflow-y-auto">
               {Object.entries(options).map(([value, count]) => (
                 <label key={value} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 cursor-pointer">
@@ -354,12 +389,11 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                 </label>
               ))}
             </div>
-          </div>
+          </FilterSection>
         );
       })}
 
-      <div>
-        <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-1">{t('catalog.price')}</h3>
+      <FilterSection sectionKey="price" title={t('catalog.price')}>
         <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
           <span>{formatPrice(priceMin)}</span>
           <span>{formatPrice(priceMax)}</span>
@@ -374,10 +408,10 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
             <input type="range" min={0} max={50000} step={500} value={priceMax} onChange={(e) => { setPriceMax(Number(e.target.value)); setPage(1); }} className="w-full accent-primary" />
           </div>
         </div>
-      </div>
+      </FilterSection>
 
       {hasActiveFilters && (
-        <button onClick={clearAllFilters} className="w-full py-2.5 text-sm font-semibold text-accent border border-accent rounded-xl hover:bg-accent hover:text-white transition-colors">
+        <button onClick={clearAllFilters} className="w-full py-2.5 text-sm font-semibold text-accent border border-accent rounded-xl hover:bg-accent hover:text-white transition-colors mt-4">
           {t('catalog.clearFilters')}
         </button>
       )}
