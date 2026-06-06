@@ -45,10 +45,10 @@ interface CouponData {
   discount: number;
 }
 
-export default function CheckoutPage() {
+export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) {
   const { locale: ctxLocale } = useLanguage();
-  // Detect RU from URL path (not just context) so translations work on /ru/ pages
-  const isRu = ctxLocale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
+  // Detect RU from prop, context or URL path
+  const isRu = forceLocale === 'ru' || ctxLocale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
   const locale = isRu ? 'ru' : 'ro';
   const txt = getCartTexts(locale);
   const { items, clearCart, getTotal } = useCartStore();

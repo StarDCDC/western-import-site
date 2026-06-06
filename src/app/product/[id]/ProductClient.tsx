@@ -153,8 +153,8 @@ export default function ProductClient({ product, similar }: { product: Product; 
       .catch(() => {});
     return () => { active = false; };
   }, [locale, product.description, product.descriptionRu]);
-
   const displayDescription = (locale === 'ru' && !product.descriptionRu && translatedDesc) ? translatedDesc : baseDescription;
+
 
   const discount = product.oldPrice ? getDiscount(product.oldPrice, product.price) : null;
   const isPhone = product.category === 'telefoane';
@@ -193,7 +193,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
         </div>
 
         <div className="max-w-[1280px] mx-auto px-5 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
             {/* Gallery */}
             <div>
               <div
@@ -276,8 +276,6 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 </div>
               )}
 
-              {/* Description text under image */}
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-3 px-1">{displayDescription}</p>
             </div>
 
             {/* Details */}
@@ -392,6 +390,14 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   ) : null;
                 })()}
               </div>
+
+              {/* Description */}
+              {displayDescription && (
+                <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-white mb-2">{locale === 'ru' ? 'Описание' : 'Descriere'}</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{displayDescription}</p>
+                </div>
+              )}
 
               {/* Benefits */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3">

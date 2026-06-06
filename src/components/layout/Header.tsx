@@ -118,7 +118,7 @@ export default function Header() {
                         </Link>
                       )}
                       <button
-                        onClick={async () => { setUserMenuOpen(false); await fetch('/api/auth/signout', { method: 'POST' }); setSession(null); window.location.href = '/'; }}
+                        onClick={async () => { setUserMenuOpen(false); try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {} setSession(null); window.location.href = '/?signedout=1'; }}
                         className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-slate-50 dark:hover:bg-slate-700"
                       >
                         <LogOut className="w-3.5 h-3.5" /> Deconectează-te
@@ -128,9 +128,8 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group">
+              <Link href="/login" className="flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group">
                 <User className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
-                <span className="text-[10px] text-slate-500 group-hover:text-sky-400 dark:group-hover:text-primary">Cont</span>
               </Link>
             )}
             <Link
@@ -157,10 +156,9 @@ export default function Header() {
             </button>
             <Link
               href="/contact"
-              className="hidden md:flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
+              className="hidden md:flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
             >
               <Phone className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
-              <span className="text-[10px] text-slate-500 group-hover:text-sky-400 dark:group-hover:text-primary">Contact</span>
             </Link>
             {/* Language + Theme toggle (desktop) */}
             <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-slate-200 dark:border-slate-700">

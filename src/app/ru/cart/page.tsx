@@ -11,5 +11,5 @@ export default function CartRuPage() {
     if (locale !== 'ru') setLocale('ru');
   }, [locale, setLocale]);
 
-  return <CartPage />;
+  return <CartPage forceLocale="ru" />;
 }

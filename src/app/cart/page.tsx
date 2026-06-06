@@ -20,11 +20,10 @@ interface CouponData {
   discount: number;
 }
 
-export default function CartPage() {
+export default function CartPage({ forceLocale }: { forceLocale?: string }) {
   const { locale: ctxLocale } = useLanguage();
-  const searchParams = useSearchParams();
-  // Detect RU from URL path or context
-  const isRu = ctxLocale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
+  // Detect RU from prop, context or URL path
+  const isRu = forceLocale === 'ru' || ctxLocale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
   const locale = isRu ? 'ru' : 'ro';
   const txt = getCartTexts(locale);
   const { items, removeItem, updateQuantity, getTotal, getItemCount } = useCartStore();

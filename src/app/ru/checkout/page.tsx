@@ -11,5 +11,5 @@ export default function CheckoutRuPage() {
     if (locale !== 'ru') setLocale('ru');
   }, [locale, setLocale]);
 
-  return <CheckoutPage />;
+  return <CheckoutPage forceLocale="ru" />;
 }
