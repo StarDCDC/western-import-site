@@ -69,7 +69,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-semibold text-slate-800 dark:text-white truncate">{item.product.name}</h4>
-                        <p className="text-xs text-slate-500 mt-0.5">{item.product.specs.procesor}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{item.product.specs?.procesor || ''}</p>
                         <div className="flex items-center justify-between mt-2">
                           <div className="flex items-center gap-2">
                             <button

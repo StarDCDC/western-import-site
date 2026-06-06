@@ -76,7 +76,7 @@ export default function WishlistPage() {
                       <Link href={`/product/${product.id}`}>
                         <h3 className="text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-1">{product.name}</h3>
                       </Link>
-                      <p className="text-xs text-slate-500 mb-2">{product.specs.procesor}, {product.specs.display}</p>
+                      <p className="text-xs text-slate-500 mb-2">{product.specs?.procesor || ""}{product.specs?.display ? `, ${product.specs.display}` : ""}</p>
                       <div className="flex items-baseline gap-2 mb-3">
                         <span className="text-lg font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
                         {product.oldPrice && <span className="text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}

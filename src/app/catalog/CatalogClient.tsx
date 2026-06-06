@@ -506,7 +506,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
             <Link href={`/product/${product.id}`}>
               <h3 className="text-sm sm:text-base font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2">{product.name}</h3>
             </Link>
-            <p className="text-xs text-slate-500 mb-2 line-clamp-1">{product.specs.procesor}{product.specs.display ? `, ${product.specs.display}` : ''}</p>
+            <p className="text-xs text-slate-500 mb-2 line-clamp-1">{product.specs?.procesor}{product.specs?.display ? `, ${product.specs.display}` : ''}</p>
 
             {/* Spacer */}
             <div className="flex-1 min-h-1" />
@@ -578,7 +578,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           <Link href={`/product/${product.id}`}>
             <h3 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-0.5 sm:mb-1 line-clamp-2">{product.name}</h3>
           </Link>
-          <p className="hidden sm:block text-xs text-slate-500 mb-1 sm:mb-2 line-clamp-1">{product.specs.procesor}, {product.specs.display}</p>
+          <p className="hidden sm:block text-xs text-slate-500 mb-1 sm:mb-2 line-clamp-1">{product.specs?.procesor}{product.specs?.display ? `, ${product.specs.display}` : ''}</p>
 
           {/* Spacer */}
           <div className="flex-1 min-h-1" />
@@ -693,10 +693,10 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                 </AnimatePresence>
               </div>
 
-              <button onClick={() => setMobileFilters(true)} className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
-                <SlidersHorizontal className="w-4 h-4" /> {t('catalog.filters')}
+              <button onClick={() => setMobileFilters(true)} className="lg:hidden flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 shrink-0">
+                <SlidersHorizontal className="w-4 h-4" /> <span className="hidden xs:inline">Filtre</span>
                 {hasActiveFilters && (
-                  <span className="w-5 h-5 bg-primary text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                  <span className="min-w-[18px] h-[18px] bg-primary text-white text-[10px] rounded-full flex items-center justify-center font-bold px-1">
                     {[...selectedCategories, ...selectedBrands, ...selectedConditions, ...Object.keys(specFilters)].length}
                   </span>
                 )}

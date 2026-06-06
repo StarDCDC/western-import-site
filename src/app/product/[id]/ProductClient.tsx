@@ -462,7 +462,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                         <Link href={`/product/${sp.id}`}>
                           <h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4>
                         </Link>
-                        <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
+                        <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs?.procesor || ""}</p>
                         <div className="flex-1 min-h-1" />
                         <div className="flex items-center justify-between mt-1 sm:mt-3">
                           <div>
@@ -507,7 +507,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                       </Link>
                       <div className="flex flex-col flex-1 min-w-0">
                         <Link href={`/product/${sp.id}`}><h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4></Link>
-                        <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs.procesor}</p>
+                        <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs?.procesor || ""}</p>
                         <div className="flex-1 min-h-1" />
                         <div className="flex items-center justify-between mt-1 sm:mt-2">
                           <p className="text-xs sm:text-base font-extrabold text-primary-dark dark:text-primary">{formatPrice(sp.price)}</p>

@@ -123,7 +123,7 @@ export default function SearchBar() {
         return '';
       }
     }
-    return [specs.procesor, specs.ram, specs.display].filter(Boolean).join(', ');
+    return [specs?.procesor, specs?.ram, specs?.display].filter(Boolean).join(', ');
   };
 
   const closeDropdown = () => {

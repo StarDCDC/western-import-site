@@ -132,9 +132,9 @@ function ProductCard({ product }: { product: Product }) {
           </h3>
         </Link>
         <p className="hidden sm:block text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-1 sm:mb-2 leading-relaxed line-clamp-2">
-          {product.specs.procesor}, {product.specs.ram}, {product.specs.stocare}
-          {product.specs.gpu ? `, ${product.specs.gpu}` : ''}
-          {product.specs.display ? `, ${product.specs.display}` : ''}
+          {product.specs?.procesor}, {product.specs?.ram}, {product.specs?.stocare}
+          {product.specs?.gpu ? `, ${product.specs.gpu}` : ''}
+          {product.specs?.display ? `, ${product.specs.display}` : ''}
         </p>
 
         {/* Rating */}
