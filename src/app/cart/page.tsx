@@ -8,6 +8,8 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Tag, Loader2, Truck } from
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store';
+import { useLanguage } from '@/components/ui/LanguageProvider';
+import { getCartTexts } from '@/lib/i18n-cart';
 
 interface CouponData {
   code: string;
@@ -17,6 +19,8 @@ interface CouponData {
 }
 
 export default function CartPage() {
+  const { locale } = useLanguage();
+  const txt = getCartTexts(locale);
   const { items, removeItem, updateQuantity, getTotal, getItemCount } = useCartStore();
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
@@ -77,16 +81,16 @@ export default function CartPage() {
       <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
         <div className="max-w-[1280px] mx-auto px-5 py-8">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-            <ShoppingBag className="w-6 h-6 text-primary" /> Coșul de Cumpărături
+            <ShoppingBag className="w-6 h-6 text-primary" /> {txt.cartTitle}
           </h1>
 
           {items.length === 0 ? (
             <div className="text-center py-20">
               <ShoppingBag className="w-20 h-20 text-slate-300 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">Coșul este gol</h2>
-              <p className="text-slate-500 mb-6">Adaugă produse pentru a începe cumpărăturile</p>
+              <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">{txt.cartEmpty}</h2>
+              <p className="text-slate-500 mb-6">{txt.cartEmptyDesc}</p>
               <Link href="/catalog" className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
-                <ArrowLeft className="w-4 h-4" /> Continuă cumpărăturile
+                <ArrowLeft className="w-4 h-4" /> {txt.continueShopping}
               </Link>
             </div>
           ) : (
@@ -108,7 +112,7 @@ export default function CartPage() {
                         <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 shrink-0 relative">
                           {((item.product?.brand as any)?.name || item.product?.brand || 'WI').toString().slice(0, 2).toUpperCase()}
                           {hasDiscount && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">REDUCERE</span>
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">{txt.reduction}</span>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -137,7 +141,7 @@ export default function CartPage() {
                               {hasDiscount && (
                                 <div className="text-[11px] text-slate-400 line-through">{formatPrice((item.product?.oldPrice || 0) * item.quantity)}</div>
                               )}
-                              {item.quantity > 1 && <div className="text-[11px] text-slate-400">{formatPrice(item.product?.price || 0)} / buc</div>}
+                              {item.quantity > 1 && <div className="text-[11px] text-slate-400">{formatPrice(item.product?.price || 0)} {txt.perUnit}</div>}
                             </div>
                           </div>
                         </div>
@@ -155,9 +159,9 @@ export default function CartPage() {
                     <Truck className="w-6 h-6 text-amber-600 shrink-0" />
                     <div>
                       <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                        Mai adaugă {formatPrice(remainingForFreeShipping)} pentru livrare gratuită!
+                        {txt.freeShippingReminder.replace('{amount}', formatPrice(remainingForFreeShipping))}
                       </p>
-                      <Link href="/catalog" className="text-xs text-amber-600 hover:underline">Vezi produse →</Link>
+                      <Link href="/catalog" className="text-xs text-amber-600 hover:underline">{txt.seeProducts}</Link>
                     </div>
                   </div>
                 )}
@@ -168,35 +172,35 @@ export default function CartPage() {
               {/* Summary */}
               <div>
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 sticky top-24">
-                  <h3 className="font-bold text-slate-800 dark:text-white mb-4">Sumar Comandă</h3>
+                  <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.orderSummary}</h3>
 
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                      <span>Subtotal ({getItemCount()} produse)</span>
+                      <span>{txt.subtotal} ({getItemCount()} {txt.products})</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
 
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-green-600">
-                        <span>Reducere cod ({coupon?.code})</span>
+                        <span>{txt.discountCode} ({coupon?.code})</span>
                         <span>-{formatPrice(couponDiscount)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                      <span>Transport</span>
-                      <span>{shipping === 0 ? <span className="text-green-600 font-semibold">Gratuit</span> : formatPrice(shipping)}</span>
+                      <span>{txt.shipping}</span>
+                      <span>{shipping === 0 ? <span className="text-green-600 font-semibold">{txt.free}</span> : formatPrice(shipping)}</span>
                     </div>
 
                     {totalDiscount > 0 && (
                       <div className="flex justify-between text-green-600 font-semibold">
-                        <span>Total economie</span>
+                        <span>{txt.totalEconomy}</span>
                         <span>-{formatPrice(totalDiscount)}</span>
                       </div>
                     )}
 
                     <div className="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
-                      <span>Total</span>
+                      <span>{txt.total}</span>
                       <span className="text-primary-dark dark:text-primary">{formatPrice(total)}</span>
                     </div>
                   </div>
@@ -209,7 +213,7 @@ export default function CartPage() {
                           <Tag className="w-4 h-4 text-green-600" />
                           <span className="text-sm font-semibold text-green-700 dark:text-green-400">{coupon.code}</span>
                         </div>
-                        <button onClick={removePromo} className="text-xs text-red-500 hover:underline">Elimină</button>
+                        <button onClick={removePromo} className="text-xs text-red-500 hover:underline">{txt.remove}</button>
                       </div>
                     ) : (
                       <div className="flex gap-2">
@@ -219,7 +223,7 @@ export default function CartPage() {
                             type="text"
                             value={promoCode}
                             onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }}
-                            placeholder="Cod promoțional"
+                            placeholder={txt.promoPlaceholder}
                             className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
                           />
                         </div>
@@ -228,25 +232,25 @@ export default function CartPage() {
                           disabled={promoLoading || !promoCode.trim()}
                           className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
                         >
-                          {promoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Aplică'}
+                          {promoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : txt.apply}
                         </button>
                       </div>
                     )}
                     {promoError && <p className="text-xs text-red-500 mt-1">{promoError}</p>}
-                    {promoApplied && !promoError && <p className="text-xs text-green-600 mt-1">✓ Cod aplicat! Reducere {coupon?.type === 'PERCENTAGE' ? `${coupon?.value}%` : formatPrice(coupon?.value || 0)}</p>}
+                    {promoApplied && !promoError && <p className="text-xs text-green-600 mt-1">{txt.promoApplied} {coupon?.type === 'PERCENTAGE' ? `${coupon?.value}%` : formatPrice(coupon?.value || 0)}</p>}
                   </div>
 
                   <Link
                     href="/checkout"
                     className="block w-full bg-accent text-white text-center py-3 rounded-xl font-semibold mt-5 hover:bg-red-700 transition-colors"
                   >
-                    Finalizează comanda — {formatPrice(total)}
+                    {txt.checkout} — {formatPrice(total)}
                   </Link>
                   <Link
                     href="/catalog"
                     className="block w-full text-center py-2.5 rounded-xl font-medium mt-2 text-sm text-slate-500 hover:text-primary transition-colors"
                   >
-                    ← Continuă cumpărăturile
+                    ← {txt.continueShopping}
                   </Link>
                 </div>
               </div>

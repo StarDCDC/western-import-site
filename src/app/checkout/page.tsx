@@ -8,6 +8,8 @@ import { formatPrice } from '@/lib/api';
 import Link from 'next/link';
 import { CreditCard, Truck, MapPin, ShoppingBag, CheckCircle, Tag, AlertCircle, Loader2, Store, Package } from 'lucide-react';
 import { checkIdnp as c365CheckIdnp, submitLoanRequest as c365Submit, confirmRequest as c365Confirm, isCredit365Configured as c365IsConfigured } from '@/lib/credit365-client';
+import { useLanguage } from '@/components/ui/LanguageProvider';
+import { getCartTexts } from '@/lib/i18n-cart';
 
 interface FormData {
   customerName: string;
@@ -44,6 +46,8 @@ interface CouponData {
 }
 
 export default function CheckoutPage() {
+  const { locale } = useLanguage();
+  const txt = getCartTexts(locale);
   const { items, clearCart, getTotal } = useCartStore();
   const [step, setStep] = useState<'form' | 'loading' | 'success' | 'error'>('form');
   const [orderNumber, setOrderNumber] = useState('');
@@ -105,22 +109,22 @@ export default function CheckoutPage() {
   // Validate form
   function validate(): FormErrors {
     const e: FormErrors = {};
-    if (!form.customerName.trim()) e.customerName = 'Numele este obligatoriu';
-    else if (form.customerName.trim().length < 2) e.customerName = 'Minim 2 caractere';
+    if (!form.customerName.trim()) e.customerName = txt.nameRequired;
+    else if (form.customerName.trim().length < 2) e.customerName = txt.nameMin;
 
-    if (!form.phone.trim()) e.phone = 'Telefonul este obligatoriu';
-    else if (!/^\+?[\d\s()-]{6,20}$/.test(form.phone.trim())) e.phone = 'Număr invalid';
+    if (!form.phone.trim()) e.phone = txt.phoneRequired;
+    else if (!/^\+?[\d\s()-]{6,20}$/.test(form.phone.trim())) e.phone = txt.phoneInvalid;
 
-    if (!form.email.trim()) e.email = 'Email-ul este obligatoriu';
-    else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email.trim())) e.email = 'Email invalid';
+    if (!form.email.trim()) e.email = txt.emailRequired;
+    else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email.trim())) e.email = txt.emailInvalid;
 
     if (form.deliveryMethod !== 'PICKUP') {
-      if (!form.raion.trim()) e.raion = 'Raionul este obligatoriu';
-      if (!form.strada.trim()) e.strada = 'Strada este obligatorie';
-      if (!form.codPostal.trim()) e.codPostal = 'Codul poștal este obligatoriu';
+      if (!form.raion.trim()) e.raion = txt.districtRequired;
+      if (!form.strada.trim()) e.strada = txt.streetRequired;
+      if (!form.codPostal.trim()) e.codPostal = txt.postalRequired;
     }
 
-    if (!form.terms) e.terms = 'Trebuie să fii de acord cu termenii';
+    if (!form.terms) e.terms = txt.termsRequired;
 
     return e;
   }
@@ -148,11 +152,11 @@ export default function CheckoutPage() {
         setCoupon(data.data);
         setCouponError('');
       } else {
-        setCouponError(data.error || 'Cod invalid');
+        setCouponError(data.error || txt.invalidCode);
         setCoupon(null);
       }
     } catch {
-      setCouponError('Eroare la validarea codului');
+      setCouponError(txt.validationError);
     } finally {
       setCouponLoading(false);
     }
@@ -300,11 +304,11 @@ export default function CheckoutPage() {
         setStep('success');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        setErrorMessage(data.error || 'Eroare la plasarea comenzii');
+        setErrorMessage(data.error || txt.errorPlacingOrder);
         setStep('error');
       }
     } catch {
-      setErrorMessage('Eroare de conexiune. Încearcă din nou.');
+      setErrorMessage(txt.connectionError);
       setStep('error');
     }
   }
@@ -359,7 +363,7 @@ export default function CheckoutPage() {
               <Link href="/" className="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
                 Înapoi la magazin
               </Link>
-              <Link href="/account" className="text-sm text-slate-500 hover:text-primary">Vezi comenzile mele →</Link>
+              <Link href="/account" className="text-sm text-slate-500 hover:text-primary">{txt.myOrders} →</Link>
             </div>
           </div>
         </main>
@@ -437,9 +441,9 @@ export default function CheckoutPage() {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
-                      { id: 'PICKUP' as const, label: 'Ridicare magazin', desc: 'Gratuit • Chișinău', icon: Store },
-                      { id: 'COURIER_CHISINAU' as const, label: 'Curier Chișinău', desc: 'Gratuit • 1-2 zile', icon: Truck },
-                      { id: 'COURIER_NATIONAL' as const, label: 'Curier național', desc: 'Gratuit • 2-5 zile', icon: Package },
+                      { id: 'PICKUP' as const, label: txt.storePickup, desc: txt.storePickupDesc, icon: Store },
+                      { id: 'COURIER_CHISINAU' as const, label: txt.courierChisinau, desc: txt.courierChisinauDesc, icon: Truck },
+                      { id: 'COURIER_NATIONAL' as const, label: txt.courierNational, desc: txt.courierNationalDesc, icon: Package },
                     ].map((m) => {
                       const Icon = m.icon;
                       return (
@@ -540,9 +544,9 @@ export default function CheckoutPage() {
                   </h3>
                   <div className="space-y-3">
                     {[
-                      { id: 'CASH' as const, label: 'Cash la livrare', desc: 'Plătești la primirea comenzii', icon: '💵' },
-                      { id: 'CREDIT' as const, label: 'Credit IuteCredit', desc: 'Rate fără dobândă până la 12 luni', icon: '🏦' },
-                      { id: 'CREDIT_365' as const, label: 'Credit Credit365', desc: 'Credit rapid online, aprobare în minute', icon: '💳' },
+                      { id: 'CASH' as const, label: txt.cashOnDelivery, desc: txt.cashDesc, icon: '💵' },
+                      { id: 'CREDIT' as const, label: txt.creditIute, desc: txt.creditIuteDesc, icon: '🏦' },
+                      { id: 'CREDIT_365' as const, label: txt.credit365, desc: txt.credit365Desc, icon: '💳' },
                     ].map((m) => (
                       <button
                         key={m.id}
@@ -933,7 +937,7 @@ export default function CheckoutPage() {
                           disabled={couponLoading || !form.couponCode.trim()}
                           className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
                         >
-                          {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Aplică'}
+                          {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : txt.apply}
                         </button>
                       </div>
                     )}
@@ -970,7 +974,7 @@ export default function CheckoutPage() {
                   </button>
 
                   <p className="text-xs text-slate-400 text-center mt-3">
-                    🔒 Datele tale sunt securizate. Nu stocăm datele cardului.
+                    {txt.dataSecure}
                   </p>
                 </div>
               </div>
