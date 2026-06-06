@@ -232,25 +232,6 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      {/* Migrații DB */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">🗄️ Migrații Bază de Date</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Aplică migrațiile pendinte (ex: coloane noi pentru bannere RU).</p>
-        <button onClick={async () => {
-          try {
-            const res = await fetch('/api/admin/migrate', { method: 'POST' });
-            const json = await res.json();
-            if (json.success) {
-              alert('✅ ' + json.data.message + '\n' + (json.data.migrations || []).join('\n'));
-            } else {
-              alert('❌ ' + (json.error || 'Eroare'));
-            }
-          } catch { alert('❌ Eroare la migrație'); }
-        }} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-sm transition">
-          ▶ Rulează migrațiile
-        </button>
-      </div>
-
       <div className="flex gap-3">
         <button onClick={handleSave} disabled={saving} className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50">
           {saving ? "Se salvează..." : "Salvează setările"}

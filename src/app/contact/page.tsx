@@ -26,6 +26,12 @@ export default async function ContactPage() {
   const email = settings.email || 'info@westernimport.md';
   const address = settings.address || 'str. Podgorenilor 17, Chișinău';
   const schedule = settings.schedule || 'Lun-Sâm: 09:00 - 18:00';
+  const facebook = settings.facebook || '';
+  const instagram = settings.instagram || '';
+  const telegram = settings.telegram || '';
+  const tiktok = settings.tiktok || '';
+  const whatsapp = settings.whatsapp || '';
+  const viber = settings.viber || '';
 
   return (
     <>
@@ -89,6 +95,22 @@ export default async function ContactPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Social Media */}
+                {(facebook || instagram || telegram || tiktok || whatsapp || viber) && (
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <p className="text-xs text-slate-400 font-medium mb-3">Social Media</p>
+                    <div className="flex flex-wrap gap-2">
+                      {facebook && <a href={facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300"><img src="/social-facebook.svg" alt="" className="w-4 h-4" />Facebook</a>}
+                      {instagram && <a href={instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300"><img src="/social-instagram.svg" alt="" className="w-4 h-4" />Instagram</a>}
+                      {telegram && <a href={telegram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300"><img src="/social-telegram.svg" alt="" className="w-4 h-4" />Telegram</a>}
+                      {tiktok && <a href={tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300"><img src="/social-tiktok.svg" alt="" className="w-4 h-4" />TikTok</a>}
+                      {whatsapp && <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300">💬 WhatsApp</a>}
+                      {viber && <a href={viber} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300">📞 Viber</a>}
+                    </div>
+                  </div>
+                )}
+
               </div>
 
               {/* Map */}
