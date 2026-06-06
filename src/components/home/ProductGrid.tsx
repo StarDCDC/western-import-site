@@ -44,23 +44,20 @@ function ProductCard({ product }: { product: Product }) {
     ? 'bg-amber-500'
     : 'bg-blue-500';
 
-  const hasImages = product.images && product.images.length > 0;
-
-  const getImageUrl = (): string | undefined => {
-    if (Array.isArray(product.images)) return product.images[0];
-    if (typeof product.images === 'string') {
-      const s = product.images.trim();
-      if (s.startsWith('[')) {
-        try {
-          const parsed = JSON.parse(s);
-          return Array.isArray(parsed) ? parsed[0] : undefined;
-        } catch { return undefined; }
-      }
-      return s.split(',')[0]?.trim();
+  const getImages = (): string[] => {
+    const raw = product.images;
+    if (Array.isArray(raw)) return raw as string[];
+    if (typeof raw === 'string' && raw.length > 0) {
+      let s = raw.trim();
+      if (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);
+      if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } }
+      return s.split(',').map(x => x.trim()).filter(Boolean);
     }
-    return undefined;
+    return [];
   };
-  const imageUrl = getImageUrl();
+  const images = getImages();
+  const imageUrl = images[0] || undefined;
+  const image2Url = images[1] || undefined;
 
   return (
     <div
@@ -98,17 +95,27 @@ function ProductCard({ product }: { product: Product }) {
       <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[110px] sm:w-full">
         {/* Mobile: fixed width square, Desktop: full width aspect ratio */}
         <div className="relative w-[110px] h-[110px] sm:w-full sm:aspect-[4/3] sm:h-auto overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50">
-          {hasImages ? (
-            <img
-              src={imageUrl}
-              alt={product.name}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
+          {imageUrl ? (
+            <>
+              <img
+                src={imageUrl}
+                alt={product.name}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+              {image2Url && (
+                <img
+                  src={image2Url}
+                  alt={product.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+            </>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
               <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
