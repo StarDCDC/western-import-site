@@ -21,7 +21,7 @@ export default function Footer() {
   const tiktok = settings.tiktok || 'https://tiktok.com';
 
   return (
-    <footer className="bg-slate-900 dark:bg-slate-950 text-slate-400 dark:text-slate-400 mt-10">
+    <footer className="bg-slate-900 dark:bg-slate-900 text-slate-400 dark:text-slate-400 mt-10">
       <div className="max-w-[1280px] mx-auto px-5 pt-12 pb-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-10">
           {/* Brand + Social */}
