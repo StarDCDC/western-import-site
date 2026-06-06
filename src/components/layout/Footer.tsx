@@ -27,7 +27,7 @@ export default function Footer() {
           {/* Brand + Social */}
           <div>
             <div className="mb-4">
-              <Image src="/logo-footer.png" alt="Western Import" width={180} height={50} className="h-10 w-auto object-contain" priority />
+              <Image src="/logo-footer.jpg" alt="Western Import" width={180} height={50} className="h-10 w-auto object-contain" priority />
             </div>
             <p className="text-sm leading-relaxed mb-4">
               {t('footer.description')}
@@ -68,7 +68,7 @@ export default function Footer() {
             <h4 className="text-slate-100 dark:text-slate-200 text-sm font-bold mb-4">{t('footer.payment')}</h4>
             {/* Payment — official brand logos */}
             <div className="flex gap-3 flex-wrap items-center justify-center mb-5">
-              <img src="/payment-visa.svg" alt="Visa" width={56} height={35} className="h-8 w-auto rounded" onError={(e) => { (e.target as HTMLImageElement).src = '/payment-visa.jpg'; }} />
+              <img src="/payment-visa.jpg" alt="Visa" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-mastercard.svg" alt="Mastercard" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-applepay.svg" alt="Apple Pay" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-googlepay.svg" alt="Google Pay" width={56} height={35} className="h-8 w-auto rounded" />

@@ -132,7 +132,7 @@ export default function CheckoutPage() {
   // Apply coupon
   async function applyCoupon() {
     if (!form.couponCode.trim()) {
-      setCouponError('Introdu un cod promoțional');
+      setCouponError(txt.promoPlaceholder);
       return;
     }
 
@@ -263,7 +263,7 @@ export default function CheckoutPage() {
                   },
                   onFailure: (result: { message: string }) => {
                     console.error('[IutePay] Checkout failed:', result);
-                    setErrorMessage(result.message || 'IutePay checkout eșuat');
+                    setErrorMessage(result.message || txt.errorPlacingOrder);
                     setStep('error');
                   },
                 },
@@ -285,7 +285,7 @@ export default function CheckoutPage() {
               script.src = 'https://ecom.iutecredit.md/iutepay.js';
               script.onload = () => doIuteCheckout();
               script.onerror = () => {
-                setErrorMessage('Nu s-a putut încărca IutePay. Reîncarcă pagina.');
+                setErrorMessage(txt.connectionError);
                 setStep('error');
               };
               document.head.appendChild(script);
@@ -638,7 +638,7 @@ export default function CheckoutPage() {
                           <button
                             type="button"
                             onClick={async () => {
-                              if (form.c365_idnp.length < 13) { setC365Error('IDNP trebuie să aibă 13 cifre'); return; }
+                              if (form.c365_idnp.length < 13) { setC365Error(locale === 'ru' ? 'IDNP должен содержать 13 цифр' : 'IDNP trebuie să aibă 13 cifre'); return; }
                               setC365Loading(true); setC365Error('');
                               try {
                                 const data = await c365CheckIdnp(form.c365_idnp);
@@ -647,13 +647,13 @@ export default function CheckoutPage() {
                                 setC365UserId(data.userId);
                                 setC365Step('terms');
                               } catch (err) {
-                                setC365Error(err instanceof Error ? err.message : 'Eroare verificare IDNP');
+                                setC365Error(err instanceof Error ? err.message : locale === 'ru' ? 'Ошибка проверки IDNP' : 'Eroare verificare IDNP');
                               } finally { setC365Loading(false); }
                             }}
                             disabled={c365Loading}
                             className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
                           >
-                            {c365Loading ? 'Se verifică...' : 'Verifică IDNP →'}
+                            {c365Loading ? locale === 'ru' ? 'Проверка...' : 'Se verifică...' : locale === 'ru' ? 'Проверить IDNP →' : 'Verifică IDNP →'}
                           </button>
                         </div>
                       ) : null}
@@ -721,7 +721,7 @@ export default function CheckoutPage() {
                             type="button"
                             onClick={async () => {
                               if (!form.c365_firstName || !form.c365_lastName || !form.c365_birthDate) {
-                                setC365Error('Completează toate câmpurile'); return;
+                                setC365Error(locale === 'ru' ? 'Заполните все поля' : 'Completează toate câmpurile'); return;
                               }
                               setC365Loading(true); setC365Error('');
                               try {
@@ -743,13 +743,13 @@ export default function CheckoutPage() {
                                 setC365ApplicationId(applicationId);
                                 setC365Step('sms');
                               } catch (err) {
-                                setC365Error(err instanceof Error ? err.message : 'Eroare trimitere cerere');
+                                setC365Error(err instanceof Error ? err.message : locale === 'ru' ? 'Ошибка отправки заявки' : 'Eroare trimitere cerere');
                               } finally { setC365Loading(false); }
                             }}
                             disabled={c365Loading}
                             className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
                           >
-                            {c365Loading ? 'Se trimite...' : 'Trimite cererea →'}
+                            {c365Loading ? locale === 'ru' ? 'Отправка...' : 'Se trimite...' : locale === 'ru' ? 'Отправить заявку →' : 'Trimite cererea →'}
                           </button>
                           <button type="button" onClick={() => setC365Step('terms')} className="text-xs text-blue-500 hover:underline">← Înapoi</button>
                         </div>
@@ -777,13 +777,13 @@ export default function CheckoutPage() {
                                 await c365Confirm(c365ApplicationId!, c365SmsCode);
                                 setC365Step('done');
                               } catch (err) {
-                                setC365Error(err instanceof Error ? err.message : 'Eroare confirmare');
+                                setC365Error(err instanceof Error ? err.message : locale === 'ru' ? 'Ошибка подтверждения' : 'Eroare confirmare');
                               } finally { setC365Loading(false); }
                             }}
                             disabled={c365Loading}
                             className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
                           >
-                            {c365Loading ? 'Se confirmă...' : 'Confirmă ✅'}
+                            {c365Loading ? locale === 'ru' ? 'Подтверждение...' : 'Se confirmă...' : locale === 'ru' ? 'Подтвердить ✅' : 'Confirmă ✅'}
                           </button>
                         </div>
                       )}

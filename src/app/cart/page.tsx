@@ -58,11 +58,11 @@ export default function CartPage() {
         setCoupon(data.data);
         setPromoApplied(true);
       } else {
-        setPromoError(data.error || 'Cod invalid');
+        setPromoError(data.error || txt.invalidCode);
 
       }
     } catch {
-      setPromoError('Eroare la validare');
+      setPromoError(txt.validationError);
     } finally {
       setPromoLoading(false);
     }
