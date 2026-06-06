@@ -46,7 +46,10 @@ interface CouponData {
 }
 
 export default function CheckoutPage() {
-  const { locale } = useLanguage();
+  const { locale: ctxLocale } = useLanguage();
+  // Detect RU from URL path (not just context) so translations work on /ru/ pages
+  const isRu = ctxLocale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
+  const locale = isRu ? 'ru' : 'ro';
   const txt = getCartTexts(locale);
   const { items, clearCart, getTotal } = useCartStore();
   const [step, setStep] = useState<'form' | 'loading' | 'success' | 'error'>('form');
@@ -339,7 +342,7 @@ export default function CheckoutPage() {
           <div className="text-center">
             <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h1 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">Coșul este gol</h1>
-            <Link href="/catalog" className="text-primary font-semibold hover:underline">Înapoi la catalog</Link>
+            <Link href={isRu ? "/ru/catalog" : "/catalog"} className="text-primary font-semibold hover:underline">Înapoi la catalog</Link>
           </div>
         </main>
         <Footer />
@@ -360,8 +363,8 @@ export default function CheckoutPage() {
             <p className="text-sm text-slate-400 mb-1">Număr comandă:</p>
             <p className="text-lg font-bold text-primary mb-6">{orderNumber}</p>
             <div className="flex flex-col gap-3">
-              <Link href="/" className="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
-                Înapoi la magazin
+              <Link href={isRu ? "/ru" : "/"} className="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
+                {txt.backToStore}
               </Link>
               <Link href="/account" className="text-sm text-slate-500 hover:text-primary">{txt.myOrders} →</Link>
             </div>
@@ -682,7 +685,7 @@ export default function CheckoutPage() {
                               </button>
                             ))}
                           </div>
-                          <button type="button" onClick={() => setC365Step('idnp')} className="text-xs text-blue-500 hover:underline">← Înapoi</button>
+                          <button type="button" onClick={() => setC365Step('idnp')} className="text-xs text-blue-500 hover:underline">{locale === "ru" ? "← Назад" : "← Înapoi"}</button>
                         </div>
                       )}
 
@@ -833,7 +836,7 @@ export default function CheckoutPage() {
 
                   <div className="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-2 text-sm">
                     <div className="flex justify-between text-slate-500">
-                      <span>Subtotal</span>
+                      <span>{txt.subtotal}</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
 
@@ -845,10 +848,10 @@ export default function CheckoutPage() {
                     )}
 
                     <div className="flex justify-between text-slate-500">
-                      <span>Transport</span>
+                      <span>{txt.shipping}</span>
                       <span>
                         {shippingCost === 0 ? (
-                          <span className="text-green-600 font-semibold">Gratuit</span>
+                          <span className="text-green-600 font-semibold">{txt.free}</span>
                         ) : (
                           formatPrice(shippingCost)
                         )}
@@ -917,7 +920,7 @@ export default function CheckoutPage() {
                           <span className="text-sm font-semibold text-green-700 dark:text-green-400">{coupon.code}</span>
                           <span className="text-xs text-green-600">-{coupon.type === 'PERCENTAGE' ? `${coupon.value}%` : formatPrice(coupon.value)}</span>
                         </div>
-                        <button type="button" onClick={removeCoupon} className="text-xs text-red-500 hover:underline">Elimină</button>
+                        <button type="button" onClick={removeCoupon} className="text-xs text-red-500 hover:underline">{txt.remove}</button>
                       </div>
                     ) : (
                       <div className="flex gap-2">
@@ -927,7 +930,7 @@ export default function CheckoutPage() {
                             type="text"
                             value={form.couponCode}
                             onChange={(e) => updateField('couponCode', e.target.value.toUpperCase())}
-                            placeholder="Cod promoțional"
+                            placeholder={txt.promoPlaceholder}
                             className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
                           />
                         </div>

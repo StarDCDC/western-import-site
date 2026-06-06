@@ -1,6 +1,8 @@
+// src/app/cart/page.tsx
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { formatPrice } from '@/lib/api';
@@ -19,7 +21,11 @@ interface CouponData {
 }
 
 export default function CartPage() {
-  const { locale } = useLanguage();
+  const { locale: ctxLocale } = useLanguage();
+  const searchParams = useSearchParams();
+  // Detect RU from URL path or context
+  const isRu = ctxLocale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
+  const locale = isRu ? 'ru' : 'ro';
   const txt = getCartTexts(locale);
   const { items, removeItem, updateQuantity, getTotal, getItemCount } = useCartStore();
   const [promoCode, setPromoCode] = useState('');
@@ -30,22 +36,15 @@ export default function CartPage() {
 
   const subtotal = getTotal();
   const shipping = 0;
-
-  // Coupon discount
   const couponDiscount = coupon?.discount || 0;
-
   const totalDiscount = couponDiscount;
   const total = subtotal - totalDiscount + shipping;
-
-  // Free shipping remaining
   const remainingForFreeShipping = 0;
 
   const handlePromo = async () => {
     if (!promoCode.trim()) return;
-
     setPromoLoading(true);
     setPromoError('');
-
     try {
       const res = await fetch('/api/coupons/validate', {
         method: 'POST',
@@ -53,13 +52,11 @@ export default function CartPage() {
         body: JSON.stringify({ code: promoCode, subtotal }),
       });
       const data = await res.json();
-
       if (data.success) {
         setCoupon(data.data);
         setPromoApplied(true);
       } else {
         setPromoError(data.error || txt.invalidCode);
-
       }
     } catch {
       setPromoError(txt.validationError);
@@ -89,13 +86,12 @@ export default function CartPage() {
               <ShoppingBag className="w-20 h-20 text-slate-300 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">{txt.cartEmpty}</h2>
               <p className="text-slate-500 mb-6">{txt.cartEmptyDesc}</p>
-              <Link href="/catalog" className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
+              <Link href={isRu ? "/ru/catalog" : "/catalog"} className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
                 <ArrowLeft className="w-4 h-4" /> {txt.continueShopping}
               </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
-              {/* Items */}
               <div className="space-y-3">
                 <AnimatePresence>
                   {items.map((item, index) => {
@@ -117,43 +113,28 @@ export default function CartPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <Link href={`/product/${item.product?.id}`} className="text-sm font-semibold text-slate-800 dark:text-white hover:text-primary line-clamp-1">
-                            {item.product?.name || 'Produs'}
+                            {item.product?.name || (isRu ? 'Товар' : 'Produs')}
                           </Link>
-                          <p className="text-xs text-slate-500 mt-0.5">{item.product?.specs?.procesor}, {item.product?.specs?.display}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">{item.product?.specs?.procesor || ''}</p>
                           <div className="flex items-center justify-between mt-3">
                             <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => updateQuantity(item.product?.id || '', item.quantity - 1)}
-                                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600"
-                              >
-                                <Minus className="w-3 h-3" />
-                              </button>
+                              <button onClick={() => updateQuantity(item.product?.id || '', item.quantity - 1)} className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600"><Minus className="w-3 h-3" /></button>
                               <span className="text-sm font-semibold w-8 text-center">{item.quantity}</span>
-                              <button
-                                onClick={() => updateQuantity(item.product?.id || '', item.quantity + 1)}
-                                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600"
-                              >
-                                <Plus className="w-3 h-3" />
-                              </button>
+                              <button onClick={() => updateQuantity(item.product?.id || '', item.quantity + 1)} className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600"><Plus className="w-3 h-3" /></button>
                             </div>
                             <div className="text-right">
                               <div className="text-sm font-bold text-primary-dark dark:text-primary">{formatPrice((item.product?.price || 0) * item.quantity)}</div>
-                              {hasDiscount && (
-                                <div className="text-[11px] text-slate-400 line-through">{formatPrice((item.product?.oldPrice || 0) * item.quantity)}</div>
-                              )}
+                              {hasDiscount && <div className="text-[11px] text-slate-400 line-through">{formatPrice((item.product?.oldPrice || 0) * item.quantity)}</div>}
                               {item.quantity > 1 && <div className="text-[11px] text-slate-400">{formatPrice(item.product?.price || 0)} {txt.perUnit}</div>}
                             </div>
                           </div>
                         </div>
-                        <button onClick={() => removeItem(item.product?.id || '')} className="self-start p-1.5 text-slate-400 hover:text-accent transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <button onClick={() => removeItem(item.product?.id || '')} className="self-start p-1.5 text-slate-400 hover:text-accent transition-colors"><Trash2 className="w-4 h-4" /></button>
                       </motion.div>
                     );
                   })}
                 </AnimatePresence>
 
-                {/* Upsell: Free shipping reminder */}
                 {remainingForFreeShipping > 0 && (
                   <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-2xl p-4 border border-amber-200 dark:border-amber-800 flex items-center gap-3">
                     <Truck className="w-6 h-6 text-amber-600 shrink-0" />
@@ -161,51 +142,42 @@ export default function CartPage() {
                       <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
                         {txt.freeShippingReminder.replace('{amount}', formatPrice(remainingForFreeShipping))}
                       </p>
-                      <Link href="/catalog" className="text-xs text-amber-600 hover:underline">{txt.seeProducts}</Link>
+                      <Link href={isRu ? "/ru/catalog" : "/catalog"} className="text-xs text-amber-600 hover:underline">{txt.seeProducts}</Link>
                     </div>
                   </div>
                 )}
-
-
               </div>
 
-              {/* Summary */}
               <div>
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 sticky top-24">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.orderSummary}</h3>
-
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between text-slate-600 dark:text-slate-300">
                       <span>{txt.subtotal} ({getItemCount()} {txt.products})</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
-
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>{txt.discountCode} ({coupon?.code})</span>
                         <span>-{formatPrice(couponDiscount)}</span>
                       </div>
                     )}
-
                     <div className="flex justify-between text-slate-600 dark:text-slate-300">
                       <span>{txt.shipping}</span>
                       <span>{shipping === 0 ? <span className="text-green-600 font-semibold">{txt.free}</span> : formatPrice(shipping)}</span>
                     </div>
-
                     {totalDiscount > 0 && (
                       <div className="flex justify-between text-green-600 font-semibold">
                         <span>{txt.totalEconomy}</span>
                         <span>-{formatPrice(totalDiscount)}</span>
                       </div>
                     )}
-
                     <div className="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
                       <span>{txt.total}</span>
                       <span className="text-primary-dark dark:text-primary">{formatPrice(total)}</span>
                     </div>
                   </div>
 
-                  {/* Promo */}
                   <div className="mt-4">
                     {coupon ? (
                       <div className="flex items-center justify-between bg-green-50 dark:bg-green-950/20 rounded-lg p-3">
@@ -219,19 +191,9 @@ export default function CartPage() {
                       <div className="flex gap-2">
                         <div className="relative flex-1">
                           <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                          <input
-                            type="text"
-                            value={promoCode}
-                            onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }}
-                            placeholder={txt.promoPlaceholder}
-                            className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
-                          />
+                          <input type="text" value={promoCode} onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }} placeholder={txt.promoPlaceholder} className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm" />
                         </div>
-                        <button
-                          onClick={handlePromo}
-                          disabled={promoLoading || !promoCode.trim()}
-                          className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
-                        >
+                        <button onClick={handlePromo} disabled={promoLoading || !promoCode.trim()} className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50">
                           {promoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : txt.apply}
                         </button>
                       </div>
@@ -240,16 +202,10 @@ export default function CartPage() {
                     {promoApplied && !promoError && <p className="text-xs text-green-600 mt-1">{txt.promoApplied} {coupon?.type === 'PERCENTAGE' ? `${coupon?.value}%` : formatPrice(coupon?.value || 0)}</p>}
                   </div>
 
-                  <Link
-                    href="/checkout"
-                    className="block w-full bg-accent text-white text-center py-3 rounded-xl font-semibold mt-5 hover:bg-red-700 transition-colors"
-                  >
+                  <Link href={isRu ? "/ru/checkout" : "/checkout"} className="block w-full bg-accent text-white text-center py-3 rounded-xl font-semibold mt-5 hover:bg-red-700 transition-colors">
                     {txt.checkout} — {formatPrice(total)}
                   </Link>
-                  <Link
-                    href="/catalog"
-                    className="block w-full text-center py-2.5 rounded-xl font-medium mt-2 text-sm text-slate-500 hover:text-primary transition-colors"
-                  >
+                  <Link href={isRu ? "/ru/catalog" : "/catalog"} className="block w-full text-center py-2.5 rounded-xl font-medium mt-2 text-sm text-slate-500 hover:text-primary transition-colors">
                     ← {txt.continueShopping}
                   </Link>
                 </div>
