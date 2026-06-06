@@ -52,6 +52,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
   const { locale, t } = useLanguage();
   const [banners, setBanners] = useState<Banner[]>(initialBanners ?? []);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   // Compute sidebar banners from data
   const sidebarBanners: PromoCard[] = (banners)
@@ -148,7 +149,19 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
     <section className="max-w-[1280px] mx-auto px-5 pt-6 pb-8">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
         {/* Left: Banner slider (60-70%) */}
-        <div className="relative rounded-2xl overflow-hidden min-h-[420px]">
+        <div
+          className="relative rounded-2xl overflow-hidden min-h-[420px] select-none"
+          onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
+          onTouchEnd={(e) => {
+            if (touchStart === null || banners.length <= 1) return;
+            const diff = touchStart - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) {
+              if (diff > 0) setCurrentSlide(prev => (prev + 1) % banners.length);
+              else setCurrentSlide(prev => (prev - 1 + banners.length) % banners.length);
+            }
+            setTouchStart(null);
+          }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
