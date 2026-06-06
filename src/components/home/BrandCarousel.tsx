@@ -5,18 +5,18 @@ import Link from 'next/link';
 import { useLanguage } from '@/components/ui/LanguageProvider';
 
 const BRANDS = [
-  { name: 'DELL', slug: 'dell', url: 'https://www.dell.com' },
-  { name: 'Lenovo', slug: 'lenovo', url: 'https://www.lenovo.com' },
-  { name: 'HP', slug: 'hp', url: 'https://www.hp.com' },
-  { name: 'Apple', slug: 'apple', url: 'https://www.apple.com' },
-  { name: 'ASUS', slug: 'asus', url: 'https://www.asus.com' },
-  { name: 'Acer', slug: 'acer', url: 'https://www.acer.com' },
-  { name: 'Samsung', slug: 'samsung', url: 'https://www.samsung.com' },
-  { name: 'MSI', slug: 'msi', url: 'https://www.msi.com' },
-  { name: 'Microsoft', slug: 'microsoft', url: 'https://www.microsoft.com' },
-  { name: 'Google', slug: 'google', url: 'https://store.google.com' },
-  { name: 'Amazon', slug: 'amazon', url: 'https://www.amazon.com' },
-  { name: 'Motorola', slug: 'motorola', url: 'https://www.motorola.com' },
+  { name: 'DELL', slug: 'dell' },
+  { name: 'Lenovo', slug: 'lenovo' },
+  { name: 'HP', slug: 'hp' },
+  { name: 'Apple', slug: 'apple' },
+  { name: 'ASUS', slug: 'asus' },
+  { name: 'Acer', slug: 'acer' },
+  { name: 'Samsung', slug: 'samsung' },
+  { name: 'MSI', slug: 'msi' },
+  { name: 'Microsoft', slug: 'microsoft' },
+  { name: 'Google', slug: 'google' },
+  { name: 'Amazon', slug: 'amazon' },
+  { name: 'Motorola', slug: 'motorola' },
 ];
 
 export default function BrandCarousel() {
@@ -33,17 +33,14 @@ export default function BrandCarousel() {
       <div className="animate-scroll-left flex hover:[animation-play-state:paused]">
         <div className="flex shrink-0">
           {doubled.map((brand, i) => (
-            <a
+            <Link
               key={`${brand.slug}-${i}`}
-              href={brand.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/catalog?brand=${brand.slug}`}
               title={brand.name}
               aria-label={brand.name}
               className="flex items-center justify-center min-w-[180px] px-6 py-5"
             >
-              <Link
-                href={`/catalog?brand=${brand.slug}`}
+              <div
                 className="flex items-center justify-center h-20 w-40 rounded-xl bg-white shadow-sm border border-slate-100 px-5 transition-all hover:scale-105 hover:shadow-md"
               >
                 <img
@@ -52,8 +49,8 @@ export default function BrandCarousel() {
                   className="max-h-12 max-w-full w-auto object-contain"
                   loading="lazy"
                 />
-              </Link>
-            </a>
+              </div>
+            </Link>
           ))}
         </div>
       </div>

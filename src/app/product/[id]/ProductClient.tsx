@@ -195,14 +195,14 @@ export default function ProductClient({ product, similar }: { product: Product; 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Gallery */}
             <div>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-8 flex items-center justify-center min-h-[250px] sm:min-h-[400px] relative">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative aspect-[4/3] sm:aspect-[16/10]">
                 {currentImage ? (
                   <AnimatePresence mode="wait">
                     <motion.img
                       key={selectedThumb}
                       src={currentImage}
                       alt={`${product.name} - ${selectedThumb + 1}`}
-                      className="max-h-[220px] sm:max-h-[360px] w-auto object-contain"
+                      className="absolute inset-0 w-full h-full object-cover"
                       initial={{ opacity: 0, scale: 0.96 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.96 }}
@@ -211,35 +211,42 @@ export default function ProductClient({ product, similar }: { product: Product; 
                     />
                   </AnimatePresence>
                 ) : (
-                  <svg viewBox={isPhone ? '0 0 200 300' : '0 0 400 280'} fill="none" className="w-full max-w-sm">
-                    {isPhone ? (
-                      <>
-                        <rect x="40" y="10" width="120" height="260" rx="20" fill="#e2e8f0" />
-                        <rect x="50" y="35" width="100" height="200" rx="5" fill="#1a56db" opacity=".08" />
-                      </>
-                    ) : (
-                      <>
-                        <rect x="30" y="20" width="340" height="190" rx="12" fill="#e2e8f0" />
-                        <rect x="50" y="35" width="300" height="155" rx="4" fill="#1a56db" opacity=".06" />
-                      </>
-                    )}
-                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox={isPhone ? '0 0 200 300' : '0 0 400 280'} fill="none" className="w-full max-w-sm">
+                      {isPhone ? (
+                        <>
+                          <rect x="40" y="10" width="120" height="260" rx="20" fill="#e2e8f0" />
+                          <rect x="50" y="35" width="100" height="200" rx="5" fill="#1a56db" opacity=".08" />
+                        </>
+                      ) : (
+                        <>
+                          <rect x="30" y="20" width="340" height="190" rx="12" fill="#e2e8f0" />
+                          <rect x="50" y="35" width="300" height="155" rx="4" fill="#1a56db" opacity=".06" />
+                        </>
+                      )}
+                    </svg>
+                  </div>
                 )}
                 {totalImages > 1 && (
                   <>
                     <button
                       onClick={() => setSelectedThumb((prev) => (prev - 1 + totalImages) % totalImages)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-700/80 rounded-full p-2 shadow hover:bg-white dark:hover:bg-slate-700 transition-colors"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 backdrop-blur-sm rounded-full p-2.5 transition-colors z-10"
                     >
-                      <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                      <ChevronLeft className="w-5 h-5 text-white" />
                     </button>
                     <button
                       onClick={() => setSelectedThumb((prev) => (prev + 1) % totalImages)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-700/80 rounded-full p-2 shadow hover:bg-white dark:hover:bg-slate-700 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 backdrop-blur-sm rounded-full p-2.5 transition-colors z-10"
                     >
-                      <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                      <ChevronRight className="w-5 h-5 text-white" />
                     </button>
                   </>
+                )}
+                {totalImages > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full z-10">
+                    <span className="text-xs text-white font-medium">{selectedThumb + 1} / {totalImages}</span>
+                  </div>
                 )}
               </div>
               {totalImages > 1 && (
@@ -250,11 +257,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
                       onClick={() => setSelectedThumb(i)}
                       className={`w-2.5 h-2.5 rounded-full transition-colors ${
                         i === selectedThumb ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'
-                      }`
-                    }
+                      }`}
                     />
                   ))}
-                  <span className="text-xs text-slate-400 ml-2">{selectedThumb + 1} / {totalImages}</span>
                 </div>
               )}
 

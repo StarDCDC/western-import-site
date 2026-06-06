@@ -460,10 +460,81 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     const imgUrl = images[0] || null;
     const img2Url = images[1] || null;
 
+    // LIST MODE — horizontal card: image left, text+price right
+    if (listMode) {
+      return (
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl hover:shadow-md transition-all relative flex flex-row gap-0 overflow-hidden">
+          {/* Badge */}
+          <span className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-bold text-white z-10 ${badgeClass}`}>
+            {discount ? `${t('catalog.discount')} -${discount}%` : badgeText}
+          </span>
+
+          {/* Image — left side, fixed width */}
+          <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[200px] sm:w-[240px]">
+            <div className="relative w-full h-full min-h-[160px] overflow-hidden bg-slate-50 dark:bg-slate-700/50 group/img">
+              {imgUrl ? (
+                <>
+                  <img
+                    src={imgUrl}
+                    alt={product.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover/img:opacity-0"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  {img2Url && (
+                    <img
+                      src={img2Url}
+                      alt={product.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover/img:opacity-100"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  )}
+                </>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-slate-300 dark:text-slate-600">
+                  <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                </div>
+              )}
+            </div>
+          </Link>
+
+          {/* Content — right side */}
+          <div className="flex flex-col flex-1 min-w-0 p-4 sm:p-5">
+            <Link href={`/product/${product.id}`}>
+              <h3 className="text-sm sm:text-base font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2">{product.name}</h3>
+            </Link>
+            <p className="text-xs text-slate-500 mb-2 line-clamp-1">{product.specs.procesor}{product.specs.display ? `, ${product.specs.display}` : ''}</p>
+
+            {/* Spacer */}
+            <div className="flex-1 min-h-1" />
+
+            {/* Price */}
+            <div className="flex items-baseline gap-2 mb-3">
+              <span className="text-lg sm:text-xl font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
+              {product.oldPrice && <span className="text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <button onClick={() => addToCart(product)} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-1.5">
+                <ShoppingCart className="w-4 h-4" /> {t('catalog.addToCart')}
+              </button>
+              <button onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)} className={`p-2.5 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 text-slate-400 hover:text-accent hover:border-accent'}`}>
+                <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // GRID MODE — original card layout
     return (
       <div
-        /* No entrance animation — cards must paint from SSR HTML before hydration. */
-        className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row ${listMode ? 'lg:flex-row' : 'sm:flex-col'} gap-2 sm:gap-0`}
+        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0"
       >
         {/* Badge */}
         <span className={`absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-2 rounded text-[9px] sm:text-[11px] font-bold text-white z-10 ${badgeClass}`}>
@@ -580,7 +651,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                 onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
                 className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium focus:outline-none focus:border-primary"
               >
-                {[12, 18, 24].map(n => (
+                {[20, 24, 28].map(n => (
                   <option key={n} value={n}>{n}</option>
                 ))}
               </select>
@@ -695,18 +766,30 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
             <div className="flex-1">
               {loading ? (
-                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3 list-mode"}>
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4 list-mode"}>
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 animate-pulse">
-                      <div className="h-36 bg-slate-200 dark:bg-slate-700 rounded-xl mb-3" />
-                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded mb-2 w-3/4" />
-                      <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded mb-3 w-1/2" />
-                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/3" />
+                    <div key={i} className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl animate-pulse ${viewMode === 'list' ? 'h-[160px]' : 'p-4'}`}>
+                      {viewMode === 'list' ? (
+                        <div className="flex h-full">
+                          <div className="w-[200px] bg-slate-200 dark:bg-slate-700" />
+                          <div className="flex-1 p-4 space-y-2">
+                            <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
+                            <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="h-36 bg-slate-200 dark:bg-slate-700 rounded-xl mb-3" />
+                          <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded mb-2 w-3/4" />
+                          <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded mb-3 w-1/2" />
+                          <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/3" />
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-3 list-mode"}>
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4 list-mode"}>
                   {filteredProducts.map((p, i) => (
                     <ProductCardSmall key={`${p.id}-${i}`} product={p} listMode={viewMode === 'list'} />
                   ))}
