@@ -64,7 +64,7 @@ export default function CategorySlider({ initialCategories }: CategorySliderProp
               >
                 <Link
                   href={`/catalog?category=${cat.slug}`}
-                  className="flex flex-col items-center gap-3 w-[170px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 hover:-translate-y-1 hover:shadow-md hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all"
+                  className="flex flex-col items-center gap-3 w-[170px] bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 hover:-translate-y-1 hover:shadow-md hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 active:-translate-y-1 active:shadow-md active:bg-blue-50 dark:active:bg-blue-900/20 active:border-blue-300 dark:active:border-blue-700 transition-all"
                 >
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center">
                     {icon}

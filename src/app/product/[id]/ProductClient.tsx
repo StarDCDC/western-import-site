@@ -126,6 +126,7 @@ function ReviewForm({ productId, locale }: { productId: string; locale: string }
 export default function ProductClient({ product, similar }: { product: Product; similar: Product[] }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
   const [qty, setQty] = useState(1);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
   const { locale, t } = useLanguage();
   const addToCart = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.addItem);
@@ -195,7 +196,19 @@ export default function ProductClient({ product, similar }: { product: Product; 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Gallery */}
             <div>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative aspect-[4/3] sm:aspect-[16/10]">
+              <div
+                className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative aspect-[4/3] sm:aspect-[16/10] select-none"
+                onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
+                onTouchEnd={(e) => {
+                  if (touchStart === null) return;
+                  const diff = touchStart - e.changedTouches[0].clientX;
+                  if (Math.abs(diff) > 50) {
+                    if (diff > 0 && selectedThumb < totalImages - 1) setSelectedThumb(prev => prev + 1);
+                    if (diff < 0 && selectedThumb > 0) setSelectedThumb(prev => prev - 1);
+                  }
+                  setTouchStart(null);
+                }}
+              >
                 {currentImage ? (
                   <AnimatePresence mode="wait">
                     <motion.img
