@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 interface SiteSettings {
   site_phone?: string;
   site_email?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
   site_address?: string;
   WHATSAPP_NUMBER?: string;
   FACEBOOK_PIXEL_ID?: string;

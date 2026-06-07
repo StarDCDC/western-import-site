@@ -179,9 +179,11 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
                 />
               )}
               <div className="relative z-10 h-full flex flex-col justify-center p-8 md:p-12 text-white">
-                <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-4 w-fit shadow-lg">
-                  {banner.badge || '🔥 Ofertă'}
-                </span>
+                {banner.badge && (
+                  <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-4 w-fit shadow-lg">
+                    {banner.badge}
+                  </span>
+                )}
                 <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight max-w-xl drop-shadow-lg">
                   {(locale === 'ru' && banner.titleRu) ? banner.titleRu : banner.title}
                 </h1>
