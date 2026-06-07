@@ -191,7 +191,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
   // Load spec filter options when base filters change
   useEffect(() => {
-    async function loadSpecFilters() {
+    const t = setTimeout(async () => {
       setLoadingSpecFilters(true);
       try {
         const params = new URLSearchParams();
@@ -206,8 +206,8 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
         const json = await res.json();
         if (json.success) setSpecFilterOptions(json.data);
       } catch {} finally { setLoadingSpecFilters(false); }
-    }
-    loadSpecFilters();
+    }, 300);
+    return () => clearTimeout(t);
   }, [selectedCategories, selectedBrands, selectedConditions, priceMin, priceMax, searchQuery]);
 
   // Debounce price changes so we only fetch after user stops dragging
@@ -657,7 +657,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               </select>
 
               {/* View mode toggle */}
-              <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+              <div className="hidden sm:flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}
@@ -757,6 +757,18 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                     <div className="flex justify-between items-center mb-5">
                       <h2 className="font-bold text-lg">{t('catalog.filters')}</h2>
                       <button onClick={() => setMobileFilters(false)}><X className="w-5 h-5" /></button>
+                    </div>
+                    {/* View mode toggle in mobile filters */}
+                    <div className="flex items-center gap-2 mb-5 pb-4 border-b border-slate-200 dark:border-slate-700">
+                      <span className="text-xs text-slate-500">{locale === 'ru' ? 'Вид:' : 'Vizualizare:'}</span>
+                      <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden">
+                        <button onClick={() => setViewMode('grid')} className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z"/></svg>
+                        </button>
+                        <button onClick={() => setViewMode('list')} className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" d="M2.5 12a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/></svg>
+                        </button>
+                      </div>
                     </div>
                     {FilterSidebar()}
                   </motion.div>
