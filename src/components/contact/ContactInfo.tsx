@@ -84,15 +84,16 @@ export default function ContactInfo({ locale }: { locale: string }) {
         )}
       </div>
 
-      {/* Map — OpenStreetMap (no API key needed) */}
       <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-[260px]">
         <iframe
-          src="https://www.openstreetmap.org/export/embed.html?bbox=28.845%2C47.02%2C28.867%2C47.028&layer=mapnik&marker=47.024%2C28.856"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2727.5!2d28.856!3d47.024!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c33b9e0f8e7%3A0x0!2sStrada%20Podgorenilor%2017%2C%20Chi%C8%99in%C4%83u%2C%20Moldova!5e0!3m2!1sro!2s!4v1700000000000!5m2!1sro!2s"
           width="100%"
           height="260"
           style={{ border: 0 }}
+          allowFullScreen
           loading="lazy"
-          title="Western Import — str. Podgorenilor 17, Chișinău"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Western Import — Podgorenilor 17, Chișinău"
         />
       </div>
     </div>
