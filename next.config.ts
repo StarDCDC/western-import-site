@@ -20,7 +20,7 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ecom.iutecredit.md",
       "style-src 'self' 'unsafe-inline' https://ecom.iutecredit.md https://fonts.googleapis.com",
-      "frame-src 'self' https://ecom.iutecredit.md https://iutecredit.md https://iute.md https://www.google.com https://maps.google.com",
+      "frame-src 'self' https://ecom.iutecredit.md https://iutecredit.md https://iute.md https://www.google.com https://maps.google.com https://www.openstreetmap.org",
       "connect-src 'self' https://ecom.iutecredit.md https://iutecredit.md https://preprod.aventus.md",
       "img-src 'self' data: https: blob:",
       "font-src 'self' https://fonts.gstatic.com https://ecom.iutecredit.md",
