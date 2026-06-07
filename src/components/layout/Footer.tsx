@@ -70,8 +70,8 @@ export default function Footer() {
             <div className="flex gap-3 flex-wrap items-center justify-center mb-5">
               <img src="/payment-visa.jpg" alt="Visa" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-mastercard.png" alt="Mastercard" width={56} height={35} className="h-8 w-auto" />
-              <img src="/payment-applepay.png" alt="Apple Pay" width={56} height={35} className="h-8 w-auto" />
-              <img src="/payment-googlepay.png" alt="Google Pay" width={56} height={35} className="h-8 w-auto" />
+              <img src="/payment-applepay.png" alt="Apple Pay" width={56} height={35} className="h-8 w-auto rounded-lg" />
+              <img src="/payment-googlepay.png" alt="Google Pay" width={56} height={35} className="h-8 w-auto rounded-lg" />
             </div>
             <div className="flex gap-3">
               <a href={`tel:${phoneClean}`} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-slate-100 dark:text-slate-200 transition-colors">

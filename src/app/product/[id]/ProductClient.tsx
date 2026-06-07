@@ -467,15 +467,26 @@ export default function ProductClient({ product, similar }: { product: Product; 
                         <span className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
                       )}
                       <Link href={`/product/${sp.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
-                        <div className="w-[100px] h-[100px] sm:w-full sm:h-32 sm:flex sm:items-center sm:justify-center overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                          {imgUrl ? (
-                            <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover sm:max-h-28 sm:w-auto sm:object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
-                              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                        {(() => {
+                          const imgs = Array.isArray(sp.images) ? sp.images : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (() => { let s = (sp.images as string).trim(); if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } } return s.split(',').map((u: string) => u.trim()).filter((u: string) => u.startsWith('http') || u.startsWith('/')); })() : []);
+                          const hasSecond = Array.isArray(imgs) && imgs.length > 1;
+                          return (
+                            <div className="w-[100px] h-[100px] sm:w-full sm:h-40 overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 group/img relative">
+                              {imgUrl ? (
+                                <>
+                                  <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover transition-opacity duration-300 group-hover/img:opacity-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                  {hasSecond && (
+                                    <img src={imgs[1]} alt={`${sp.name} 2`} className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover/img:opacity-100" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                  )}
+                                </>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+                                  <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
+                          );
+                        })()}
                       </Link>
                       <div className="flex flex-col flex-1 min-w-0 sm:mt-3">
                         <Link href={`/product/${sp.id}`}>
@@ -514,15 +525,26 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   return (
                     <div key={`sim-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0 relative">
                       <Link href={`/product/${sp.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
-                        <div className="w-[100px] h-[100px] sm:w-full sm:h-32 sm:flex sm:items-center sm:justify-center overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 sm:mb-3">
-                          {imgUrl ? (
-                            <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover sm:max-h-28 sm:w-auto sm:object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
-                              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                        {(() => {
+                          const imgs = Array.isArray(sp.images) ? sp.images : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (() => { let s = (sp.images as string).trim(); if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } } return s.split(',').map((u: string) => u.trim()).filter((u: string) => u.startsWith('http') || u.startsWith('/')); })() : []);
+                          const hasSecond = Array.isArray(imgs) && imgs.length > 1;
+                          return (
+                            <div className="w-[100px] h-[100px] sm:w-full sm:h-40 overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 group/img relative sm:mb-3">
+                              {imgUrl ? (
+                                <>
+                                  <img src={imgUrl} alt={sp.name} className="w-full h-full object-cover transition-opacity duration-300 group-hover/img:opacity-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                  {hasSecond && (
+                                    <img src={imgs[1]} alt={`${sp.name} 2`} className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover/img:opacity-100" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                  )}
+                                </>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+                                  <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 5H4V19L13.292 9.706a1 1 0 011.414 0L20 15.01V5zM2 3.993A1 1 0 012.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993zM8 11a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
+                          );
+                        })()}
                       </Link>
                       <div className="flex flex-col flex-1 min-w-0">
                         <Link href={`/product/${sp.id}`}><h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4></Link>

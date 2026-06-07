@@ -110,7 +110,7 @@ export default function RecentlyViewed() {
                   className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <Link href={`/product/${product.id}`}>
-                    <div className="flex items-center justify-center aspect-square mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden">
+                    <div className="flex items-center justify-center aspect-square mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden group/img relative">
                       {(() => {
                         let imgs: string[] = [];
                         if (typeof product.images === 'string') {
@@ -129,16 +129,30 @@ export default function RecentlyViewed() {
                           );
                         }
                         return (
-                          <img
-                            src={imgs[0]}
-                            alt={product.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
+                          <>
+                            <img
+                              src={imgs[0]}
+                              alt={product.name}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover transition-opacity duration-300 group-hover/img:opacity-0"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                            {imgs.length > 1 && (
+                              <img
+                                src={imgs[1]}
+                                alt={`${product.name} 2`}
+                                loading="lazy"
+                                decoding="async"
+                                className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover/img:opacity-100"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            )}
+                          </>
                         );
                       })()}
                     </div>
