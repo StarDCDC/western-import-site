@@ -77,7 +77,7 @@ export default function AccountPage() {
     return (
       <>
         <Header />
-        <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen flex items-center justify-center">
+        <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-600"></div>
         </main>
         <Footer />
@@ -88,7 +88,7 @@ export default function AccountPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 py-8">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] py-8">
         <div className="max-w-6xl mx-auto px-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -107,7 +107,7 @@ export default function AccountPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Sidebar */}
               <div className="lg:col-span-1">
-                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] overflow-hidden">
                   <nav className="p-4 space-y-1">
                     <button
                       onClick={() => setActiveTab('info')}
@@ -145,7 +145,7 @@ export default function AccountPage() {
                       <Heart className="w-4 h-4" />
                       Wishlist
                     </button>
-                    <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div className="pt-4 mt-4 border-t border-slate-200 dark:border-white/[0.06]">
                       <button
                         onClick={() => signOut({ callbackUrl: '/login' })}
                         className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
@@ -164,7 +164,7 @@ export default function AccountPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6"
+                    className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] p-6"
                   >
                     <h2 className="text-lg font-semibold mb-4">Informații cont</h2>
                     <div className="space-y-4">
@@ -188,7 +188,7 @@ export default function AccountPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6"
+                    className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] p-6"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold">Comenzile mele</h2>
@@ -202,7 +202,7 @@ export default function AccountPage() {
                           <Link
                             key={order.id}
                             href={`/orders/${order.id}`}
-                            className="block p-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                            className="block p-4 border border-slate-200 dark:border-white/[0.06] rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                           >
                             <div className="flex items-center justify-between">
                               <div>
@@ -227,11 +227,11 @@ export default function AccountPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6"
+                    className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] p-6"
                   >
                     <h2 className="text-lg font-semibold mb-4">Metode de plată</h2>
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg">
+                      <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-white/[0.06] rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                             <CreditCard className="w-5 h-5 text-green-600" />
@@ -243,7 +243,7 @@ export default function AccountPage() {
                         </div>
                         <span className="text-xs text-slate-500">Activ</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg">
+                      <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-white/[0.06] rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                             <CreditCard className="w-5 h-5 text-blue-600" />
@@ -263,7 +263,7 @@ export default function AccountPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6"
+                    className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] p-6"
                   >
                     <h2 className="text-lg font-semibold mb-4">Produse favorite</h2>
                     <p className="text-slate-500 text-center py-8">Funcționalitățile wishlist sunt implementate!</p>

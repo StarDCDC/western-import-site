@@ -63,7 +63,7 @@ function ProductCard({ product }: { product: Product }) {
     <div
       /* Mobile: horizontal card (image left, text right). No entrance animation —
          content must be visible from the SSR HTML before JS hydrates (perceived speed). */
-      className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-lg hover:border-transparent dark:hover:border-transparent transition-all relative overflow-hidden
+      className="group card-premium rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-lg hover:border-transparent dark:hover:border-transparent transition-all relative overflow-hidden
         flex flex-row sm:flex-col gap-2 sm:gap-0"
     >
       {/* Badge — hidden on mobile to save space */}
@@ -179,7 +179,7 @@ function ProductCard({ product }: { product: Product }) {
             className={`p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl border transition-colors ${
               isInWishlist(product.id)
                 ? 'border-red-300 text-red-500 bg-red-50 dark:bg-red-900/20'
-                : 'border-slate-200 dark:border-slate-600 text-slate-400 hover:text-red-500 hover:border-red-300'
+                : 'border-slate-200 dark:border-white/[0.08] text-slate-400 hover:text-red-500 hover:border-red-300'
             }`}
           >
             <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? 'fill-red-500' : ''}`} />
@@ -221,7 +221,7 @@ export default function ProductGrid({ initialProducts }: { initialProducts?: Pro
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 animate-pulse flex flex-row sm:flex-col gap-2 sm:gap-0">
+              <div key={i} className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl p-2 sm:p-4 animate-pulse flex flex-row sm:flex-col gap-2 sm:gap-0">
                 <div className="w-[110px] h-[110px] sm:w-full sm:h-36 bg-slate-200 dark:bg-slate-700 rounded-lg sm:rounded-xl sm:mb-3" />
                 <div className="flex-1">
                   <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded mb-1.5 w-3/4" />

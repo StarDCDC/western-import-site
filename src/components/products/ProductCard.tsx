@@ -42,7 +42,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   return (
     <div
-      className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-transparent dark:hover:border-transparent relative overflow-hidden"
+      className="group card-premium rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-transparent dark:hover:border-transparent relative overflow-hidden"
     >
       {/* Badge */}
       {product.badge && (
@@ -98,7 +98,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         <button className="flex-1 flex items-center justify-center gap-1.5 bg-primary text-white py-2.5 rounded-xl text-[13px] font-semibold transition-colors hover:bg-primary-dark">
           <ShoppingCart size={15} /> Adaugă
         </button>
-        <button className="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 dark:text-slate-500er transition-colors hover:text-accent hover:border-accent">
+        <button className="p-2.5 border border-slate-200 dark:border-white/[0.06] rounded-xl text-slate-500 dark:text-slate-500er transition-colors hover:text-accent hover:border-accent">
           <Heart size={15} />
         </button>
       </div>

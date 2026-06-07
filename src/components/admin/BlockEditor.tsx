@@ -104,7 +104,7 @@ function InlineSelect({
     <div className="relative inline-block">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-2 py-1 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs hover:border-amber-400 transition"
+        className="flex items-center gap-1 px-2 py-1 rounded-md border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-xs hover:border-amber-400 transition"
         title="Schimbă"
       >
         {renderOption ? renderOption(value) : value}
@@ -113,7 +113,7 @@ function InlineSelect({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute z-20 top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg max-h-48 overflow-y-auto min-w-[120px]">
+          <div className="absolute z-20 top-full left-0 mt-1 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.08] rounded-lg shadow-lg max-h-48 overflow-y-auto min-w-[120px]">
             {options.map((opt) => (
               <button
                 key={opt}
@@ -210,17 +210,17 @@ function QuoteEdit({ block, onChange }: { block: QuoteBlock; onChange: (b: Quote
 
 function ImageEdit({ block, onChange }: { block: ImageBlock; onChange: (b: ImageBlock) => void }) {
   return (
-    <div className="mb-6 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+    <div className="mb-6 rounded-xl overflow-hidden border border-slate-200 dark:border-white/[0.06]">
       {block.src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={block.src} alt={block.alt} className="w-full" />
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 dark:bg-slate-800 text-slate-400">
+        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 dark:bg-[var(--color-dark-elevated)] text-slate-400">
           <ImageIcon size={48} className="mb-2 opacity-30" />
           <p className="text-sm">Click pe URL pentru a adăuga imagine</p>
         </div>
       )}
-      <div className="p-3 space-y-2 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+      <div className="p-3 space-y-2 bg-slate-50 dark:bg-[var(--color-dark-elevated)]/50 border-t border-slate-200 dark:border-white/[0.06]">
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-400 w-10 shrink-0">URL</span>
           <Editable
@@ -268,7 +268,7 @@ function StatsEdit({ block, onChange }: { block: StatsBlock; onChange: (b: Stats
     <div className="mb-10">
       <div className="grid grid-cols-3 gap-4">
         {block.items.map((item, i) => (
-          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-slate-800 rounded-xl relative group">
+          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl relative group">
             {/* Remove button */}
             <button
               onClick={() => removeItem(i)}
@@ -333,7 +333,7 @@ function CardsEdit({ block, onChange }: { block: CardsBlock; onChange: (b: Cards
       </div>
       <div className={`grid grid-cols-1 ${cols} gap-4`}>
         {block.items.map((item, i) => (
-          <div key={i} className="p-5 border border-slate-200 dark:border-slate-700 rounded-xl relative group">
+          <div key={i} className="p-5 border border-slate-200 dark:border-white/[0.06] rounded-xl relative group">
             {/* Remove */}
             <button
               onClick={() => removeItem(i)}
@@ -403,7 +403,7 @@ function TeamEdit({ block, onChange }: { block: TeamBlock; onChange: (b: TeamBlo
     <div className="mb-4">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {block.items.map((item, i) => (
-          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-slate-800 rounded-xl relative group">
+          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl relative group">
             {/* Remove */}
             <button
               onClick={() => removeItem(i)}
@@ -475,8 +475,8 @@ function BlockWrapper({
       {/* Floating controls */}
       {hovered && (
         <div className="absolute -left-12 top-2 flex flex-col gap-1 z-10">
-          <div className="flex items-center bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200 dark:border-slate-600 overflow-hidden">
-            <div className="px-1.5 py-1 border-r border-slate-200 dark:border-slate-600 flex items-center justify-center" title={cfg?.label}>
+          <div className="flex items-center bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200 dark:border-white/[0.08] overflow-hidden">
+            <div className="px-1.5 py-1 border-r border-slate-200 dark:border-white/[0.08] flex items-center justify-center" title={cfg?.label}>
               <IconComp size={12} className="text-amber-500" />
             </div>
             <button
@@ -578,14 +578,14 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
       <div className="relative mt-4">
         <button
           onClick={() => setShowAddMenu(!showAddMenu)}
-          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-400 hover:text-amber-600 hover:border-amber-400 transition"
+          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-white/[0.08] text-sm text-slate-400 hover:text-amber-600 hover:border-amber-400 transition"
         >
           <Plus size={16} /> Adaugă bloc nou
         </button>
         {showAddMenu && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setShowAddMenu(false)} />
-            <div className="absolute left-0 right-0 bottom-full mb-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 overflow-hidden">
+            <div className="absolute left-0 right-0 bottom-full mb-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl shadow-lg z-20 overflow-hidden">
               {BLOCK_TYPES.map((bt) => (
                 <button
                   key={bt.type}

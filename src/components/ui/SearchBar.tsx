@@ -145,7 +145,7 @@ export default function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length >= 2 && setOpen(true)}
-          className="w-full py-2.5 pl-4 pr-20 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 focus:outline-none focus:border-primary dark:focus:border-primary-light transition-colors"
+          className="w-full py-2.5 pl-4 pr-20 border-2 border-slate-200 dark:border-white/[0.06] rounded-xl text-sm bg-slate-50 dark:bg-[var(--color-dark-surface)] focus:outline-none focus:border-primary dark:focus:border-primary-light transition-colors"
         />
         {query && (
           <button
@@ -163,7 +163,7 @@ export default function SearchBar() {
           {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
         </button>
         {/* Keyboard shortcut hint */}
-        <kbd className="hidden lg:flex absolute right-[52px] top-1/2 -translate-y-1/2 items-center gap-0.5 text-[10px] text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600">
+        <kbd className="hidden lg:flex absolute right-[52px] top-1/2 -translate-y-1/2 items-center gap-0.5 text-[10px] text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-[var(--color-dark-elevated)] px-1.5 py-0.5 rounded border border-slate-200 dark:border-white/[0.08]">
           <span>⌘</span>K
         </kbd>
       </div>
@@ -175,7 +175,7 @@ export default function SearchBar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-xl border border-slate-200 dark:border-white/[0.06] z-50 overflow-hidden"
           >
             {searching ? (
               <div className="px-4 py-6 text-sm text-slate-500 flex items-center justify-center gap-2">
@@ -232,7 +232,7 @@ export default function SearchBar() {
                   <Link
                     href={`/catalog?search=${encodeURIComponent(query)}`}
                     onClick={closeDropdown}
-                    className="block px-4 py-3 text-center text-sm font-semibold text-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 border-t border-slate-100 dark:border-slate-700 transition-colors"
+                    className="block px-4 py-3 text-center text-sm font-semibold text-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 border-t border-slate-100 dark:border-white/[0.06] transition-colors"
                   >
                     {isRu ? `Все ${total} результатов →` : `Vezi toate cele ${total} rezultate →`}
                   </Link>

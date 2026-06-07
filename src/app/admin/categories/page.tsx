@@ -116,18 +116,18 @@ export default function AdminCategoriesPage() {
 
       {/* Add root category */}
       {adding && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-amber-300 dark:border-amber-600 p-4">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-amber-300 dark:border-amber-600 p-4">
           <h3 className="font-medium text-slate-900 dark:text-white mb-3">Categorie nouă</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} placeholder="Nume RO *" className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+            <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} placeholder="Nume RO *" className="px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
             
-            <input value={form.slug} onChange={(e) => set("slug", e.target.value)} placeholder="Slug (auto)" className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
-            <input value={form.image} onChange={(e) => set("image", e.target.value)} placeholder="Icon/Emoji" className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+            <input value={form.slug} onChange={(e) => set("slug", e.target.value)} placeholder="Slug (auto)" className="px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+            <input value={form.image} onChange={(e) => set("image", e.target.value)} placeholder="Icon/Emoji" className="px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
             <label className="flex items-center gap-2"><input type="checkbox" checked={form.isActive} onChange={(e) => set("isActive", e.target.checked)} className="rounded" /><span className="text-sm text-slate-700 dark:text-slate-300">Activă</span></label>
           </div>
           <div className="flex gap-2 mt-3">
             <button onClick={() => handleAdd(null)} disabled={saving} className="px-4 py-1.5 bg-amber-500 text-white rounded-lg text-sm disabled:opacity-50">{saving ? "..." : "Salvează"}</button>
-            <button onClick={() => { setAdding(false); resetForm(); }} className="px-4 py-1.5 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 rounded-lg text-sm">Anulează</button>
+            <button onClick={() => { setAdding(false); resetForm(); }} className="px-4 py-1.5 border border-slate-300 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 rounded-lg text-sm">Anulează</button>
           </div>
         </div>
       )}
@@ -138,15 +138,15 @@ export default function AdminCategoriesPage() {
           const children = getChildren(cat.id);
           const isEditing = editing === cat.id;
           return (
-            <div key={cat.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div key={cat.id} className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] overflow-hidden">
               <div className="p-4 flex items-center justify-between">
                 {isEditing ? (
                   <div className="flex flex-wrap items-center gap-2 flex-1">
-                    <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm w-32 focus:ring-2 focus:ring-amber-500 outline-none" />
+                    <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm w-32 focus:ring-2 focus:ring-amber-500 outline-none" />
                     
-                    <input value={form.slug} onChange={(e) => set("slug", e.target.value)} className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm w-28 focus:ring-2 focus:ring-amber-500 outline-none" />
+                    <input value={form.slug} onChange={(e) => set("slug", e.target.value)} className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm w-28 focus:ring-2 focus:ring-amber-500 outline-none" />
                     <button onClick={() => handleSaveEdit(cat.id)} disabled={saving} className="px-3 py-1.5 bg-amber-500 text-white rounded-lg text-xs disabled:opacity-50">✓</button>
-                    <button onClick={() => { setEditing(null); resetForm(); }} className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 rounded-lg text-xs">✕</button>
+                    <button onClick={() => { setEditing(null); resetForm(); }} className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 rounded-lg text-xs">✕</button>
                   </div>
                 ) : (
                   <>
@@ -171,27 +171,27 @@ export default function AdminCategoriesPage() {
               {addingChild === cat.id && (
                 <div className="px-4 pb-4 ml-8">
                   <div className="flex flex-wrap gap-2">
-                    <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} placeholder="Nume RO *" className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                    <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} placeholder="Nume RO *" className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
                     
                     <button onClick={() => handleAdd(cat.id)} disabled={saving} className="px-3 py-1.5 bg-amber-500 text-white rounded-lg text-xs disabled:opacity-50">{saving ? "..." : "Salvează"}</button>
-                    <button onClick={() => setAddingChild(null)} className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 rounded-lg text-xs">Anulează</button>
+                    <button onClick={() => setAddingChild(null)} className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 rounded-lg text-xs">Anulează</button>
                   </div>
                 </div>
               )}
 
               {/* Children */}
               {children.length > 0 && (
-                <div className="border-t border-slate-100 dark:border-slate-700/50 ml-8">
+                <div className="border-t border-slate-100 dark:border-white/[0.06]/50 ml-8">
                   {children.map((child) => {
                     const isChildEditing = editing === child.id;
                     return (
-                      <div key={child.id} className="px-4 py-3 flex items-center justify-between border-b border-slate-50 dark:border-slate-700/30 last:border-0">
+                      <div key={child.id} className="px-4 py-3 flex items-center justify-between border-b border-slate-50 dark:border-white/[0.06]/30 last:border-0">
                         {isChildEditing ? (
                           <div className="flex flex-wrap items-center gap-2 flex-1">
-                            <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm w-32 focus:ring-2 focus:ring-amber-500 outline-none" />
+                            <input value={form.nameRo} onChange={(e) => { set("nameRo", e.target.value); set("slug", autoSlug(e.target.value)); }} className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm w-32 focus:ring-2 focus:ring-amber-500 outline-none" />
                             
                             <button onClick={() => handleSaveEdit(child.id)} disabled={saving} className="px-3 py-1.5 bg-amber-500 text-white rounded-lg text-xs disabled:opacity-50">✓</button>
-                            <button onClick={() => { setEditing(null); resetForm(); }} className="px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-slate-600 rounded-lg text-xs">✕</button>
+                            <button onClick={() => { setEditing(null); resetForm(); }} className="px-3 py-1.5 border border-slate-300 dark:border-white/[0.08] text-slate-600 rounded-lg text-xs">✕</button>
                           </div>
                         ) : (
                           <>

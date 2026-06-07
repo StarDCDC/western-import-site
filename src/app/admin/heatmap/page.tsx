@@ -70,7 +70,7 @@ export default function HeatmapAdmin() {
       </div>
 
       {/* Heatmap canvas */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-hidden">
         {loading ? (
           <div className="h-96 flex items-center justify-center text-slate-400">
             <RefreshCw className="w-6 h-6 animate-spin" />
@@ -80,7 +80,7 @@ export default function HeatmapAdmin() {
             <p>Nicio dată de heatmap pentru pagina {selectedPage}</p>
           </div>
         ) : (
-          <div className="relative h-96 bg-slate-50 dark:bg-slate-900">
+          <div className="relative h-96 bg-slate-50 dark:bg-[var(--color-dark-surface)]">
             <div className="absolute inset-0 overflow-hidden">
               {clicks.map((click, i) => {
                 const relX = click.width > 0 ? (click.x / click.width) * 100 : 50;

@@ -32,10 +32,10 @@ export default async function CookiesRuPage() {
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Breadcrumb items={[{ label: "Политика Cookies" }]} />
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
               <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Политика Cookies</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
               {isBlockContent ? (
@@ -54,11 +54,11 @@ export default async function CookiesRuPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Политика Cookie" }]} />
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Политика Cookie
             </h1>
@@ -88,7 +88,7 @@ export default async function CookiesRuPage() {
                 2. Типы используемых файлов cookie
               </h2>
 
-              <div className="mb-6 p-5 border border-slate-200 dark:border-slate-700 rounded-xl">
+              <div className="mb-6 p-5 border border-slate-200 dark:border-white/[0.06] rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     🟢 Строго необходимые cookie
@@ -105,7 +105,7 @@ export default async function CookiesRuPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <tr className="border-b border-slate-200 dark:border-white/[0.06]">
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Cookie</th>
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Назначение</th>
                         <th className="py-2 text-slate-700 dark:text-slate-300 font-semibold">Срок</th>
@@ -137,7 +137,7 @@ export default async function CookiesRuPage() {
                 </div>
               </div>
 
-              <div className="mb-6 p-5 border border-slate-200 dark:border-slate-700 rounded-xl">
+              <div className="mb-6 p-5 border border-slate-200 dark:border-white/[0.06] rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     🔵 Функциональные cookie
@@ -153,7 +153,7 @@ export default async function CookiesRuPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <tr className="border-b border-slate-200 dark:border-white/[0.06]">
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Cookie</th>
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Назначение</th>
                         <th className="py-2 text-slate-700 dark:text-slate-300 font-semibold">Срок</th>
@@ -180,7 +180,7 @@ export default async function CookiesRuPage() {
                 </div>
               </div>
 
-              <div className="mb-6 p-5 border border-slate-200 dark:border-slate-700 rounded-xl">
+              <div className="mb-6 p-5 border border-slate-200 dark:border-white/[0.06] rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     🟡 Аналитические cookie
@@ -197,7 +197,7 @@ export default async function CookiesRuPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <tr className="border-b border-slate-200 dark:border-white/[0.06]">
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Cookie</th>
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Назначение</th>
                         <th className="py-2 text-slate-700 dark:text-slate-300 font-semibold">Срок</th>
@@ -224,7 +224,7 @@ export default async function CookiesRuPage() {
                 </div>
               </div>
 
-              <div className="p-5 border border-slate-200 dark:border-slate-700 rounded-xl">
+              <div className="p-5 border border-slate-200 dark:border-white/[0.06] rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     🟠 Маркетинговые cookie
@@ -240,7 +240,7 @@ export default async function CookiesRuPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <tr className="border-b border-slate-200 dark:border-white/[0.06]">
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Cookie</th>
                         <th className="py-2 pr-4 text-slate-700 dark:text-slate-300 font-semibold">Назначение</th>
                         <th className="py-2 text-slate-700 dark:text-slate-300 font-semibold">Срок</th>
@@ -282,19 +282,19 @@ export default async function CookiesRuPage() {
                 Инструкции для браузеров:
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm">
+                <div className="p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg text-sm">
                   <p className="font-semibold text-slate-700 dark:text-slate-300">Google Chrome</p>
                   <p className="text-slate-600 dark:text-slate-400">Настройки → Конфиденциальность → Файлы cookie</p>
                 </div>
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm">
+                <div className="p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg text-sm">
                   <p className="font-semibold text-slate-700 dark:text-slate-300">Mozilla Firefox</p>
                   <p className="text-slate-600 dark:text-slate-400">Параметры → Конфиденциальность → Файлы cookie</p>
                 </div>
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm">
+                <div className="p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg text-sm">
                   <p className="font-semibold text-slate-700 dark:text-slate-300">Safari</p>
                   <p className="text-slate-600 dark:text-slate-400">Настройки → Конфиденциальность → Файлы cookie</p>
                 </div>
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm">
+                <div className="p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg text-sm">
                   <p className="font-semibold text-slate-700 dark:text-slate-300">Microsoft Edge</p>
                   <p className="text-slate-600 dark:text-slate-400">Настройки → Файлы cookie → Управление</p>
                 </div>

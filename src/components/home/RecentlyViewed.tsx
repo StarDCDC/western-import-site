@@ -89,7 +89,7 @@ export default function RecentlyViewed() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 animate-pulse">
+              <div key={i} className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 animate-pulse">
                 <div className="h-24 bg-slate-200 dark:bg-slate-700 rounded-lg mb-2" />
                 <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded mb-1.5 w-3/4" />
                 <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
@@ -107,7 +107,7 @@ export default function RecentlyViewed() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.04 }}
-                  className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                  className="group bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <Link href={`/product/${product.id}`} prefetch={false}>
                     <div className="flex items-center justify-center aspect-square mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden group/img relative">
@@ -183,7 +183,7 @@ export default function RecentlyViewed() {
                       className={`p-1.5 rounded-lg border transition-colors ${
                         isInWishlist(product.id)
                           ? 'border-accent text-accent'
-                          : 'border-slate-200 dark:border-slate-600 text-slate-400 hover:text-accent'
+                          : 'border-slate-200 dark:border-white/[0.08] text-slate-400 hover:text-accent'
                       }`}
                     >
                       <Heart className={`w-3 h-3 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />

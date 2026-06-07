@@ -91,7 +91,7 @@ export default function AbandonedCartsAdmin() {
         <>
           <div className="space-y-3">
             {carts.map(cart => (
-              <div key={cart.id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+              <div key={cart.id} className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">

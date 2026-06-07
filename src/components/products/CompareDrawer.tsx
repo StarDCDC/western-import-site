@@ -72,7 +72,7 @@ export default function CompareDrawer({ maxItems = 4 }: CompareDrawerProps) {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl px-5 py-3 flex items-center gap-4"
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl shadow-xl px-5 py-3 flex items-center gap-4"
           >
             <div className="flex items-center gap-2">
               {items.slice(0, maxItems).map((item) => (
@@ -84,7 +84,7 @@ export default function CompareDrawer({ maxItems = 4 }: CompareDrawerProps) {
                 </div>
               ))}
               {items.length < maxItems && (
-                <div className="w-10 h-10 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs text-slate-500er">
+                <div className="w-10 h-10 rounded-lg border-2 border-dashed border-slate-200 dark:border-white/[0.06] flex items-center justify-center text-xs text-slate-500er">
                   +
                 </div>
               )}
@@ -118,9 +118,9 @@ export default function CompareDrawer({ maxItems = 4 }: CompareDrawerProps) {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 z-[80] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[80vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 z-[80] bg-white dark:bg-[var(--color-dark-surface)] rounded-t-3xl max-h-[80vh] overflow-y-auto"
             >
-              <div className="sticky top-0 bg-white dark:bg-slate-900 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between rounded-t-3xl">
+              <div className="sticky top-0 bg-white dark:bg-[var(--color-dark-surface)] px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between rounded-t-3xl">
                 <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200">
                   Comparare Produse ({items.length})
                 </h3>
@@ -144,7 +144,7 @@ export default function CompareDrawer({ maxItems = 4 }: CompareDrawerProps) {
                       >
                         <X size={12} className="text-slate-500" />
                       </button>
-                      <div className="w-full h-24 bg-slate-50 dark:bg-slate-800 rounded-xl mb-2 flex items-center justify-center text-primary font-bold">
+                      <div className="w-full h-24 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl mb-2 flex items-center justify-center text-primary font-bold">
                         {item.title.split(" ").slice(0, 2).join(" ")}
                       </div>
                       <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
@@ -177,7 +177,7 @@ export default function CompareDrawer({ maxItems = 4 }: CompareDrawerProps) {
                     <div
                       key={attr.key}
                       className={`grid gap-4 py-3 ${
-                        i % 2 === 0 ? "bg-slate-50 dark:bg-slate-800/50" : ""
+                        i % 2 === 0 ? "bg-slate-50 dark:bg-[var(--color-dark-elevated)]/50" : ""
                       } rounded-lg px-3`}
                       style={{ gridTemplateColumns: `180px repeat(${items.length}, 1fr)` }}
                     >

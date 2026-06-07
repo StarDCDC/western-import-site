@@ -58,13 +58,13 @@ export default function InstallmentCalculator({ price, minPrice = 1000 }: Props)
   }, [price, minPrice]);
 
   if (price < minPrice) return null;
-  if (loading) return <div className="mb-6 h-32 animate-pulse bg-slate-100 dark:bg-slate-800 rounded-2xl" />;
+  if (loading) return <div className="mb-6 h-32 animate-pulse bg-slate-100 dark:bg-[var(--color-dark-elevated)] rounded-2xl" />;
 
   const active = plans[selected];
   if (!active) return null;
 
   return (
-    <div className="mb-6 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-800">
+    <div className="mb-6 rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-hidden bg-white dark:bg-[var(--color-dark-elevated)]">
       {/* Header */}
       <div className="flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500">
         <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -147,7 +147,7 @@ export default function InstallmentCalculator({ price, minPrice = 1000 }: Props)
         )}
 
         {/* Payment schedule */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-700">
+        <div className="pt-3 border-t border-slate-100 dark:border-white/[0.06]">
           <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">Grafic de plată</p>
           <div className="flex flex-wrap gap-1.5">
             {Array.from({ length: active.months }, (_, i) => (

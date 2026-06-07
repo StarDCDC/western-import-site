@@ -122,7 +122,7 @@ export default function AdminBlogPage() {
       </div>
 
       {showForm && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
             {editing ? "Editează articol" : "Articol nou"}
           </h2>
@@ -134,7 +134,7 @@ export default function AdminBlogPage() {
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') })}
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
               </div>
@@ -144,7 +144,7 @@ export default function AdminBlogPage() {
                   type="text"
                   value={form.slug}
                   onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
             </div>
@@ -154,10 +154,10 @@ export default function AdminBlogPage() {
                 type="text"
                 value={form.excerpt}
                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
-            <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-2">
+            <div className="border-t border-slate-200 dark:border-white/[0.06] pt-4 mt-2">
               <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-3">🇷🇺 Перевод на русский</p>
             </div>
             <div>
@@ -166,7 +166,7 @@ export default function AdminBlogPage() {
                 type="text"
                 value={form.titleRu}
                 onChange={(e) => setForm({ ...form, titleRu: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="Заголовок на русском"
               />
             </div>
@@ -176,7 +176,7 @@ export default function AdminBlogPage() {
                 type="text"
                 value={form.excerptRu}
                 onChange={(e) => setForm({ ...form, excerptRu: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="Краткое описание на русском"
               />
             </div>
@@ -186,7 +186,7 @@ export default function AdminBlogPage() {
                 value={form.contentRu}
                 onChange={(e) => setForm({ ...form, contentRu: e.target.value })}
                 rows={8}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono"
                 placeholder="Содержание на русском языке"
               />
             </div>
@@ -196,7 +196,7 @@ export default function AdminBlogPage() {
                 type="text"
                 value={form.image}
                 onChange={(e) => setForm({ ...form, image: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="/blog/image.jpg"
               />
             </div>
@@ -206,7 +206,7 @@ export default function AdminBlogPage() {
                 value={form.content}
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
                 rows={12}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono"
                 required
               />
             </div>
@@ -224,7 +224,7 @@ export default function AdminBlogPage() {
               <button type="submit" className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition">
                 {editing ? "Salvează" : "Creează"}
               </button>
-              <button type="button" onClick={resetForm} className="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+              <button type="button" onClick={resetForm} className="px-6 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                 Anulează
               </button>
             </div>
@@ -233,7 +233,7 @@ export default function AdminBlogPage() {
       )}
 
       {/* Posts list */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 dark:bg-slate-700/50">
@@ -247,7 +247,7 @@ export default function AdminBlogPage() {
             </thead>
             <tbody>
               {posts.map((post) => (
-                <tr key={post.id} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <tr key={post.id} className="border-b border-slate-100 dark:border-white/[0.06]/50 hover:bg-slate-50 dark:hover:bg-slate-700/30">
                   <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{post.title}</td>
                   <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs">{post.slug}</td>
                   <td className="px-4 py-3">

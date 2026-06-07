@@ -77,17 +77,17 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Utilizatori</h1>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-4">
         <input
           type="text"
           placeholder="Caută după nume, email sau telefon..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-sm"
+          className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-sm"
         />
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 dark:bg-slate-700/50">
@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
               ) : filtered.map((u, i) => {
                 const r = roleLabels[u.role] || roleLabels.CUSTOMER;
                 return (
-                  <tr key={u.id} className={`border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 ${i % 2 === 0 ? "" : "bg-slate-50/50 dark:bg-slate-800/50"}`}>
+                  <tr key={u.id} className={`border-b border-slate-100 dark:border-white/[0.06]/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 ${i % 2 === 0 ? "" : "bg-slate-50/50 dark:bg-[var(--color-dark-elevated)]/50"}`}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-amber-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -145,16 +145,16 @@ export default function AdminUsersPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <div className="px-4 py-3 border-t border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
             <span className="text-sm text-slate-500 dark:text-slate-400">Pagina {page} din {totalPages} ({total} utilizatori)</span>
             <div className="flex gap-2">
-              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1} className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">← Anterior</button>
-              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page >= totalPages} className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">Următor →</button>
+              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1} className="px-3 py-1 border border-slate-300 dark:border-white/[0.08] rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">← Anterior</button>
+              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page >= totalPages} className="px-3 py-1 border border-slate-300 dark:border-white/[0.08] rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">Următor →</button>
             </div>
           </div>
         )}
 
-        <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400">
+        <div className="px-4 py-3 border-t border-slate-200 dark:border-white/[0.06] text-sm text-slate-500 dark:text-slate-400">
           {filtered.length} utilizator(i) afișați din {total} total
         </div>
       </div>

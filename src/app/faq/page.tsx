@@ -41,7 +41,7 @@ export default function FAQPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-3xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: locale === 'ru' ? 'FAQ' : 'FAQ' }]} />
 
@@ -68,7 +68,7 @@ export default function FAQPage() {
               {faqs.map((faq, i) => (
                 <div
                   key={faq.id}
-                  className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden"
+                  className="bg-white dark:bg-[var(--color-dark-surface)] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenIndex(openIndex === i ? null : i)}

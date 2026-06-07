@@ -151,8 +151,8 @@ export default function AdminPagesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Page list */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <div className="p-3 border-b border-slate-200 dark:border-slate-700">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] overflow-hidden">
+          <div className="p-3 border-b border-slate-200 dark:border-white/[0.06]">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Pagini disponibile</p>
           </div>
           <div>
@@ -160,7 +160,7 @@ export default function AdminPagesPage() {
               <button
                 key={p.id}
                 onClick={() => selectPage(p.id)}
-                className={`w-full text-left px-4 py-3.5 text-sm border-b border-slate-100 dark:border-slate-700/50 transition ${
+                className={`w-full text-left px-4 py-3.5 text-sm border-b border-slate-100 dark:border-white/[0.06]/50 transition ${
                   selectedId === p.id
                     ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 font-medium"
                     : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/30"
@@ -176,7 +176,7 @@ export default function AdminPagesPage() {
         {/* Main content */}
         <div className="lg:col-span-3 space-y-4">
           {/* Toolbar */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+          <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-3">
                 {/* Inline title edit */}
@@ -200,11 +200,11 @@ export default function AdminPagesPage() {
 
               <div className="flex items-center gap-2">
                 {/* RO / RU */}
-                <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-white/[0.06]">
                   <button
                     onClick={() => setActiveTab("ro")}
                     className={`px-3 py-1.5 text-xs font-medium transition ${
-                      activeTab === "ro" ? "bg-amber-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      activeTab === "ro" ? "bg-amber-500 text-white" : "bg-white dark:bg-[var(--color-dark-elevated)] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                     }`}
                   >
                     🇷🇴 RO
@@ -212,7 +212,7 @@ export default function AdminPagesPage() {
                   <button
                     onClick={() => setActiveTab("ru")}
                     className={`px-3 py-1.5 text-xs font-medium transition ${
-                      activeTab === "ru" ? "bg-amber-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      activeTab === "ru" ? "bg-amber-500 text-white" : "bg-white dark:bg-[var(--color-dark-elevated)] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                     }`}
                   >
                     🇷🇺 RU
@@ -220,11 +220,11 @@ export default function AdminPagesPage() {
                 </div>
 
                 {/* View / Edit */}
-                <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-white/[0.06]">
                   <button
                     onClick={() => setViewMode("edit")}
                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
-                      viewMode === "edit" ? "bg-amber-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                      viewMode === "edit" ? "bg-amber-500 text-white" : "bg-white dark:bg-[var(--color-dark-elevated)] text-slate-600 dark:text-slate-300"
                     }`}
                   >
                     <Edit3 className="w-3.5 h-3.5" /> Editare
@@ -232,7 +232,7 @@ export default function AdminPagesPage() {
                   <button
                     onClick={() => setViewMode("preview")}
                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition ${
-                      viewMode === "preview" ? "bg-blue-500 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                      viewMode === "preview" ? "bg-blue-500 text-white" : "bg-white dark:bg-[var(--color-dark-elevated)] text-slate-600 dark:text-slate-300"
                     }`}
                   >
                     <Eye className="w-3.5 h-3.5" /> Preview
@@ -243,7 +243,7 @@ export default function AdminPagesPage() {
                   href={`${siteUrl}/${form.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                 >
                   <ExternalLink className="w-3.5 h-3.5" /> Site
                 </a>
@@ -260,7 +260,7 @@ export default function AdminPagesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-8 min-h-[500px]"
+                className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-8 min-h-[500px]"
               >
                 {/* Page title like on site */}
                 <div className="mb-8">
@@ -283,7 +283,7 @@ export default function AdminPagesPage() {
                 className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white"
               >
                 {/* Browser chrome */}
-                <div className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-2.5 flex items-center gap-3">
+                <div className="bg-slate-100 dark:bg-[var(--color-dark-elevated)] border-b border-slate-200 dark:border-white/[0.06] px-4 py-2.5 flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-400" />
                     <div className="w-3 h-3 rounded-full bg-yellow-400" />
@@ -312,7 +312,7 @@ export default function AdminPagesPage() {
           </AnimatePresence>
 
           {/* SEO */}
-          <details className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+          <details className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06]">
             <summary className="p-4 cursor-pointer text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 select-none hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-xl transition">
               🔍 SEO
             </summary>
@@ -322,7 +322,7 @@ export default function AdminPagesPage() {
                 <input
                   value={form.metaTitle || ""}
                   onChange={(e) => setForm({ ...form, metaTitle: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
                 />
               </div>
               <div>
@@ -330,7 +330,7 @@ export default function AdminPagesPage() {
                 <input
                   value={form.metaDescription || ""}
                   onChange={(e) => setForm({ ...form, metaDescription: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
                 />
               </div>
             </div>

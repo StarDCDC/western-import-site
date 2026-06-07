@@ -60,13 +60,13 @@ export default function RegisterPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen flex items-center justify-center py-12">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen flex items-center justify-center py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md mx-auto px-5"
         >
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-8 border border-slate-200 dark:border-white/[0.06] shadow-sm">
             <div className="text-center mb-6">
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
                 <UserPlus className="w-7 h-7 text-primary" />
@@ -93,7 +93,7 @@ export default function RegisterPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ion Popescu"
-                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
+                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -107,7 +107,7 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="email@exemplu.md"
-                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
+                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+373 69 000 000"
-                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
+                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minim 8 caractere"
-                    className="w-full py-2.5 pl-10 pr-10 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
+                    className="w-full py-2.5 pl-10 pr-10 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
                   />
                   <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                     {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                     value={confirmPass}
                     onChange={(e) => setConfirmPass(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
+                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>

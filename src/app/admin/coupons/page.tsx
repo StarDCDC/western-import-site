@@ -135,7 +135,7 @@ export default function AdminCouponsPage() {
 
       {/* Create form */}
       {showForm && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 space-y-4">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Creează Cod Promotional</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -145,7 +145,7 @@ export default function AdminCouponsPage() {
                 value={form.code || ""}
                 onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
                 placeholder="PROMO10"
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none uppercase"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none uppercase"
               />
             </div>
             <div>
@@ -153,7 +153,7 @@ export default function AdminCouponsPage() {
               <select
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value as "PERCENTAGE" | "FIXED" })}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               >
                 <option value="PERCENTAGE">Procent (% din reducere)</option>
                 <option value="FIXED">Sumă fixă (MDL)</option>
@@ -169,7 +169,7 @@ export default function AdminCouponsPage() {
                 onChange={(e) => setForm({ ...form, value: parseFloat(e.target.value) || 0 })}
                 min="1"
                 max={form.type === "PERCENTAGE" ? "100" : undefined}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function AdminCouponsPage() {
                 value={form.minOrder || ""}
                 onChange={(e) => setForm({ ...form, minOrder: e.target.value ? parseFloat(e.target.value) : null })}
                 placeholder="Ex: 500"
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
             <div>
@@ -192,7 +192,7 @@ export default function AdminCouponsPage() {
                 value={form.maxDiscount || ""}
                 onChange={(e) => setForm({ ...form, maxDiscount: e.target.value ? parseFloat(e.target.value) : null })}
                 placeholder="Ex: 100"
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
             <div>
@@ -201,7 +201,7 @@ export default function AdminCouponsPage() {
                 type="datetime-local"
                 value={form.expiresAt || ""}
                 onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
           </div>
@@ -219,10 +219,10 @@ export default function AdminCouponsPage() {
       )}
 
       {/* Coupons list */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06] overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+            <tr className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-white/[0.06]">
               <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Cod</th>
               <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Tip</th>
               <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Valoare</th>
@@ -238,7 +238,7 @@ export default function AdminCouponsPage() {
               </tr>
             ) : (
               coupons.map((c) => (
-                <tr key={c.id} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/20">
+                <tr key={c.id} className="border-b border-slate-100 dark:border-white/[0.06]/50 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                   <td className="px-4 py-3">
                     <span className="font-mono font-bold text-primary">{c.code}</span>
                   </td>

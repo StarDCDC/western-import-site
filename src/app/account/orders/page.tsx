@@ -66,7 +66,7 @@ export default function OrdersPage() {
               const sc = statusConfig[order.status] || statusConfig.PENDING;
               const StatusIcon = sc.icon;
               return (
-                <div key={order.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+                <div key={order.id} className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl border border-slate-200 dark:border-white/[0.06] p-5">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <StatusIcon className="w-4 h-4" />

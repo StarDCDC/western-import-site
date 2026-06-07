@@ -24,7 +24,7 @@ export default function BrandCarousel() {
   const doubled = [...BRANDS, ...BRANDS];
 
   return (
-    <section className="py-8 border-y border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+    <section className="py-8 border-y border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[var(--color-dark-surface)] overflow-hidden">
       <div className="max-w-[1280px] mx-auto px-5 mb-5">
         <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white text-center">
           {locale === 'ru' ? 'Бренды, которым доверяют' : 'Branduri de Încredere'}

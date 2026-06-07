@@ -182,7 +182,7 @@ export default function AdminChatbotPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-4">
         <div className="flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -191,7 +191,7 @@ export default function AdminChatbotPage() {
               placeholder="Caută în conversații..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
+              className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm focus:outline-none focus:border-primary"
             />
           </div>
           {["toate", "active", "closed", "abandoned"].map((f) => (
@@ -211,7 +211,7 @@ export default function AdminChatbotPage() {
       </div>
 
       {/* Conversations list */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 dark:bg-slate-700/50">
@@ -229,7 +229,7 @@ export default function AdminChatbotPage() {
               {filtered.map((conv) => (
                 <tr
                   key={conv.id}
-                  className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                  className="border-b border-slate-100 dark:border-white/[0.06]/50 hover:bg-slate-50 dark:hover:bg-slate-700/30"
                 >
                   <td className="px-4 py-3">
                     <div className="font-medium text-slate-800 dark:text-slate-200">{conv.visitorId}</div>
@@ -273,10 +273,10 @@ export default function AdminChatbotPage() {
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setSelected(null)}>
           <div
-            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
+            className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-white/[0.06]">
               <div>
                 <h2 className="font-bold text-slate-800 dark:text-white">Conversație {selected.visitorId}</h2>
                 <p className="text-xs text-slate-500">
@@ -313,7 +313,7 @@ export default function AdminChatbotPage() {
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 flex items-center gap-4">
+            <div className="p-4 border-t border-slate-200 dark:border-white/[0.06] text-xs text-slate-400 flex items-center gap-4">
               <span>Status: <strong className={selected.status === "active" ? "text-green-600" : selected.status === "abandoned" ? "text-amber-600" : "text-slate-500"}>{statusLabels[selected.status]}</strong></span>
               <span><Clock size={12} className="inline" /> Durată: <strong>{formatDuration(selected.startedAt, selected.endedAt)}</strong></span>
             </div>

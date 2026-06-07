@@ -20,10 +20,10 @@ export default async function WarrantyPage() {
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Breadcrumb items={[{ label: "Garanție" }]} />
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
               <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Garanție</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
               {isBlockContent ? (
@@ -44,11 +44,11 @@ export default async function WarrantyPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Garanție" }]} />
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Garanție
             </h1>
@@ -64,7 +64,7 @@ export default async function WarrantyPage() {
                   Garanție completă pentru toate produsele noi achiziționate de la Western Import.
                 </p>
               </div>
-              <div className="p-6 bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="p-6 bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-white/[0.06]">
                 <Clock className="text-slate-600 dark:text-slate-400 mb-3" size={32} />
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">Produse refurbished</h3>
                 <p className="text-3xl font-extrabold text-slate-600 dark:text-slate-400">6 luni</p>
@@ -190,7 +190,7 @@ export default async function WarrantyPage() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                 <Phone size={20} className="text-primary" /> Contact service
               </h2>
-              <div className="p-5 bg-slate-50 dark:bg-slate-800 rounded-xl">
+              <div className="p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-600 dark:text-slate-400 text-sm">
                   <div>
                     <p className="font-semibold text-slate-800 dark:text-slate-200 mb-1">Telefon service</p>

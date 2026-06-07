@@ -45,7 +45,7 @@ function SharePopup({ productName, locale, onClose }: { productName: string; loc
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-[90vw] max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-6 w-[90vw] max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-slate-800 dark:text-white">{locale === 'ru' ? 'Поделиться' : 'Distribuie'}</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl">✕</button>
@@ -60,7 +60,7 @@ function SharePopup({ productName, locale, onClose }: { productName: string; loc
             </button>
           ))}
         </div>
-        <button onClick={() => { navigator.clipboard.writeText(productUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="w-full mt-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+        <button onClick={() => { navigator.clipboard.writeText(productUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="w-full mt-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.06] text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
           {copied ? '✅ Copiat!' : '📋 Copiază link'}
         </button>
       </div>
@@ -114,8 +114,8 @@ function ReviewForm({ productId, locale }: { productId: string; locale: string }
           </button>
         ))}
       </div>
-      <input value={name} onChange={e => setName(e.target.value)} placeholder={locale === 'ru' ? 'Ваше имя' : 'Numele tău'} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary" />
-      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={locale === 'ru' ? 'Напишите отзыв...' : 'Scrie review-ul tău...'} rows={3} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary resize-none" />
+      <input value={name} onChange={e => setName(e.target.value)} placeholder={locale === 'ru' ? 'Ваше имя' : 'Numele tău'} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary" />
+      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={locale === 'ru' ? 'Напишите отзыв...' : 'Scrie review-ul tău...'} rows={3} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-primary resize-none" />
       <button onClick={handleSubmit} disabled={submitting || !name.trim() || !text.trim()} className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-colors disabled:opacity-40">
         {submitting ? '...' : (locale === 'ru' ? 'Отправить' : 'Trimite')}
       </button>
@@ -180,9 +180,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen">
         {/* Breadcrumb */}
-        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+        <div className="bg-white dark:bg-[var(--color-dark-surface)] border-b border-slate-200 dark:border-white/[0.06]">
           <div className="max-w-[1280px] mx-auto px-5 py-3 flex items-center gap-2 text-sm text-slate-500 flex-wrap">
             <Link href="/" className="hover:text-primary">{t('nav.home')}</Link>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -197,7 +197,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
             {/* Gallery */}
             <div>
               <div
-                className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative aspect-[4/3] sm:aspect-[16/10] select-none"
+                className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-hidden relative aspect-[4/3] sm:aspect-[16/10] select-none"
                 onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
                 onTouchEnd={(e) => {
                   if (touchStart === null) return;
@@ -312,9 +312,9 @@ export default function ProductClient({ product, similar }: { product: Product; 
 
               {/* Quantity + Cart + Favorite + Share — right under price */}
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <div className="flex items-center border border-slate-200 dark:border-white/[0.06] rounded-xl overflow-hidden">
                   <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">−</button>
-                  <span className="px-4 py-2 text-sm font-semibold border-x border-slate-200 dark:border-slate-700">{qty}</span>
+                  <span className="px-4 py-2 text-sm font-semibold border-x border-slate-200 dark:border-white/[0.06]">{qty}</span>
                   <button onClick={() => setQty(Math.min(99, qty + 1))} className="px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">+</button>
                 </div>
                 <button
@@ -325,7 +325,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 </button>
                 <button
                   onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)}
-                  className={`p-2.5 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-accent hover:border-accent'}`}
+                  className={`p-2.5 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 dark:border-white/[0.06] text-slate-400 hover:text-accent hover:border-accent'}`}
                 >
                   <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
                 </button>
@@ -339,7 +339,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
               )}
 
               {/* Specs Table */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
+              <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-hidden mb-6">
                 <div className="p-4 bg-slate-50 dark:bg-slate-700 font-bold text-sm text-slate-800 dark:text-white">{locale === 'ru' ? 'Технические характеристики' : 'Specificații'}</div>
                 {[
                   [(locale === 'ru' ? 'Производитель' : 'Producător'), product.specs?.producator],
@@ -361,7 +361,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 ]
                   .filter(([, value]) => value && String(value).trim() !== '')
                   .map(([label, value], i) => (
-                    <div key={i} className={`flex text-sm ${i % 2 === 0 ? 'bg-slate-50/50 dark:bg-slate-800/50' : ''}`}>
+                    <div key={i} className={`flex text-sm ${i % 2 === 0 ? 'bg-slate-50/50 dark:bg-[var(--color-dark-elevated)]/50' : ''}`}>
                       <div className="w-32 sm:w-40 shrink-0 py-2.5 px-3 sm:px-4 font-medium text-slate-500 dark:text-slate-400">{label}</div>
                       <div className="py-2.5 px-3 sm:px-4 text-slate-800 dark:text-white">{value}</div>
                     </div>
@@ -393,7 +393,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
 
               {/* Description */}
               {displayDescription && (
-                <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div className="mt-4 p-4 bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06]">
                   <h4 className="text-sm font-bold text-slate-800 dark:text-white mb-2">{locale === 'ru' ? 'Описание' : 'Descriere'}</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{displayDescription}</p>
                 </div>
@@ -401,15 +401,15 @@ export default function ProductClient({ product, similar }: { product: Product; 
 
               {/* Benefits */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl">
                   <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-1" />
                   <span className="text-[10px] sm:text-[11px] text-slate-500">{locale === 'ru' ? 'Быстрая доставка' : 'Livrare rapidă'}</span>
                 </div>
-                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl">
                   <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-1" />
                   <span className="text-[10px] sm:text-[11px] text-slate-500">{locale === 'ru' ? 'Гарантия включена' : 'Garanție inclusă'}</span>
                 </div>
-                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                <div className="flex flex-col items-center text-center p-2 sm:p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl">
                   <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-1" />
                   <span className="text-[10px] sm:text-[11px] text-slate-500">Credit 0%</span>
                 </div>
@@ -422,7 +422,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
             <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-5">{locale === 'ru' ? 'Отзывы' : 'Review-uri'}</h2>
             <div className="space-y-4">
               {product.reviews.map((review) => (
-                <div key={review.id} className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div key={review.id} className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06]">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
@@ -445,7 +445,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
             </div>
 
             {/* Add Review Form */}
-            <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+            <div className="mt-6 bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl border border-slate-200 dark:border-white/[0.06] p-5">
               <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-3">{locale === 'ru' ? 'Оставить отзыв' : 'Scrie un review'}</h3>
               <ReviewForm productId={product.id} locale={locale} />
             </div>
@@ -462,7 +462,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 {similar.slice(0, 4).map((sp, i) => {
                   const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
                   return (
-                    <div key={`bt-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0">
+                    <div key={`bt-${sp.id}-${i}`} className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0">
                       {sp.oldPrice && (
                         <span className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
                       )}
@@ -523,7 +523,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 {similar.map((sp, i) => {
                   const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
                   return (
-                    <div key={`sim-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0 relative">
+                    <div key={`sim-${sp.id}-${i}`} className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0 relative">
                       <Link href={`/product/${sp.id}`} prefetch={false} className="flex-shrink-0 w-[100px] sm:w-full">
                         {(() => {
                           const imgs = Array.isArray(sp.images) ? sp.images : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (() => { let s = (sp.images as string).trim(); if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } } return s.split(',').map((u: string) => u.trim()).filter((u: string) => u.startsWith('http') || u.startsWith('/')); })() : []);

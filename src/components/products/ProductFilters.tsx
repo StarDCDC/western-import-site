@@ -128,7 +128,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
     const selected = selectedFilters[section.id] || [];
 
     return (
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
+      <div className="border-b border-slate-200 dark:border-white/[0.06] pb-4 mb-4">
         <button
           onClick={() => toggleSection(section.id)}
           className="w-full flex items-center justify-between py-1"
@@ -163,7 +163,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
                       type="checkbox"
                       checked={selected.includes(opt.value)}
                       onChange={() => toggleFilter(section.id, opt.value)}
-                      className="w-4 h-4 rounded border-slate-200 dark:border-slate-700 text-primary focus:ring-primary/30"
+                      className="w-4 h-4 rounded border-slate-200 dark:border-white/[0.06] text-primary focus:ring-primary/30"
                     />
                     <span>{opt.label}</span>
                     {opt.count !== undefined && (
@@ -207,7 +207,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
         <select
           value={sort}
           onChange={(e) => handleSort(e.target.value)}
-          className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
+          className="w-full border border-slate-200 dark:border-white/[0.06] rounded-xl px-3 py-2.5 text-sm bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -221,7 +221,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
       {renderFilterSection(BRANDS_FILTER)}
 
       {/* Price range */}
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
+      <div className="border-b border-slate-200 dark:border-white/[0.06] pb-4 mb-4">
         <button
           onClick={() => toggleSection("price")}
           className="w-full flex items-center justify-between py-1"
@@ -249,7 +249,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
                     }}
                     placeholder="Min"
                     min={0}
-                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
+                    className="w-full border border-slate-200 dark:border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
                   />
                   <span className="text-slate-500er">—</span>
                   <input
@@ -262,7 +262,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
                     placeholder="Max"
                     min={0}
                     max={30000}
-                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
+                    className="w-full border border-slate-200 dark:border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary"
                   />
                 </div>
                 <input
@@ -292,7 +292,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
     <>
       {/* Desktop sidebar */}
       <aside className="hidden lg:block w-[260px] shrink-0">
-        <div className="sticky top-24 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5">
+        <div className="sticky top-24 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl p-5">
           {filtersContent}
         </div>
       </aside>
@@ -301,7 +301,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
       <div className="lg:hidden">
         <button
           onClick={() => setMobileOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800"
+          className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 dark:border-white/[0.06] rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 bg-white dark:bg-[var(--color-dark-elevated)]"
         >
           <SlidersHorizontal size={14} /> Filtre
           {totalActive > 0 && (
@@ -324,7 +324,7 @@ export default function ProductFilters({ onFilterChange, onSortChange }: Product
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed left-0 top-0 bottom-0 w-[300px] bg-bg dark:bg-slate-900 z-[80] overflow-y-auto p-5"
+                className="fixed left-0 top-0 bottom-0 w-[300px] bg-bg dark:bg-[var(--color-dark-surface)] z-[80] overflow-y-auto p-5"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-lg">Filtre</h3>

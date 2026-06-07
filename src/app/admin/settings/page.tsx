@@ -161,7 +161,7 @@ export default function AdminSettingsPage() {
     return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent" /></div>;
   }
 
-  const inputCls = "w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm";
+  const inputCls = "w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm";
   const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
 
   return (
@@ -172,8 +172,8 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* General */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">📋 Informații generale</h2>
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/[0.06] pb-2">📋 Informații generale</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div><label className={labelCls}>Nume site</label><input value={form.siteName} onChange={(e) => set("siteName", e.target.value)} className={inputCls} /></div>
           <div><label className={labelCls}>Telefon</label><input value={form.phone} onChange={(e) => set("phone", e.target.value)} className={inputCls} /></div>
@@ -184,8 +184,8 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* SEO */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">🔍 SEO</h2>
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/[0.06] pb-2">🔍 SEO</h2>
         <div className="space-y-4">
           <div><label className={labelCls}>Meta Title</label><input value={form.metaTitle} onChange={(e) => set("metaTitle", e.target.value)} className={inputCls} /></div>
           <div><label className={labelCls}>Meta Description</label><textarea value={form.metaDescription} onChange={(e) => set("metaDescription", e.target.value)} rows={3} className={inputCls + " resize-none"} /></div>
@@ -194,8 +194,8 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Social */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">🌐 Rețele sociale</h2>
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/[0.06] pb-2">🌐 Rețele sociale</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div><label className={labelCls}>Facebook</label><input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} className={inputCls} /></div>
           <div><label className={labelCls}>Instagram</label><input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} className={inputCls} /></div>
@@ -207,8 +207,8 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Email */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">📧 Email (SMTP)</h2>
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/[0.06] pb-2">📧 Email (SMTP)</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div><label className={labelCls}>SMTP Host</label><input value={form.smtpHost} onChange={(e) => set("smtpHost", e.target.value)} className={inputCls} /></div>
           <div><label className={labelCls}>Port</label><input value={form.smtpPort} onChange={(e) => set("smtpPort", e.target.value)} className={inputCls} /></div>
@@ -221,8 +221,8 @@ export default function AdminSettingsPage() {
       {/* 999.md, IuteCredit și Elfsight sunt activate permanent — configurarea tehnică se face prin .env și cod */}
 
       {/* Program Magazin */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">🕐 Program Magazin</h2>
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/[0.06] pb-2">🕐 Program Magazin</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {(['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] as const).map((day) => (
             <div key={day}><label className={labelCls}>{day.charAt(0).toUpperCase() + day.slice(1)}</label>

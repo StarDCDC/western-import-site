@@ -25,7 +25,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen">
         <HeroSection />
         <CategorySlider />
         <ProductGrid />

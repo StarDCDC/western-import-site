@@ -16,7 +16,7 @@ export default function WishlistPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen">
         <div className="max-w-[1280px] mx-auto px-5 py-8">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
             <Heart className="w-6 h-6 text-accent" /> Favorite ({items.length})
@@ -45,7 +45,7 @@ export default function WishlistPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 relative"
+                      className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl p-4 relative"
                     >
                       <button
                         onClick={() => removeItem(product.id)}

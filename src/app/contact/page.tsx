@@ -8,7 +8,7 @@ export default function ContactPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)] py-12">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-10">
             <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-3">
@@ -24,7 +24,7 @@ export default function ContactPage() {
               <ContactInfo locale="ro" />
             </div>
             <div className="lg:col-span-3">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-6 border border-slate-200 dark:border-white/[0.06]">
                 <ContactForm />
               </div>
             </div>

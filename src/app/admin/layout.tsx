@@ -124,7 +124,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-4 lg:px-6 flex-shrink-0">
+        <header className="h-16 bg-white dark:bg-[var(--color-dark-elevated)] border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between px-4 lg:px-6 flex-shrink-0">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-slate-600 dark:text-slate-300 p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
@@ -145,7 +145,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 bg-slate-50 dark:bg-slate-950 p-4 lg:p-6 overflow-y-auto">
+        <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] p-4 lg:p-6 overflow-y-auto">
           {children}
         </main>
       </div>

@@ -95,7 +95,7 @@ export default function AdminBrandsPage() {
     } catch { alert('Upload eșuat'); }
   };
 
-  const inputClass = "w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none";
+  const inputClass = "w-full px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none";
   const labelClass = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
 
   return (
@@ -115,10 +115,10 @@ export default function AdminBrandsPage() {
       ) : brands.length === 0 ? (
         <div className="text-center py-20 text-slate-400">Niciun brand. Adaugă primul!</div>
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-xl border border-slate-200 dark:border-white/[0.06] overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+              <tr className="bg-slate-50 dark:bg-[var(--color-dark-elevated)] border-b border-slate-200 dark:border-white/[0.06]">
                 <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-400">Logo</th>
                 <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-400">Nume</th>
                 <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-400">Slug</th>
@@ -153,7 +153,7 @@ export default function AdminBrandsPage() {
       {/* Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-md shadow-xl">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-6 w-full max-w-md shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingId ? 'Editează brand' : 'Brand nou'}</h2>
               <button onClick={() => setShowForm(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded"><X size={20} /></button>
@@ -174,18 +174,18 @@ export default function AdminBrandsPage() {
               <div>
                 <label className={labelClass}>Logo (URL sau încarcă)</label>
                 <div className="flex gap-2">
-                  <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm" placeholder="https://..." />
+                  <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} className="flex-1 px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm" placeholder="https://..." />
                   <label className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium cursor-pointer flex items-center gap-1">
                     <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />Încarcă
                   </label>
                 </div>
-                {logoUrl && <img src={logoUrl} alt="logo" className="mt-2 h-12 object-contain rounded border border-slate-200 dark:border-slate-700" />}
+                {logoUrl && <img src={logoUrl} alt="logo" className="mt-2 h-12 object-contain rounded border border-slate-200 dark:border-white/[0.06]" />}
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" className="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium text-sm">
                   {editingId ? 'Salvează' : 'Creează'}
                 </button>
-                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-slate-800">
+                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-slate-800">
                   Anulează
                 </button>
               </div>

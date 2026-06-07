@@ -28,7 +28,7 @@ export default function WhatsAppButton() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
       {showTooltip && !dismissed && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-3 max-w-[200px] relative animate-fade-in">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-lg border border-slate-200 dark:border-white/[0.06] p-3 max-w-[200px] relative animate-fade-in">
           <button onClick={() => { setDismissed(true); setShowTooltip(false); }} className="absolute -top-2 -right-2 w-5 h-5 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center">
             <X className="w-3 h-3" />
           </button>

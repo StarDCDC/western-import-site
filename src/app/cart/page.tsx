@@ -74,7 +74,7 @@ export default function CartPage({ forceLocale }: { forceLocale?: string }) {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen">
         <div className="max-w-[1280px] mx-auto px-5 py-8">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
             <ShoppingBag className="w-6 h-6 text-primary" /> {txt.cartTitle}
@@ -102,7 +102,7 @@ export default function CartPage({ forceLocale }: { forceLocale?: string }) {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -100 }}
-                        className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex gap-4"
+                        className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-4 border border-slate-200 dark:border-white/[0.06] flex gap-4"
                       >
                         <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 shrink-0 relative">
                           {((item.product?.brand as any)?.name || item.product?.brand || 'WI').toString().slice(0, 2).toUpperCase()}
@@ -148,7 +148,7 @@ export default function CartPage({ forceLocale }: { forceLocale?: string }) {
               </div>
 
               <div>
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 sticky top-24">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06] sticky top-24">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.orderSummary}</h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between text-slate-600 dark:text-slate-300">
@@ -171,7 +171,7 @@ export default function CartPage({ forceLocale }: { forceLocale?: string }) {
                         <span>-{formatPrice(totalDiscount)}</span>
                       </div>
                     )}
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
+                    <div className="border-t border-slate-200 dark:border-white/[0.06] pt-3 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
                       <span>{txt.total}</span>
                       <span className="text-primary-dark dark:text-primary">{formatPrice(total)}</span>
                     </div>
@@ -190,7 +190,7 @@ export default function CartPage({ forceLocale }: { forceLocale?: string }) {
                       <div className="flex gap-2">
                         <div className="relative flex-1">
                           <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                          <input type="text" value={promoCode} onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }} placeholder={txt.promoPlaceholder} className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm" />
+                          <input type="text" value={promoCode} onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }} placeholder={txt.promoPlaceholder} className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm" />
                         </div>
                         <button onClick={handlePromo} disabled={promoLoading || !promoCode.trim()} className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50">
                           {promoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : txt.apply}

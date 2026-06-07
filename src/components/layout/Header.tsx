@@ -58,7 +58,7 @@ export default function Header() {
 
       {/* Header */}
       <header
-        className={`sticky top-1 z-[100] bg-slate-800/95 backdrop-blur-xl transition-all duration-300 rounded-2xl mx-2 sm:mx-4 lg:mx-6 shadow-sm dark:bg-slate-900/95 ${
+        className={`sticky top-1 z-[100] bg-slate-800/95 backdrop-blur-xl transition-all duration-300 rounded-2xl mx-2 sm:mx-4 lg:mx-6 shadow-sm dark:bg-[var(--color-dark-surface)]/95 ${
           scrolled ? 'shadow-lg' : ''
         } ${!headerVisible ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'}`}
       >
@@ -101,8 +101,8 @@ export default function Header() {
                 </button>
                 <AnimatePresence>
                   {userMenuOpen && (
-                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1 z-50">
-                      <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-700">
+                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl shadow-lg py-1 z-50">
+                      <div className="px-3 py-2 border-b border-slate-100 dark:border-white/[0.06]">
                         <p className="text-xs font-medium text-slate-700 dark:text-slate-200 truncate">{session.user.name || 'Client'}</p>
                         <p className="text-[10px] text-slate-400 truncate">{session.user.email}</p>
                       </div>
@@ -164,7 +164,7 @@ export default function Header() {
               <Phone className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
             </Link>
             {/* Language + Theme toggle (desktop) */}
-            <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-slate-200 dark:border-slate-700">
+            <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-slate-200 dark:border-white/[0.06]">
               <button
                 onClick={() => setLocale('ro')}
                 className={`px-2 py-1 rounded-md text-[11px] font-semibold transition ${
@@ -238,7 +238,7 @@ export default function Header() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="lg:hidden overflow-hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+              className="lg:hidden overflow-hidden border-t border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[var(--color-dark-surface)]"
             >
               <div className="px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
                 {/* Mobile Search */}
@@ -246,7 +246,7 @@ export default function Header() {
                   <SearchBar />
                 </div>
                 {/* Mobile Quick Actions */}
-                <div className="flex gap-2 mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                <div className="flex gap-2 mb-3 pb-3 border-b border-slate-200 dark:border-white/[0.06]">
                   <Link href="/login" className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition text-sm">
                     <User className="w-4 h-4" /> {locale === 'ru' ? 'Аккаунт' : 'Cont'}
                   </Link>
@@ -271,7 +271,7 @@ export default function Header() {
                   </Link>
                 ))}
                 {/* Mobile Language + Theme */}
-                <div className="flex items-center gap-2 pt-3 mt-2 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex items-center gap-2 pt-3 mt-2 border-t border-slate-200 dark:border-white/[0.06]">
                   <button
                     onClick={() => setLocale('ro')}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${

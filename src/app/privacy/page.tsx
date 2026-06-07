@@ -32,10 +32,10 @@ export default async function PrivacyPage() {
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Breadcrumb items={[{ label: "Politica de Confidențialitate" }]} />
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
               <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Politica de Confidențialitate</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
               {isBlockContent ? (
@@ -54,10 +54,10 @@ export default async function PrivacyPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Politica de Confidențialitate" }]} />
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Politica de Confidențialitate
             </h1>
@@ -163,44 +163,44 @@ export default async function PrivacyPage() {
                 Conform GDPR și legislației Republicii Moldova, aveți următoarele drepturi:
               </p>
               <div className="space-y-3">
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul de acces</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți solicita o copie a datelor personale pe care le deținem despre dumneavoastră.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul de rectificare</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți solicita corectarea datelor inexacte sau completarea datelor incomplete.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul la ștergere („dreptul de a fi uitat")</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți solicita ștergerea datelor personale, cu excepția cazurilor în care legea ne
                     obligă să le păstrăm.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul la restricționarea procesării</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți solicita limitarea utilizării datelor în anumite circumstanțe.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul la portabilitate</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți solicita exportul datelor într-un format structurat, lizibil automat.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul de opoziție</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți să vă opuneți procesării datelor bazate pe interesul legitim.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Dreptul de a retrage consimțământul</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Puteți retracta consimțământul oricând, fără a afecta legalitatea procesării anterioare.
@@ -288,7 +288,7 @@ export default async function PrivacyPage() {
                 Pentru întrebări legate de protecția datelor, contactați responsabilul nostru cu
                 protecția datelor:
               </p>
-              <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                 <p className="text-slate-600 dark:text-slate-400">
                   <strong>E-mail:</strong> privacy@westernimport.md<br />
                   <strong>Telefon:</strong> +373 69 466 585<br />

@@ -87,7 +87,7 @@ function ConfirmModal({ open, onClose, onConfirm, loading, title, message, confi
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden"
+            className="relative bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl shadow-2xl border border-slate-200 dark:border-white/[0.06] w-full max-w-md overflow-hidden"
           >
             {/* Header gradient */}
             <div className={`px-6 pt-6 pb-4 ${icon === "warning" ? "bg-gradient-to-br from-red-500 to-orange-600" : "bg-gradient-to-br from-red-500 to-red-700"}`}>
@@ -126,7 +126,7 @@ function ConfirmModal({ open, onClose, onConfirm, loading, title, message, confi
               <button
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
               >
                 Anulează
               </button>
@@ -273,7 +273,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-4">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => { setFilter(""); setPage(1); }}
@@ -294,7 +294,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 dark:bg-slate-700/50">
@@ -313,7 +313,7 @@ export default function AdminOrdersPage() {
               ) : displayed.map((o, i) => {
                 const s = statusMap[o.status] || { label: o.status, cls: "bg-slate-100 text-slate-600" };
                 return (
-                  <tr key={o.id} className={`border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 cursor-pointer ${i % 2 === 0 ? "" : "bg-slate-50/50 dark:bg-slate-800/50"}`}>
+                  <tr key={o.id} className={`border-b border-slate-100 dark:border-white/[0.06]/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 cursor-pointer ${i % 2 === 0 ? "" : "bg-slate-50/50 dark:bg-[var(--color-dark-elevated)]/50"}`}>
                     <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{o.orderNumber}</td>
                     <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{o.user?.name || o.email || "—"}</td>
                     <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{new Date(o.createdAt).toLocaleDateString("ro-RO")}</td>
@@ -344,16 +344,16 @@ export default function AdminOrdersPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <div className="px-4 py-3 border-t border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
             <span className="text-sm text-slate-500 dark:text-slate-400">Pagina {page} din {totalPages}</span>
             <div className="flex gap-2">
-              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1} className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">← Anterior</button>
-              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page >= totalPages} className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">Următor →</button>
+              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1} className="px-3 py-1 border border-slate-300 dark:border-white/[0.08] rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">← Anterior</button>
+              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page >= totalPages} className="px-3 py-1 border border-slate-300 dark:border-white/[0.08] rounded text-xs disabled:opacity-50 text-slate-700 dark:text-slate-200">Următor →</button>
             </div>
           </div>
         )}
 
-        <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400">
+        <div className="px-4 py-3 border-t border-slate-200 dark:border-white/[0.06] text-sm text-slate-500 dark:text-slate-400">
           {displayed.length} comandă(e) afișate din {total} total
         </div>
       </div>

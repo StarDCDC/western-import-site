@@ -21,10 +21,10 @@ export default async function ShippingPage() {
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Breadcrumb items={[{ label: "Livrare și Returnare" }]} />
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
               <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Livrare și Returnare</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
               {isBlockContent ? (
@@ -45,11 +45,11 @@ export default async function ShippingPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Livrare și Returnare" }]} />
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Livrare și Returnare
             </h1>
@@ -57,19 +57,19 @@ export default async function ShippingPage() {
 
             {/* Cards livrare */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-              <div className="p-5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06]">
                 <Truck className="text-primary mb-3" size={28} />
                 <h3 className="font-bold text-slate-900 dark:text-white mb-1">Curier Chișinău</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">Gratuit</p>
                 <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Livrare în 1–2 zile lucrătoare</p>
               </div>
-              <div className="p-5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06]">
                 <Package className="text-primary mb-3" size={28} />
                 <h3 className="font-bold text-slate-900 dark:text-white mb-1">Curier național</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">Gratuit</p>
                 <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Livrare în 2–5 zile lucrătoare</p>
               </div>
-              <div className="p-5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl border border-slate-200 dark:border-white/[0.06]">
                 <MapPin className="text-primary mb-3" size={28} />
                 <h3 className="font-bold text-slate-900 dark:text-white mb-1">Ridicare din magazin</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">Gratuit</p>
@@ -83,9 +83,9 @@ export default async function ShippingPage() {
                 <Truck size={20} className="text-primary" /> Tabel livrare
               </h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <table className="w-full text-sm border border-slate-200 dark:border-white/[0.06] rounded-xl overflow-hidden">
                   <thead>
-                    <tr className="bg-slate-100 dark:bg-slate-800">
+                    <tr className="bg-slate-100 dark:bg-[var(--color-dark-elevated)]">
                       <th className="text-left py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold">Metodă</th>
                       <th className="text-left py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold">Zonă</th>
                       <th className="text-left py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold">Cost</th>
@@ -93,19 +93,19 @@ export default async function ShippingPage() {
                     </tr>
                   </thead>
                   <tbody className="text-slate-600 dark:text-slate-400">
-                    <tr className="border-t border-slate-200 dark:border-slate-700">
+                    <tr className="border-t border-slate-200 dark:border-white/[0.06]">
                       <td className="py-3 px-4">Curier</td>
                       <td className="py-3 px-4">Chișinău</td>
                       <td className="py-3 px-4">Gratuit <span className="text-xs text-green-600 dark:text-green-400">(transport gratuit oriunde)</span></td>
                       <td className="py-3 px-4">1–2 zile</td>
                     </tr>
-                    <tr className="border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                    <tr className="border-t border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-[var(--color-dark-elevated)]/50">
                       <td className="py-3 px-4">Curier</td>
                       <td className="py-3 px-4">Republica Moldova</td>
                       <td className="py-3 px-4">Gratuit</td>
                       <td className="py-3 px-4">2–5 zile</td>
                     </tr>
-                    <tr className="border-t border-slate-200 dark:border-slate-700">
+                    <tr className="border-t border-slate-200 dark:border-white/[0.06]">
                       <td className="py-3 px-4">Ridicare</td>
                       <td className="py-3 px-4">Magazin Chișinău</td>
                       <td className="py-3 px-4 text-green-600 dark:text-green-400 font-semibold">Gratuit</td>

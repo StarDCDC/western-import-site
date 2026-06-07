@@ -86,11 +86,11 @@ export default function ComparePage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-5xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Comparare" }]} />
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
@@ -126,7 +126,7 @@ export default function ComparePage() {
                       {products.map((product) => (
                         <th key={product.id} className="py-3 px-4 text-center">
                           <div className="flex flex-col items-center">
-                            <div className="w-20 h-20 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2 mx-auto">
+                            <div className="w-20 h-20 rounded-lg bg-slate-100 dark:bg-[var(--color-dark-elevated)] flex items-center justify-center mb-2 mx-auto">
                               <Package size={28} className="text-slate-400" />
                             </div>
                             <span className="font-bold text-slate-900 dark:text-white text-sm">
@@ -155,8 +155,8 @@ export default function ComparePage() {
                         key={key}
                         className={
                           i % 2 === 0
-                            ? "bg-slate-50 dark:bg-slate-800/50"
-                            : "bg-white dark:bg-slate-900"
+                            ? "bg-slate-50 dark:bg-[var(--color-dark-elevated)]/50"
+                            : "bg-white dark:bg-[var(--color-dark-surface)]"
                         }
                       >
                         <td className="py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">

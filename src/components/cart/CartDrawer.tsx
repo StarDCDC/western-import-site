@@ -36,10 +36,10 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-slate-900 z-[201] shadow-2xl flex flex-col"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-[var(--color-dark-surface)] z-[201] shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/[0.06]">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" />
                 <h2 className="text-lg font-bold text-slate-800 dark:text-white">{txt.yourCart}</h2>
@@ -67,7 +67,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: 100 }}
-                      className="flex gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"
+                      className="flex gap-3 p-3 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl"
                     >
                       <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 shrink-0">
                         {((item.product.brand as any)?.name || item.product.brand || 'WI').toString().slice(0, 2).toUpperCase()}
@@ -79,14 +79,14 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                              className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-600"
+                              className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-white/[0.08] flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-600"
                             >
                               <Minus className="w-3 h-3" />
                             </button>
                             <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                              className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-600"
+                              className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-white/[0.08] flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-600"
                             >
                               <Plus className="w-3 h-3" />
                             </button>
@@ -110,7 +110,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-3">
+              <div className="border-t border-slate-200 dark:border-white/[0.06] p-4 space-y-3">
                 <div className="flex justify-between text-lg font-bold">
                   <span className="text-slate-600 dark:text-slate-300">{txt.total}:</span>
                   <span className="text-primary-dark dark:text-primary">{formatPrice(getTotal())}</span>

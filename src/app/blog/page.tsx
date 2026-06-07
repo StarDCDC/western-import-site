@@ -55,7 +55,7 @@ export default function BlogPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: locale === 'ru' ? 'Блог' : 'Blog' }]} />
 
@@ -81,7 +81,7 @@ export default function BlogPage() {
               {posts.map((article, i) => (
                 <article
                   key={article.id}
-                  className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow group"
+                  className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl shadow-sm overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow group"
                 >
                   <div className="h-48 bg-gradient-to-br from-primary/20 to-blue-500/10 dark:from-primary/10 dark:to-blue-500/5 flex items-center justify-center">
                     {article.image ? (

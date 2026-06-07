@@ -339,7 +339,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
     return (
       <>
         <Header />
-        <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen flex items-center justify-center">
+        <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen flex items-center justify-center">
           <div className="text-center">
             <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h1 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">{txt.cartEmpty}</h1>
@@ -356,7 +356,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
     return (
       <>
         <Header />
-        <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen flex items-center justify-center">
+        <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen flex items-center justify-center">
           <div className="text-center max-w-md mx-auto px-5">
             <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{txt.orderSuccess}</h1>
@@ -379,7 +379,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen">
         <div className="max-w-[1280px] mx-auto px-5 py-8">
           <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6">{txt.checkoutTitle}</h1>
 
@@ -397,7 +397,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
               <div className="space-y-6">
                 {/* Customer Info */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06]">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-primary" /> {txt.personalData}
                   </h3>
@@ -408,7 +408,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                         type="text"
                         value={form.customerName}
                         onChange={(e) => updateField('customerName', e.target.value)}
-                        className={`w-full py-2.5 px-3 rounded-lg border ${errors.customerName ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
+                        className={`w-full py-2.5 px-3 rounded-lg border ${errors.customerName ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700'} text-sm`}
                         placeholder={txt.namePlaceholder}
                       />
                       {errors.customerName && <p className="text-xs text-red-500 mt-1">{errors.customerName}</p>}
@@ -419,7 +419,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                         type="tel"
                         value={form.phone}
                         onChange={(e) => updateField('phone', e.target.value)}
-                        className={`w-full py-2.5 px-3 rounded-lg border ${errors.phone ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
+                        className={`w-full py-2.5 px-3 rounded-lg border ${errors.phone ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700'} text-sm`}
                         placeholder={txt.phonePlaceholder}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
@@ -430,7 +430,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                         type="email"
                         value={form.email}
                         onChange={(e) => updateField('email', e.target.value)}
-                        className={`w-full py-2.5 px-3 rounded-lg border ${errors.email ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
+                        className={`w-full py-2.5 px-3 rounded-lg border ${errors.email ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700'} text-sm`}
                         placeholder={txt.emailPlaceholder}
                       />
                       {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
@@ -439,7 +439,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 </div>
 
                 {/* Delivery Method */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06]">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <Truck className="w-5 h-5 text-primary" /> {txt.deliveryMethod}
                   </h3>
@@ -458,7 +458,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                           className={`p-4 rounded-xl border-2 text-left transition-colors ${
                             form.deliveryMethod === m.id
                               ? 'border-primary bg-primary/5'
-                              : 'border-slate-200 dark:border-slate-600 hover:border-slate-300'
+                              : 'border-slate-200 dark:border-white/[0.08] hover:border-slate-300'
                           }`}
                         >
                           <Icon className={`w-5 h-5 mb-2 ${form.deliveryMethod === m.id ? 'text-primary' : 'text-slate-400'}`} />
@@ -472,7 +472,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
 
                 {/* Address */}
                 {form.deliveryMethod !== 'PICKUP' && (
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                  <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06]">
                     <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.deliveryAddress}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div data-error={errors.city ? 'true' : undefined}>
@@ -480,7 +480,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                         <select
                           value={form.city}
                           onChange={(e) => updateField('city', e.target.value)}
-                          className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
+                          className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm"
                         >
                           <option value="">{txt.selectCity}</option>
                           <option>{txt.cityChisinau}</option>
@@ -500,7 +500,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                           type="text"
                           value={form.raion}
                           onChange={(e) => updateField('raion', e.target.value)}
-                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.raion ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
+                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.raion ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700'} text-sm`}
                           placeholder={txt.districtPlaceholder}
                         />
                         {errors.raion && <p className="text-xs text-red-500 mt-1">{errors.raion}</p>}
@@ -511,7 +511,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                           type="text"
                           value={form.localitate}
                           onChange={(e) => updateField('localitate', e.target.value)}
-                          className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
+                          className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm"
                           placeholder={txt.localityPlaceholder}
                         />
                       </div>
@@ -521,7 +521,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                           type="text"
                           value={form.strada}
                           onChange={(e) => updateField('strada', e.target.value)}
-                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.strada ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
+                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.strada ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700'} text-sm`}
                           placeholder={txt.streetPlaceholder}
                         />
                         {errors.strada && <p className="text-xs text-red-500 mt-1">{errors.strada}</p>}
@@ -532,7 +532,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                           type="text"
                           value={form.codPostal}
                           onChange={(e) => updateField('codPostal', e.target.value)}
-                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.codPostal ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
+                          className={`w-full py-2.5 px-3 rounded-lg border ${errors.codPostal ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700'} text-sm`}
                           placeholder={txt.postalPlaceholder}
                         />
                         {errors.codPostal && <p className="text-xs text-red-500 mt-1">{errors.codPostal}</p>}
@@ -542,7 +542,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 )}
 
                 {/* Payment Method */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06]">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-primary" /> {txt.paymentMethod}
                   </h3>
@@ -559,7 +559,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                         className={`w-full p-4 rounded-xl border-2 text-left transition-colors flex items-center gap-3 ${
                           form.paymentMethod === m.id
                             ? 'border-primary bg-primary/5'
-                            : 'border-slate-200 dark:border-slate-600 hover:border-slate-300'
+                            : 'border-slate-200 dark:border-white/[0.08] hover:border-slate-300'
                         }`}
                       >
                         <span className="text-2xl">{m.icon}</span>
@@ -568,7 +568,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                           <div className="text-xs text-slate-500 mt-0.5">{m.desc}</div>
                         </div>
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          form.paymentMethod === m.id ? 'border-primary' : 'border-slate-300 dark:border-slate-600'
+                          form.paymentMethod === m.id ? 'border-primary' : 'border-slate-300 dark:border-white/[0.08]'
                         }`}>
                           {form.paymentMethod === m.id && <div className="w-3 h-3 rounded-full bg-primary" />}
                         </div>
@@ -805,13 +805,13 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 </div>
 
                 {/* Notes */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06]">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.notes}</h3>
                   <textarea
                     value={form.notes}
                     onChange={(e) => updateField('notes', e.target.value)}
                     rows={3}
-                    className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm resize-none"
+                    className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm resize-none"
                     placeholder={txt.notesPlaceholder}
                   />
                 </div>
@@ -819,7 +819,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
 
               {/* Summary Sidebar */}
               <div>
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 sticky top-24">
+                <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06] sticky top-24">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.orderSummary}</h3>
 
                   <div className="space-y-2 mb-4 max-h-60 overflow-y-auto">
@@ -835,7 +835,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                     ))}
                   </div>
 
-                  <div className="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-2 text-sm">
+                  <div className="border-t border-slate-200 dark:border-white/[0.06] pt-3 space-y-2 text-sm">
                     <div className="flex justify-between text-slate-500">
                       <span>{txt.subtotal}</span>
                       <span>{formatPrice(subtotal)}</span>
@@ -866,7 +866,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       </div>
                     )}
 
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
+                    <div className="border-t border-slate-200 dark:border-white/[0.06] pt-2 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
                       <span>{txt.total}</span>
                       <span className="text-primary-dark dark:text-primary">{formatPrice(total)}</span>
                     </div>
@@ -932,7 +932,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                             value={form.couponCode}
                             onChange={(e) => updateField('couponCode', e.target.value.toUpperCase())}
                             placeholder={txt.promoPlaceholder}
-                            className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
+                            className="w-full py-2 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-slate-700 text-sm"
                           />
                         </div>
                         <button

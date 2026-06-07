@@ -56,11 +56,11 @@ export default function FavoritesPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Favorite" }]} />
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
@@ -97,10 +97,10 @@ export default function FavoritesPage() {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-4 p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary/30 transition-colors"
+                    className="flex items-center gap-4 p-4 border border-slate-200 dark:border-white/[0.06] rounded-xl hover:border-primary/30 transition-colors"
                   >
                     {/* Image placeholder */}
-                    <div className="w-20 h-20 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                    <div className="w-20 h-20 rounded-lg bg-slate-100 dark:bg-[var(--color-dark-elevated)] flex items-center justify-center shrink-0">
                       <Package size={28} className="text-slate-400" />
                     </div>
 
@@ -143,7 +143,7 @@ export default function FavoritesPage() {
                   </div>
                 ))}
 
-                <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-white/[0.06]">
                   <button
                     onClick={() => setItems([])}
                     className="text-sm text-slate-500 dark:text-slate-400 hover:text-red-500 transition-colors"

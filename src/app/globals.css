@@ -3,15 +3,28 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #1a56db;
-  --color-primary-dark: #0c3a8f;
-  --color-primary-light: #2563eb;
-  --color-accent: #dc2626;
-  --color-accent-light: #fef2f2;
-  --color-topbar: #091f4a;
-  --color-success: #059669;
-  --color-warning: #d97706;
-  --color-info: #6366f1;
+  /* Premium Tech Palette */
+  --color-primary: #2563EB;
+  --color-primary-dark: #1D4ED8;
+  --color-primary-light: #3B82F6;
+  --color-accent: #DC2626;
+  --color-accent-light: #FCA5A5;
+  --color-topbar: #0F1115;
+
+  /* Dark mode premium surfaces */
+  --color-dark-bg: #0F1115;
+  --color-dark-surface: #1A1D23;
+  --color-dark-elevated: #252830;
+  --color-dark-border: rgba(255, 255, 255, 0.06);
+
+  /* Status */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-info: #6366F1;
+
+  /* Amber for premium */
+  --color-premium: #D97706;
+  --color-premium-light: #FDE68A;
 }
 
 /* Smooth scrolling */
@@ -19,7 +32,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Interactive elements show the pointer cursor (Tailwind v4 preflight no longer adds it) */
+/* Interactive elements show the pointer cursor */
 button:not(:disabled),
 [role="button"]:not(:disabled),
 label[for],
@@ -30,23 +43,23 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar — premium thin */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #374151;
 }
 
 /* Brand carousel animation */
@@ -57,45 +70,137 @@ button:disabled {
 .animate-scroll-left {
   animation: scroll-left 30s linear infinite;
 }
-@media (max-width: 640px) {
-  .animate-scroll-left {
-    animation-duration: 15s;
-  }
-}
-.animate-scroll-left:hover {
-  animation-play-state: paused;
-}
-
-/* Fade in animation */
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in-up {
-  animation: fade-in-up 0.5s ease forwards;
-}
-
-/* Pulse glow */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(26, 86, 219, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(26, 86, 219, 0); }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 2s infinite;
-}
-
-/* Hide scrollbar for carousels */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid #1a56db;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
-
-/* Remove outline for mouse users */
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Premium Button Glow */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.4), 0 0 40px rgba(37, 99, 235, 0.1);
+  pointer-events: none;
+}
+.btn-glow:hover::after {
+  opacity: 1;
+}
+.btn-glow:active {
+  transform: scale(0.97);
+}
+
+/* Accent CTA glow */
+.btn-accent-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.btn-accent-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+  pointer-events: none;
+}
+.btn-accent-glow:hover::after {
+  opacity: 1;
+}
+.btn-accent-glow:active {
+  transform: scale(0.97);
+}
+
+/* Product card micro-border + glassmorphism */
+.card-premium {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+.dark .card-premium {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(26, 29, 35, 0.8);
+  backdrop-filter: blur(12px);
+}
+.card-premium:hover {
+  border-color: rgba(37, 99, 235, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(37, 99, 235, 0.06);
+}
+.dark .card-premium:hover {
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+
+/* Badge premium styling */
+.badge-certified {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+/* Image hover crossfade */
+.img-crossfade {
+  position: relative;
+  overflow: hidden;
+}
+.img-crossfade img {
+  transition: opacity 0.4s ease;
+}
+.img-crossfade:hover .img-primary {
+  opacity: 0;
+}
+.img-crossfade .img-secondary {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+.img-crossfade:hover .img-secondary {
+  opacity: 1;
+}
+
+/* Urgency pulse */
+@keyframes urgency-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.urgency-pulse {
+  animation: urgency-pulse 2s ease-in-out infinite;
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+.dark .shimmer {
+  background: linear-gradient(90deg, #1A1D23 25%, #252830 50%, #1A1D23 75%);
+  background-size: 200px 100%;
+}
+
+@media (max-width: 640px) {
+  .animate-scroll-left {
+    animation-duration: 20s;
+  }
 }

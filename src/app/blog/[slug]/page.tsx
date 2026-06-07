@@ -59,7 +59,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)] flex items-center justify-center">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent" />
         </main>
         <Footer />
@@ -71,7 +71,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
           <div className="max-w-3xl mx-auto px-4 py-16 text-center">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">{notFoundText}</h1>
             <p className="text-slate-500 dark:text-slate-400 mb-6">{notFoundSub}</p>
@@ -88,7 +88,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-3xl mx-auto px-4 py-8">
           <Breadcrumb
             items={[

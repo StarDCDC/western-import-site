@@ -93,7 +93,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} min-h-full flex flex-col font-sans antialiased bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 transition-colors`}
+        className={`${inter.variable} min-h-full flex flex-col font-sans antialiased bg-slate-50 text-slate-800 dark:bg-[var(--color-dark-bg)] dark:text-slate-200 transition-colors`}
       >
         <LanguageProvider>
           <ThemeProvider>

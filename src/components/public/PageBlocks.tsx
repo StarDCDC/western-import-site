@@ -114,7 +114,7 @@ function StatsBlockComp({ block }: { block: Extract<PageBlock, { type: "stats" }
   return (
     <div className="grid grid-cols-3 gap-4 mb-10">
       {block.items.map((item, i) => (
-        <div key={i} className="text-center p-5 bg-slate-50 dark:bg-slate-800 rounded-xl">
+        <div key={i} className="text-center p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl">
           <Icon name={item.icon} size={28} className="text-primary mx-auto mb-2" />
           <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{item.value}</p>
           <p className="text-sm text-slate-600 dark:text-slate-400">{item.label}</p>
@@ -133,7 +133,7 @@ function CardsBlockComp({ block }: { block: Extract<PageBlock, { type: "cards" }
       )}
       <div className={`grid grid-cols-1 ${cols} gap-4`}>
         {block.items.map((item, i) => (
-          <div key={i} className="p-5 border border-slate-200 dark:border-slate-700 rounded-xl">
+          <div key={i} className="p-5 border border-slate-200 dark:border-white/[0.06] rounded-xl">
             <div
               className={`w-12 h-12 rounded-xl ${colorBg500(item.color)} flex items-center justify-center mb-3`}
             >
@@ -158,7 +158,7 @@ function TeamBlockComp({ block }: { block: Extract<PageBlock, { type: "team" }> 
       )}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {block.items.map((item, i) => (
-          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-slate-800 rounded-xl">
+          <div key={i} className="text-center p-5 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-xl">
             <div
               className={`w-16 h-16 rounded-full bg-gradient-to-br ${item.gradient} mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl`}
             >

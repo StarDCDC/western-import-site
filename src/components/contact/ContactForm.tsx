@@ -63,27 +63,27 @@ export default function ContactForm({ phone, email, address }: ContactFormProps)
           placeholder={ru ? 'Имя' : 'Nume'}
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
         />
         <input
           type="email"
           placeholder="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
         />
       </div>
       <input
         placeholder={ru ? 'Телефон' : 'Telefon'}
         value={form.phone}
         onChange={(e) => setForm({ ...form, phone: e.target.value })}
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
       />
       <input
         placeholder={ru ? 'Тема' : 'Subiect'}
         value={form.subject}
         onChange={(e) => setForm({ ...form, subject: e.target.value })}
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
       />
       <textarea
         required
@@ -91,7 +91,7 @@ export default function ContactForm({ phone, email, address }: ContactFormProps)
         placeholder={ru ? 'Сообщение' : 'Mesajul tău'}
         value={form.message}
         onChange={(e) => setForm({ ...form, message: e.target.value })}
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"
+        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"
       />
       <button
         type="submit"

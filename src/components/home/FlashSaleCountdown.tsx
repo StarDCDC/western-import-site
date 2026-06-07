@@ -77,7 +77,7 @@ export default function FlashSaleCountdown() {
     return (
       <section className="py-10">
         <div className="max-w-[1280px] mx-auto px-5">
-          <div className="animate-pulse h-40 bg-slate-200 dark:bg-slate-800 rounded-2xl" />
+          <div className="animate-pulse h-40 bg-slate-200 dark:bg-[var(--color-dark-elevated)] rounded-2xl" />
         </div>
       </section>
     );
@@ -121,7 +121,7 @@ export default function FlashSaleCountdown() {
               <Link
                 key={sale.id}
                 href={`/product/${sale.product.id}`}
-                className="group relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300"
+                className="group relative bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 {/* Badge */}
                 <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg">

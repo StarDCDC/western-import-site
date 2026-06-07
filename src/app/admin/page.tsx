@@ -138,7 +138,7 @@ export default function AdminDashboard() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                 period === p
                   ? "bg-amber-500 text-white"
-                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                  : "bg-white dark:bg-[var(--color-dark-elevated)] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/[0.06]"
               }`}
             >
               {p === "7d" ? "7 zile" : p === "30d" ? "30 zile" : "Tot"}
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
       {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c) => (
-          <div key={c.label} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+          <div key={c.label} className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 ${c.color} rounded-xl flex items-center justify-center text-2xl text-white`}>{c.icon}</div>
               <div>
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue trend */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div className="lg:col-span-2 bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Vânzări (7 zile)</h2>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={salesChartData}>
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Orders by status pie */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Comenzi după status</h2>
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent orders */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div className="lg:col-span-2 bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Ultimele comenzi</h2>
             <button onClick={() => router.push("/admin/orders")} className="text-sm text-amber-600 dark:text-amber-400 hover:underline">Vezi toate →</button>
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-white/[0.06]">
                   <th className="pb-2 font-medium">Comandă</th>
                   <th className="pb-2 font-medium">Client</th>
                   <th className="pb-2 font-medium">Total</th>
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                 {recentOrders.slice(0, 8).map((o) => {
                   const s = statusMap[o.status] || { label: o.status, cls: "bg-slate-100 text-slate-600" };
                   return (
-                    <tr key={o.id} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 cursor-pointer">
+                    <tr key={o.id} className="border-b border-slate-100 dark:border-white/[0.06]/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 cursor-pointer">
                       <td className="py-2.5 font-medium text-slate-900 dark:text-white">{o.orderNumber}</td>
                       <td className="py-2.5 text-slate-600 dark:text-slate-300">{o.user?.name || o.user?.email || "—"} </td>
                       <td className="py-2.5 text-slate-900 dark:text-white font-medium">{Math.round(o.total).toLocaleString()} MDL</td>
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top products */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Produse populare</h2>
           <div className="space-y-3">
             {topProducts.map((p, i) => (
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
 
       {/* Alerts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">⚠️ Alertă stoc</h2>
           <div className="flex items-start gap-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
             <span className="text-red-500 text-lg">🔴</span>
@@ -288,7 +288,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Revenue trend mini */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-5">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Trend venituri</h2>
           <ResponsiveContainer width="100%" height={150}>
             <LineChart data={salesChartData}>

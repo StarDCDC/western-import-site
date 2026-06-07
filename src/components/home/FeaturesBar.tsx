@@ -37,7 +37,7 @@ export default function FeaturesBar() {
   const { t } = useLanguage();
 
   return (
-    <section className="py-8 border-t border-slate-200 dark:border-slate-700">
+    <section className="py-8 border-t border-slate-200 dark:border-white/[0.06]">
       <div className="max-w-[1280px] mx-auto px-5">
         <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
@@ -45,7 +45,7 @@ export default function FeaturesBar() {
           {FEATURES.map((feature) => (
             <div
               key={feature.titleKey}
-              className="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 active:shadow-md active:-translate-y-0.5 active:bg-blue-50 dark:active:bg-blue-900/20 active:border-blue-300 dark:active:border-blue-700"
+              className="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 active:shadow-md active:-translate-y-0.5 active:bg-blue-50 dark:active:bg-blue-900/20 active:border-blue-300 dark:active:border-blue-700"
             >
               <div className="shrink-0 w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
                 {feature.icon}

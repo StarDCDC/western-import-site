@@ -25,10 +25,10 @@ export default async function PrivacyRuPage() {
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Breadcrumb items={[{ label: "Политика конфиденциальности" }]} />
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
               <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Политика конфиденциальности</h1>
               <div className="w-16 h-1 bg-primary rounded-full mb-8" />
               {isBlockContent ? (
@@ -47,11 +47,11 @@ export default async function PrivacyRuPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <main className="min-h-screen bg-slate-50 dark:bg-[var(--color-dark-bg)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb items={[{ label: "Политика конфиденциальности" }]} />
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white dark:bg-[var(--color-dark-surface)] rounded-2xl p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Политика конфиденциальности
             </h1>
@@ -140,31 +140,31 @@ export default async function PrivacyRuPage() {
                 5. Ваши права
               </h2>
               <div className="space-y-3">
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Право доступа</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Вы можете запросить копию персональных данных, которые мы о вас храним.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Право на исправление</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Вы можете запросить исправление неточных или дополнение неполных данных.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Право на удаление («право быть забытым»)</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Вы можете запросить удаление персональных данных, за исключением случаев, предусмотренных законом.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Право на переносимость</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Вы можете запросить экспорт данных в структурированном, машиночитаемом формате.
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Право отозвать согласие</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Вы можете отозвать согласие в любое время без влияния на законность предыдущей обработки.
@@ -226,7 +226,7 @@ export default async function PrivacyRuPage() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
                 9. Ответственный за защиту данных (DPO)
               </h2>
-              <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <div className="p-4 bg-slate-50 dark:bg-[var(--color-dark-elevated)] rounded-lg">
                 <p className="text-slate-600 dark:text-slate-400">
                   <strong>Электронная почта:</strong> privacy@westernimport.md<br />
                   <strong>Телефон:</strong> +373 69 466 585<br />

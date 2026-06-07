@@ -118,7 +118,7 @@ export default function OrderDetailPage() {
       </div>
 
       {/* Timeline */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6">
         <h2 className="font-semibold text-slate-900 dark:text-white mb-4">Status comandă</h2>
         {isCancelled ? (
           <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -143,7 +143,7 @@ export default function OrderDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Client info */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6">
           <h2 className="font-semibold text-slate-900 dark:text-white mb-4">Informații client</h2>
           <div className="space-y-3 text-sm">
             <div><span className="text-slate-500 dark:text-slate-400">Nume:</span><p className="font-medium text-slate-900 dark:text-white">{order.user?.name || "—"}</p></div>
@@ -157,11 +157,11 @@ export default function OrderDetailPage() {
 
         {/* Order items */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6">
             <h2 className="font-semibold text-slate-900 dark:text-white mb-4">Produse</h2>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-white/[0.06]">
                   <th className="pb-2 font-medium">Produs</th>
                   <th className="pb-2 font-medium text-center">Cant.</th>
                   <th className="pb-2 font-medium text-right">Preț</th>
@@ -170,7 +170,7 @@ export default function OrderDetailPage() {
               </thead>
               <tbody>
                 {order.items.map((item, i) => (
-                  <tr key={i} className="border-b border-slate-100 dark:border-slate-700/50">
+                  <tr key={i} className="border-b border-slate-100 dark:border-white/[0.06]/50">
                     <td className="py-2.5 text-slate-900 dark:text-white">{item.name}</td>
                     <td className="py-2.5 text-center text-slate-600 dark:text-slate-300">{item.quantity}</td>
                     <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{item.price.toLocaleString()} MDL</td>
@@ -179,29 +179,29 @@ export default function OrderDetailPage() {
                 ))}
               </tbody>
             </table>
-            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 text-sm">
+            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-white/[0.06] space-y-1 text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-300"><span>Subtotal</span><span>{order.subtotal.toLocaleString()} MDL</span></div>
               {order.discount > 0 && (
                 <div className="flex justify-between text-green-600 dark:text-green-400"><span>Discount</span><span>-{order.discount.toLocaleString()} MDL</span></div>
               )}
               <div className="flex justify-between text-slate-600 dark:text-slate-300"><span>Transport</span><span>{order.shippingCost === 0 ? "Gratuit" : `${order.shippingCost.toLocaleString()} MDL`}</span></div>
-              <div className="flex justify-between font-bold text-slate-900 dark:text-white text-base pt-2 border-t border-slate-200 dark:border-slate-700"><span>Total</span><span>{order.total.toLocaleString()} MDL</span></div>
+              <div className="flex justify-between font-bold text-slate-900 dark:text-white text-base pt-2 border-t border-slate-200 dark:border-white/[0.06]"><span>Total</span><span>{order.total.toLocaleString()} MDL</span></div>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
+          <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-4">
             <h2 className="font-semibold text-slate-900 dark:text-white">Actualizare status</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                   {Object.entries(statusLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Note interne</label>
-                <input value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Note..." />
+                <input value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Note..." />
               </div>
             </div>
             <button onClick={handleSave} disabled={saving} className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm transition disabled:opacity-50">

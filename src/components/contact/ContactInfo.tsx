@@ -21,7 +21,7 @@ export default function ContactInfo({ locale }: { locale: string }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-6 border border-slate-200 dark:border-white/[0.06]">
         <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">
           {isRu ? 'Контактная информация' : 'Informații de contact'}
         </h2>
@@ -70,7 +70,7 @@ export default function ContactInfo({ locale }: { locale: string }) {
 
         {/* Social Media */}
         {(facebook || instagram || telegram || tiktok || whatsapp || viber) && (
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-700 mt-4">
+          <div className="pt-4 border-t border-slate-100 dark:border-white/[0.06] mt-4">
             <p className="text-xs text-slate-400 font-medium mb-3">Social Media</p>
             <div className="flex flex-wrap gap-2">
               {facebook && <a href={facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300"><img src="/social-facebook.svg" alt="" className="w-4 h-4" />Facebook</a>}
@@ -89,7 +89,7 @@ export default function ContactInfo({ locale }: { locale: string }) {
         href="https://www.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova"
         target="_blank"
         rel="noopener noreferrer"
-        className="block rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-[260px] relative group cursor-pointer"
+        className="block rounded-2xl overflow-hidden border border-slate-200 dark:border-white/[0.06] h-[260px] relative group cursor-pointer"
       >
         <img src="/map-location.png" alt="Western Import — str. Podgorenilor 17, Chișinău" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end justify-center pb-4">

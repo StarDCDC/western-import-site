@@ -288,7 +288,7 @@ export default function EditProductPage() {
     }
   };
 
-  const inputClass = "w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm";
+  const inputClass = "w-full px-4 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm";
   const labelClass = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
 
   if (loading) {
@@ -332,9 +332,9 @@ export default function EditProductPage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-5">
+      <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-xl shadow-sm border border-slate-200 dark:border-white/[0.06] p-6 space-y-5">
 
-        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2">
+        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-white/[0.06] pb-2">
           Informații generale
         </h2>
 
@@ -345,7 +345,7 @@ export default function EditProductPage() {
           </div>
           <div>
             <label className={labelClass}>Slug (auto-generat)</label>
-            <input value={form.slug} readOnly className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-600 text-slate-500 dark:text-slate-300 text-sm cursor-not-allowed" />
+            <input value={form.slug} readOnly className="w-full px-4 py-2 border border-slate-200 dark:border-white/[0.08] rounded-lg bg-slate-50 dark:bg-slate-600 text-slate-500 dark:text-slate-300 text-sm cursor-not-allowed" />
           </div>
         </div>
 
@@ -359,7 +359,7 @@ export default function EditProductPage() {
           <textarea value={form.descriptionRu} onChange={(e) => set("descriptionRu", e.target.value)} rows={4} className={`${inputClass} resize-none`} placeholder="Descriere produs în rusă" />
         </div>
 
-        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">
+        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-white/[0.06] pb-2 pt-2">
           Preț
         </h2>
 
@@ -378,7 +378,7 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">
+        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-white/[0.06] pb-2 pt-2">
           Categorie și Brand
         </h2>
 
@@ -434,7 +434,7 @@ export default function EditProductPage() {
                 </div>
               ))}
             </div>
-            <label className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-3 text-center cursor-pointer block hover:border-amber-400 transition text-sm text-slate-500 dark:text-slate-400">
+            <label className="border-2 border-dashed border-slate-300 dark:border-white/[0.08] rounded-xl p-3 text-center cursor-pointer block hover:border-amber-400 transition text-sm text-slate-500 dark:text-slate-400">
               <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
               Click pentru a încărca imagini
             </label>
@@ -442,7 +442,7 @@ export default function EditProductPage() {
         </div>
 
         {/* Spec Fields (ProductSpec relation) */}
-        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">
+        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-white/[0.06] pb-2 pt-2">
           Specificații Tehnice
         </h2>
 
@@ -461,15 +461,15 @@ export default function EditProductPage() {
         </div>
 
         {/* Legacy Specs */}
-        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-slate-700 pb-2 pt-2">
+        <h2 className="font-semibold text-slate-900 dark:text-white text-lg border-b border-slate-200 dark:border-white/[0.06] pb-2 pt-2">
           Specificații suplimentare
         </h2>
 
         <div className="space-y-2">
           {specs.map((s, i) => (
             <div key={i} className="flex gap-2">
-              <input value={s.key} onChange={(e) => updateSpec(i, "key", e.target.value)} placeholder="Nume (ex: Procesor)" className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
-              <input value={s.value} onChange={(e) => updateSpec(i, "value", e.target.value)} placeholder="Valoare (ex: Intel i7)" className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+              <input value={s.key} onChange={(e) => updateSpec(i, "key", e.target.value)} placeholder="Nume (ex: Procesor)" className="flex-1 px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+              <input value={s.value} onChange={(e) => updateSpec(i, "value", e.target.value)} placeholder="Valoare (ex: Intel i7)" className="flex-1 px-3 py-2 border border-slate-300 dark:border-white/[0.08] rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
               <button onClick={() => removeSpec(i)} className="px-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-sm">✕</button>
             </div>
           ))}
@@ -493,7 +493,7 @@ export default function EditProductPage() {
           {saving && <Loader2 className="w-4 h-4 animate-spin" />}
           {saving ? "Se salvează..." : "Salvează modificările"}
         </button>
-        <button onClick={() => router.back()} className="px-6 py-2.5 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+        <button onClick={() => router.back()} className="px-6 py-2.5 border border-slate-300 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 rounded-lg text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition">
           Anulează
         </button>
       </div>
