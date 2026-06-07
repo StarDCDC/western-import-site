@@ -79,7 +79,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="hidden lg:flex flex-col gap-4">
             {fallbackPromos.map((promo, i) => (
               <div key={i} className={`flex-1 rounded-2xl bg-gradient-to-br ${promo.gradient} p-6 text-white flex flex-col justify-between min-h-[190px] cursor-pointer hover:scale-[1.02] transition-transform`} onClick={() => router.push(promo.link)}>
                 <div>
@@ -115,7 +115,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="hidden lg:flex flex-col gap-4">
             {displayPromos.map((promo) => (
               <div key={promo.id} className="flex-1 rounded-2xl overflow-hidden relative min-h-[190px] cursor-pointer hover:scale-[1.02] transition-transform group" onClick={() => router.push(promo.link)}>
                 {promo.image ? <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${promo.image})` }} /> : <div className={`absolute inset-0 bg-gradient-to-br ${promo.gradient}`} />}
@@ -201,7 +201,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
         </div>
 
         {/* Right: Sidebar promo cards (SIDEBAR position only) */}
-        <div className="flex flex-col gap-4">
+        <div className="hidden lg:flex flex-col gap-4">
           {displayPromos.map((promo) => (
             <div key={promo.id} className="flex-1 rounded-2xl overflow-hidden relative min-h-[190px] cursor-pointer hover:scale-[1.02] transition-transform group" onClick={() => router.push(promo.link)}>
               {promo.image ? <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${promo.image})` }} /> : <div className={`absolute inset-0 bg-gradient-to-br ${promo.gradient}`} />}
