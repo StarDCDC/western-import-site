@@ -1,3 +1,4 @@
+// src/app/checkout/page.tsx
 'use client';
 
 import { useState, useEffect, type FormEvent } from 'react';
@@ -341,8 +342,8 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
         <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h1 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">Coșul este gol</h1>
-            <Link href={isRu ? "/ru/catalog" : "/catalog"} className="text-primary font-semibold hover:underline">Înapoi la catalog</Link>
+            <h1 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">{txt.cartEmpty}</h1>
+            <Link href={isRu ? "/ru/catalog" : "/catalog"} className="text-primary font-semibold hover:underline">{txt.backToCatalog}</Link>
           </div>
         </main>
         <Footer />
@@ -358,9 +359,9 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
         <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen flex items-center justify-center">
           <div className="text-center max-w-md mx-auto px-5">
             <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Comandă plasată cu succes!</h1>
-            <p className="text-slate-500 mb-2">Vei primi un email de confirmare cu detaliile comenzii.</p>
-            <p className="text-sm text-slate-400 mb-1">Număr comandă:</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{txt.orderSuccess}</h1>
+            <p className="text-slate-500 mb-2">{txt.orderEmail}</p>
+            <p className="text-sm text-slate-400 mb-1">{txt.orderNumber}</p>
             <p className="text-lg font-bold text-primary mb-6">{orderNumber}</p>
             <div className="flex flex-col gap-3">
               <Link href={isRu ? "/ru" : "/"} className="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors">
@@ -380,14 +381,14 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
       <Header />
       <main className="flex-1 bg-slate-50 dark:bg-slate-950 min-h-screen">
         <div className="max-w-[1280px] mx-auto px-5 py-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6">Finalizare Comandă</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6">{txt.checkoutTitle}</h1>
 
           {step === 'error' && errorMessage && (
             <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-2xl p-4 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-red-700 dark:text-red-400">{errorMessage}</p>
-                <button onClick={() => setStep('form')} className="text-xs text-red-500 hover:underline mt-1">Încearcă din nou</button>
+                <button onClick={() => setStep('form')} className="text-xs text-red-500 hover:underline mt-1">{txt.tryAgain}</button>
               </div>
             </div>
           )}
@@ -398,39 +399,39 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 {/* Customer Info */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-primary" /> Date Personale
+                    <MapPin className="w-5 h-5 text-primary" /> {txt.personalData}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div data-error={errors.customerName ? 'true' : undefined}>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Nume complet *</label>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">{txt.fullName} *</label>
                       <input
                         type="text"
                         value={form.customerName}
                         onChange={(e) => updateField('customerName', e.target.value)}
                         className={`w-full py-2.5 px-3 rounded-lg border ${errors.customerName ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
-                        placeholder="Ion Popescu"
+                        placeholder={txt.namePlaceholder}
                       />
                       {errors.customerName && <p className="text-xs text-red-500 mt-1">{errors.customerName}</p>}
                     </div>
                     <div data-error={errors.phone ? 'true' : undefined}>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Telefon *</label>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">{txt.phone} *</label>
                       <input
                         type="tel"
                         value={form.phone}
                         onChange={(e) => updateField('phone', e.target.value)}
                         className={`w-full py-2.5 px-3 rounded-lg border ${errors.phone ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
-                        placeholder="+373 69 000 000"
+                        placeholder={txt.phonePlaceholder}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                     </div>
                     <div data-error={errors.email ? 'true' : undefined}>
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Email *</label>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">{txt.email} *</label>
                       <input
                         type="email"
                         value={form.email}
                         onChange={(e) => updateField('email', e.target.value)}
                         className={`w-full py-2.5 px-3 rounded-lg border ${errors.email ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
-                        placeholder="email@exemplu.md"
+                        placeholder={txt.emailPlaceholder}
                       />
                       {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                     </div>
@@ -440,7 +441,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 {/* Delivery Method */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <Truck className="w-5 h-5 text-primary" /> Metodă Livrare
+                    <Truck className="w-5 h-5 text-primary" /> {txt.deliveryMethod}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
@@ -472,67 +473,67 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 {/* Address */}
                 {form.deliveryMethod !== 'PICKUP' && (
                   <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
-                    <h3 className="font-bold text-slate-800 dark:text-white mb-4">Adresa de Livrare</h3>
+                    <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.deliveryAddress}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div data-error={errors.city ? 'true' : undefined}>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Oraș</label>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">{txt.city}</label>
                         <select
                           value={form.city}
                           onChange={(e) => updateField('city', e.target.value)}
                           className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
                         >
-                          <option value="">Selectează orașul</option>
-                          <option>Chișinău</option>
-                          <option>Bălți</option>
-                          <option>Orhei</option>
-                          <option>Soroca</option>
-                          <option>Ungheni</option>
-                          <option>Cahul</option>
-                          <option>Comrat</option>
-                          <option>Edineț</option>
-                          <option>Altul</option>
+                          <option value="">{txt.selectCity}</option>
+                          <option>{txt.cityChisinau}</option>
+                          <option>{txt.cityBalti}</option>
+                          <option>{txt.cityOrhei}</option>
+                          <option>{txt.citySoroca}</option>
+                          <option>{txt.cityUngheni}</option>
+                          <option>{txt.cityCahul}</option>
+                          <option>{txt.cityComrat}</option>
+                          <option>{txt.cityEdinet}</option>
+                          <option>{txt.cityOther}</option>
                         </select>
                       </div>
                       <div data-error={errors.raion ? 'true' : undefined}>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Raionul *</label>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">{txt.district} *</label>
                         <input
                           type="text"
                           value={form.raion}
                           onChange={(e) => updateField('raion', e.target.value)}
                           className={`w-full py-2.5 px-3 rounded-lg border ${errors.raion ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
-                          placeholder="ex: Chișinău, Bălți, Orhei..."
+                          placeholder={txt.districtPlaceholder}
                         />
                         {errors.raion && <p className="text-xs text-red-500 mt-1">{errors.raion}</p>}
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Localitatea</label>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">{txt.locality}</label>
                         <input
                           type="text"
                           value={form.localitate}
                           onChange={(e) => updateField('localitate', e.target.value)}
                           className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
-                          placeholder="ex: sat, comună (opțional)"
+                          placeholder={txt.localityPlaceholder}
                         />
                       </div>
                       <div data-error={errors.strada ? 'true' : undefined}>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Strada *</label>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">{txt.street} *</label>
                         <input
                           type="text"
                           value={form.strada}
                           onChange={(e) => updateField('strada', e.target.value)}
                           className={`w-full py-2.5 px-3 rounded-lg border ${errors.strada ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
-                          placeholder="Strada, nr., apartament"
+                          placeholder={txt.streetPlaceholder}
                         />
                         {errors.strada && <p className="text-xs text-red-500 mt-1">{errors.strada}</p>}
                       </div>
                       <div data-error={errors.codPostal ? 'true' : undefined}>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Cod poștal *</label>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">{txt.postalCode} *</label>
                         <input
                           type="text"
                           value={form.codPostal}
                           onChange={(e) => updateField('codPostal', e.target.value)}
                           className={`w-full py-2.5 px-3 rounded-lg border ${errors.codPostal ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'} text-sm`}
-                          placeholder="ex: MD-2000"
+                          placeholder={txt.postalPlaceholder}
                         />
                         {errors.codPostal && <p className="text-xs text-red-500 mt-1">{errors.codPostal}</p>}
                       </div>
@@ -543,7 +544,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                 {/* Payment Method */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-primary" /> Metodă Plată
+                    <CreditCard className="w-5 h-5 text-primary" /> {txt.paymentMethod}
                   </h3>
                   <div className="space-y-3">
                     {[
@@ -579,33 +580,33 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                   {form.paymentMethod === 'CREDIT' && total >= 1000 && (
                     <div className="mt-4 p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-100 dark:border-orange-800/30">
                       <p className="text-xs font-bold text-orange-700 dark:text-orange-400 mb-3 uppercase tracking-wide">
-                        📊 Planul tău de rate
+                        {txt.installmentPlan}
                       </p>
                       <div className="text-center">
-                        <p className="text-[10px] uppercase tracking-widest text-orange-600/70 mb-1">Plata lunară</p>
+                        <p className="text-[10px] uppercase tracking-widest text-orange-600/70 mb-1">{txt.monthlyPayment}</p>
                         <p className="text-3xl font-black text-orange-600">
                           {formatPrice(Math.ceil(total / 4))}
-                          <span className="text-sm font-medium text-orange-400 ml-1">/lună</span>
+                          <span className="text-sm font-medium text-orange-400 ml-1">{txt.perMonth}</span>
                         </p>
-                        <p className="text-xs text-orange-500 mt-1">Smart 0% — 4 luni, fără supraplată</p>
+                        <p className="text-xs text-orange-500 mt-1">{txt.smartZero}</p>
                       </div>
                       <div className="mt-3 grid grid-cols-3 gap-2">
                         <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
-                          <p className="text-[10px] text-orange-600/60">Perioada</p>
-                          <p className="text-sm font-bold text-slate-800 dark:text-white">4 luni</p>
+                          <p className="text-[10px] text-orange-600/60">{txt.period}</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-white">4 {txt.months}</p>
                         </div>
                         <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
-                          <p className="text-[10px] text-orange-600/60">Supraplată</p>
-                          <p className="text-sm font-bold text-green-600">0 MDL</p>
+                          <p className="text-[10px] text-orange-600/60">{txt.overpayment}</p>
+                          <p className="text-sm font-bold text-green-600">{txt.zeroMDL}</p>
                         </div>
                         <div className="text-center p-2 bg-white/50 dark:bg-slate-700/50 rounded-lg">
-                          <p className="text-[10px] text-orange-600/60">Total</p>
+                          <p className="text-[10px] text-orange-600/60">{txt.total}</p>
                           <p className="text-sm font-bold text-slate-800 dark:text-white">{formatPrice(total)}</p>
                         </div>
                       </div>
                       <div className="mt-3 flex items-center justify-center gap-1.5 py-1.5 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <svg className="w-3.5 h-3.5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                        <span className="text-[11px] font-bold text-green-700 dark:text-green-400">0% — fără supraplată!</span>
+                        <span className="text-[11px] font-bold text-green-700 dark:text-green-400">{txt.zeroPercentNoOverpay}</span>
                       </div>
                     </div>
                   )}
@@ -616,7 +617,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-lg">💳</span>
                         <p className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide">
-                          Credit365 — Credit rapid online
+                          {txt.credit365Title}
                         </p>
                       </div>
 
@@ -629,19 +630,19 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       {/* Step: IDNP */}
                       {c365Step === 'idle' || c365Step === 'idnp' ? (
                         <div className="space-y-3">
-                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 1: Introdu codul IDNP (13 cifre)</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400">{txt.c365Step1}</p>
                           <input
                             type="text"
                             value={form.c365_idnp}
                             onChange={(e) => updateField('c365_idnp', e.target.value.replace(/\D/g, '').slice(0, 13))}
-                            placeholder="ex: 2002001079359"
+                            placeholder={txt.c365IdnpPlaceholder}
                             maxLength={13}
                             className="w-full px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm"
                           />
                           <button
                             type="button"
                             onClick={async () => {
-                              if (form.c365_idnp.length < 13) { setC365Error(locale === 'ru' ? 'IDNP должен содержать 13 цифр' : 'IDNP trebuie să aibă 13 cifre'); return; }
+                              if (form.c365_idnp.length < 13) { setC365Error(txt.c365IdnpError); return; }
                               setC365Loading(true); setC365Error('');
                               try {
                                 const data = await c365CheckIdnp(form.c365_idnp);
@@ -650,13 +651,13 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                                 setC365UserId(data.userId);
                                 setC365Step('terms');
                               } catch (err) {
-                                setC365Error(err instanceof Error ? err.message : locale === 'ru' ? 'Ошибка проверки IDNP' : 'Eroare verificare IDNP');
+                                setC365Error(err instanceof Error ? err.message : txt.c365CheckError);
                               } finally { setC365Loading(false); }
                             }}
                             disabled={c365Loading}
                             className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
                           >
-                            {c365Loading ? locale === 'ru' ? 'Проверка...' : 'Se verifică...' : locale === 'ru' ? 'Проверить IDNP →' : 'Verifică IDNP →'}
+                            {c365Loading ? txt.c365Checking : txt.c365CheckBtn}
                           </button>
                         </div>
                       ) : null}
@@ -664,7 +665,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       {/* Step: Select term */}
                       {c365Step === 'terms' && (
                         <div className="space-y-3">
-                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 2: Alege perioada și suma</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400">{txt.c365Step2}</p>
                           <div className="grid grid-cols-2 gap-2">
                             {c365Terms.map((t) => (
                               <button
@@ -680,30 +681,30 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                                     : 'border-blue-200 dark:border-blue-700 bg-white dark:bg-slate-700 hover:border-blue-300'
                                 }`}
                               >
-                                <p className="text-lg font-bold text-slate-800 dark:text-white">{t.months} luni</p>
-                                <p className="text-[10px] text-blue-600/70">{formatPrice(Math.ceil(total / t.months))}/lună</p>
+                                <p className="text-lg font-bold text-slate-800 dark:text-white">{t.months} {txt.months}</p>
+                                <p className="text-[10px] text-blue-600/70">{formatPrice(Math.ceil(total / t.months))}{txt.perMonth}</p>
                               </button>
                             ))}
                           </div>
-                          <button type="button" onClick={() => setC365Step('idnp')} className="text-xs text-blue-500 hover:underline">{locale === "ru" ? "← Назад" : "← Înapoi"}</button>
+                          <button type="button" onClick={() => setC365Step('idnp')} className="text-xs text-blue-500 hover:underline">{txt.c365Back}</button>
                         </div>
                       )}
 
                       {/* Step: Personal details */}
                       {c365Step === 'details' && (
                         <div className="space-y-3">
-                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 3: Date personale</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400">{txt.c365Step3}</p>
                           <div className="grid grid-cols-2 gap-2">
-                            <input value={form.c365_firstName} onChange={(e) => updateField('c365_firstName', e.target.value)} placeholder="Prenume" className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
-                            <input value={form.c365_lastName} onChange={(e) => updateField('c365_lastName', e.target.value)} placeholder="Nume" className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                            <input value={form.c365_firstName} onChange={(e) => updateField('c365_firstName', e.target.value)} placeholder={txt.c365FirstName} className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                            <input value={form.c365_lastName} onChange={(e) => updateField('c365_lastName', e.target.value)} placeholder={txt.c365LastName} className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
                             <input type="date" value={form.c365_birthDate} onChange={(e) => updateField('c365_birthDate', e.target.value)} className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm" />
                             <select value={form.c365_gender} onChange={(e) => updateField('c365_gender', e.target.value)} className="px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm">
-                              <option value="1">Masculin</option>
-                              <option value="2">Feminin</option>
+                              <option value="1">{txt.c365GenderMale}</option>
+                              <option value="2">{txt.c365GenderFemale}</option>
                             </select>
                           </div>
                           <div>
-                            <label className="text-[10px] text-blue-600/70">Foto buletin (opțional)</label>
+                            <label className="text-[10px] text-blue-600/70">{txt.c365PassportLabel}</label>
                             <input
                               type="file"
                               accept="image/*"
@@ -724,7 +725,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                             type="button"
                             onClick={async () => {
                               if (!form.c365_firstName || !form.c365_lastName || !form.c365_birthDate) {
-                                setC365Error(locale === 'ru' ? 'Заполните все поля' : 'Completează toate câmpurile'); return;
+                                setC365Error(txt.c365FillAll); return;
                               }
                               setC365Loading(true); setC365Error('');
                               try {
@@ -746,28 +747,28 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                                 setC365ApplicationId(applicationId);
                                 setC365Step('sms');
                               } catch (err) {
-                                setC365Error(err instanceof Error ? err.message : locale === 'ru' ? 'Ошибка отправки заявки' : 'Eroare trimitere cerere');
+                                setC365Error(err instanceof Error ? err.message : txt.c365SendError);
                               } finally { setC365Loading(false); }
                             }}
                             disabled={c365Loading}
                             className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
                           >
-                            {c365Loading ? locale === 'ru' ? 'Отправка...' : 'Se trimite...' : locale === 'ru' ? 'Отправить заявку →' : 'Trimite cererea →'}
+                            {c365Loading ? txt.c365Sending : txt.c365SendBtn}
                           </button>
-                          <button type="button" onClick={() => setC365Step('terms')} className="text-xs text-blue-500 hover:underline">← Înapoi</button>
+                          <button type="button" onClick={() => setC365Step('terms')} className="text-xs text-blue-500 hover:underline">{txt.c365Back}</button>
                         </div>
                       )}
 
                       {/* Step: SMS confirmation */}
                       {c365Step === 'sms' && (
                         <div className="space-y-3">
-                          <p className="text-xs text-blue-600 dark:text-blue-400">Pas 4: Confirmă cu codul SMS</p>
-                          <p className="text-xs text-slate-500">Un cod de confirmare a fost trimis pe telefonul tău.</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400">{txt.c365Step4}</p>
+                          <p className="text-xs text-slate-500">{txt.c365SmsSent}</p>
                           <input
                             type="text"
                             value={c365SmsCode}
                             onChange={(e) => setC365SmsCode(e.target.value)}
-                            placeholder="Cod SMS"
+                            placeholder={txt.c365SmsPlaceholder}
                             maxLength={6}
                             className="w-full px-3 py-2 border border-blue-200 dark:border-blue-700 rounded-lg bg-white dark:bg-slate-700 text-sm text-center text-lg tracking-widest"
                           />
@@ -780,13 +781,13 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                                 await c365Confirm(c365ApplicationId!, c365SmsCode);
                                 setC365Step('done');
                               } catch (err) {
-                                setC365Error(err instanceof Error ? err.message : locale === 'ru' ? 'Ошибка подтверждения' : 'Eroare confirmare');
+                                setC365Error(err instanceof Error ? err.message : txt.c365ConfirmError);
                               } finally { setC365Loading(false); }
                             }}
                             disabled={c365Loading}
                             className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition disabled:opacity-50"
                           >
-                            {c365Loading ? locale === 'ru' ? 'Подтверждение...' : 'Se confirmă...' : locale === 'ru' ? 'Подтвердить ✅' : 'Confirmă ✅'}
+                            {c365Loading ? txt.c365Confirming : txt.c365ConfirmBtn}
                           </button>
                         </div>
                       )}
@@ -795,8 +796,8 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       {c365Step === 'done' && (
                         <div className="text-center space-y-2">
                           <div className="text-3xl">✅</div>
-                          <p className="text-sm font-bold text-green-600">Cerere de credit aprobată!</p>
-                          <p className="text-xs text-slate-500">Poți plasa comanda acum.</p>
+                          <p className="text-sm font-bold text-green-600">{txt.c365Done}</p>
+                          <p className="text-xs text-slate-500">{txt.c365DoneDesc}</p>
                         </div>
                       )}
                     </div>
@@ -805,13 +806,13 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
 
                 {/* Notes */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
-                  <h3 className="font-bold text-slate-800 dark:text-white mb-4">Notițe (opțional)</h3>
+                  <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.notes}</h3>
                   <textarea
                     value={form.notes}
                     onChange={(e) => updateField('notes', e.target.value)}
                     rows={3}
                     className="w-full py-2.5 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm resize-none"
-                    placeholder="Instrucțiuni speciale pentru livrare..."
+                    placeholder={txt.notesPlaceholder}
                   />
                 </div>
               </div>
@@ -819,7 +820,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
               {/* Summary Sidebar */}
               <div>
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 sticky top-24">
-                  <h3 className="font-bold text-slate-800 dark:text-white mb-4">Sumar Comandă</h3>
+                  <h3 className="font-bold text-slate-800 dark:text-white mb-4">{txt.orderSummary}</h3>
 
                   <div className="space-y-2 mb-4 max-h-60 overflow-y-auto">
                     {items.map((item) => (
@@ -842,7 +843,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
 
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-green-600">
-                        <span>Reducere cod ({coupon?.code})</span>
+                        <span>{txt.discountLabel} ({coupon?.code})</span>
                         <span>-{formatPrice(couponDiscount)}</span>
                       </div>
                     )}
@@ -860,13 +861,13 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
 
                     {totalDiscount > 0 && (
                       <div className="flex justify-between text-green-600 font-semibold">
-                        <span>Total reducere</span>
+                        <span>{txt.totalDiscount}</span>
                         <span>-{formatPrice(totalDiscount)}</span>
                       </div>
                     )}
 
                     <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between font-bold text-lg text-slate-800 dark:text-white">
-                      <span>Total</span>
+                      <span>{txt.total}</span>
                       <span className="text-primary-dark dark:text-primary">{formatPrice(total)}</span>
                     </div>
 
@@ -875,12 +876,12 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3 mt-3 border border-orange-100 dark:border-orange-800/30">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-[10px] uppercase tracking-wide text-orange-600/70 font-semibold">Rata lunară</p>
-                            <p className="text-2xl font-black text-orange-600">{formatPrice(Math.ceil(total / 4))}<span className="text-xs font-medium text-orange-400">/lună</span></p>
+                            <p className="text-[10px] uppercase tracking-wide text-orange-600/70 font-semibold">{txt.installmentMonthlyLabel}</p>
+                            <p className="text-2xl font-black text-orange-600">{formatPrice(Math.ceil(total / 4))}<span className="text-xs font-medium text-orange-400">{txt.perMonth}</span></p>
                           </div>
                           <div className="text-right">
-                            <p className="text-[10px] uppercase tracking-wide text-orange-600/70 font-semibold">Smart 0% • 4 rate</p>
-                            <p className="text-sm font-bold text-green-600">Fără supraplată</p>
+                            <p className="text-[10px] uppercase tracking-wide text-orange-600/70 font-semibold">{txt.installmentSmartLabel}</p>
+                            <p className="text-sm font-bold text-green-600">{txt.noOverpayment}</p>
                           </div>
                         </div>
                       </div>
@@ -892,10 +893,10 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-[10px] uppercase tracking-wide text-blue-600/70 font-semibold">Credit365</p>
-                            <p className="text-sm font-bold text-blue-600">{c365Step === 'done' ? '✅ Aprobat' : 'În așteptare'}</p>
+                            <p className="text-sm font-bold text-blue-600">{c365Step === 'done' ? txt.credit365Approved : txt.credit365Pending}</p>
                           </div>
                           {c365Step !== 'done' && (
-                            <span className="text-xs text-blue-500">Completează formularul</span>
+                            <span className="text-xs text-blue-500">{txt.fillForm}</span>
                           )}
                         </div>
                       </div>
@@ -906,7 +907,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                   {shippingCost > 0 && form.deliveryMethod !== 'PICKUP' && (
                     <div className="mt-3 bg-amber-50 dark:bg-amber-950/20 rounded-xl p-3 text-xs">
                       <p className="text-amber-700 dark:text-amber-400">
-                        🚚 Mai adaugă <strong>{formatPrice(remainingForFreeShipping)}</strong> pentru livrare gratuită!
+                        {txt.moreForFreeShipping} <strong>{formatPrice(remainingForFreeShipping)}</strong> {txt.forFreeShipping}
                       </p>
                     </div>
                   )}
@@ -955,9 +956,9 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                       className="mt-1 rounded border-slate-300 text-primary focus:ring-primary"
                     />
                     <span className="text-xs text-slate-500">
-                      Sunt de acord cu{' '}
-                      <Link href="/terms" className="text-primary hover:underline">Termenii și Condițiile</Link> și{' '}
-                      <Link href="/privacy" className="text-primary hover:underline">Politica de Confidențialitate</Link>
+                      {txt.termsAgree}{' '}
+                      <Link href={isRu ? "/ru/terms" : "/terms"} className="text-primary hover:underline">{txt.terms}</Link> {txt.and}{' '}
+                      <Link href={isRu ? "/ru/privacy" : "/privacy"} className="text-primary hover:underline">{txt.privacy}</Link>
                     </span>
                   </label>
                   {errors.terms && <p className="text-xs text-red-500 mt-1">{errors.terms}</p>}
@@ -969,10 +970,10 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                   >
                     {step === 'loading' ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Se procesează...
+                        <Loader2 className="w-4 h-4 animate-spin" /> {txt.processing}
                       </>
                     ) : (
-                      `Plasează comanda — ${formatPrice(total)}`
+                      `${txt.placeOrder} — ${formatPrice(total)}`
                     )}
                   </button>
 

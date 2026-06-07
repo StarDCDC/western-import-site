@@ -6,6 +6,8 @@ import { useCartStore } from '@/lib/store';
 import { formatPrice } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useLanguage } from '@/components/ui/LanguageProvider';
+import { getCartTexts } from '@/lib/i18n-cart';
 
 interface CartDrawerProps {
   open: boolean;
@@ -13,6 +15,9 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
+  const { locale } = useLanguage();
+  const isRu = locale === 'ru' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/ru'));
+  const txt = getCartTexts(isRu ? 'ru' : 'ro');
   const { items, removeItem, updateQuantity, getTotal } = useCartStore();
 
   return (
@@ -37,8 +42,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-bold text-slate-800 dark:text-white">Coșul tău</h2>
-                <span className="text-sm text-slate-500">({items.length} produse)</span>
+                <h2 className="text-lg font-bold text-slate-800 dark:text-white">{txt.yourCart}</h2>
+                <span className="text-sm text-slate-500">({items.length} {txt.cartItems})</span>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                 <X className="w-5 h-5" />
@@ -50,8 +55,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               {items.length === 0 ? (
                 <div className="text-center py-16">
                   <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500 text-lg">Coșul este gol</p>
-                  <p className="text-slate-400 text-sm mt-1">Adaugă produse pentru a începe cumpărăturile</p>
+                  <p className="text-slate-500 text-lg">{txt.cartEmptyTitle}</p>
+                  <p className="text-slate-400 text-sm mt-1">{txt.cartEmptySubtitle}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -107,22 +112,22 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             {items.length > 0 && (
               <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-3">
                 <div className="flex justify-between text-lg font-bold">
-                  <span className="text-slate-600 dark:text-slate-300">Total:</span>
+                  <span className="text-slate-600 dark:text-slate-300">{txt.total}:</span>
                   <span className="text-primary-dark dark:text-primary">{formatPrice(getTotal())}</span>
                 </div>
                 <Link
-                  href="/cart"
+                  href={isRu ? "/ru/cart" : "/cart"}
                   onClick={onClose}
                   className="block w-full bg-primary text-white text-center py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors"
                 >
-                  Vezi coșul
+                  {txt.viewCart}
                 </Link>
                 <Link
-                  href="/checkout"
+                  href={isRu ? "/ru/checkout" : "/checkout"}
                   onClick={onClose}
                   className="block w-full bg-accent text-white text-center py-3 rounded-xl font-semibold hover:bg-red-700 transition-colors"
                 >
-                  Finalizează comanda
+                  {txt.checkout}
                 </Link>
               </div>
             )}
