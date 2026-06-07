@@ -38,15 +38,15 @@ export default function BrandCarousel() {
               href={`/catalog?brand=${brand.slug}`}
               title={brand.name}
               aria-label={brand.name}
-              className="flex items-center justify-center min-w-[180px] px-6 py-5"
+              className="flex items-center justify-center min-w-[120px] sm:min-w-[180px] px-3 sm:px-6 py-3 sm:py-5"
             >
               <div
-                className="flex items-center justify-center h-20 w-40 rounded-xl bg-white shadow-sm border border-slate-100 px-5 transition-all hover:scale-105 hover:shadow-md"
+                className="flex items-center justify-center h-16 w-28 sm:h-20 sm:w-40 rounded-lg sm:rounded-xl bg-white shadow-sm border border-slate-100 px-3 sm:px-5 transition-all hover:scale-105 hover:shadow-md"
               >
                 <img
                   src={`/brands/${brand.slug}.svg`}
                   alt={brand.name}
-                  className="max-h-12 max-w-full w-auto object-contain"
+                  className="max-h-10 sm:max-h-12 max-w-full w-auto object-contain scale-110 sm:scale-100"
                   loading="lazy"
                 />
               </div>

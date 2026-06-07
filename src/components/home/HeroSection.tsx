@@ -74,8 +74,8 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 leading-tight">{t('home.hero.title')}</h1>
               <p className="text-sm sm:text-base md:text-lg opacity-90 mb-6 sm:mb-8">{t('home.hero.subtitle')}</p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => router.push('/catalog?promo=true')} className="px-7 py-3.5 bg-white text-primary-dark rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-sm">🔥 {t('home.hero.ctaPromo')}</button>
-                <button onClick={() => router.push('/catalog')} className="px-7 py-3.5 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition text-sm">💻 {t('home.hero.ctaCatalog')}</button>
+                <button onClick={() => router.push('/catalog?promo=true')} className="px-4 py-2 sm:px-7 sm:py-3.5 bg-white text-primary-dark rounded-lg sm:rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-xs sm:text-sm">🔥 {t('home.hero.ctaPromo')}</button>
+                <button onClick={() => router.push('/catalog')} className="px-4 py-2 sm:px-7 sm:py-3.5 bg-transparent border-2 border-white text-white rounded-lg sm:rounded-xl font-bold hover:bg-white/10 transition text-xs sm:text-sm">💻 {t('home.hero.ctaCatalog')}</button>
               </div>
             </div>
           </div>
@@ -110,8 +110,8 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 leading-tight">{t('home.hero.title')}</h1>
               <p className="text-sm sm:text-base md:text-lg opacity-90 mb-6 sm:mb-8">{t('home.hero.subtitle')}</p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => router.push('/catalog?promo=true')} className="px-7 py-3.5 bg-white text-primary-dark rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-sm">🔥 {t('home.hero.ctaPromo')}</button>
-                <button onClick={() => router.push('/catalog')} className="px-7 py-3.5 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition text-sm">💻 {t('home.hero.ctaCatalog')}</button>
+                <button onClick={() => router.push('/catalog?promo=true')} className="px-4 py-2 sm:px-7 sm:py-3.5 bg-white text-primary-dark rounded-lg sm:rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-xs sm:text-sm">🔥 {t('home.hero.ctaPromo')}</button>
+                <button onClick={() => router.push('/catalog')} className="px-4 py-2 sm:px-7 sm:py-3.5 bg-transparent border-2 border-white text-white rounded-lg sm:rounded-xl font-bold hover:bg-white/10 transition text-xs sm:text-sm">💻 {t('home.hero.ctaCatalog')}</button>
               </div>
             </div>
           </div>
@@ -176,10 +176,10 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
                   {(locale === 'ru' && banner.subtitleRu) ? banner.subtitleRu : banner.subtitle}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button onClick={() => router.push(banner.link || '/catalog')} className="px-7 py-3.5 bg-white text-primary rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-sm w-fit">
+                  <button onClick={() => router.push(banner.link || '/catalog')} className="px-4 py-2 sm:px-7 sm:py-3.5 bg-white text-primary rounded-lg sm:rounded-xl font-bold hover:bg-slate-100 transition shadow-lg text-xs sm:text-sm w-fit">
                     {(locale === 'ru' && banner.buttonTextRu) ? banner.buttonTextRu : (banner.buttonText || 'Vezi detalii')}
                   </button>
-                  <button onClick={() => router.push('/catalog')} className="px-7 py-3.5 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition text-sm w-fit">
+                  <button onClick={() => router.push('/catalog')} className="px-4 py-2 sm:px-7 sm:py-3.5 bg-transparent border-2 border-white text-white rounded-lg sm:rounded-xl font-bold hover:bg-white/10 transition text-xs sm:text-sm w-fit">
                     💻 {locale === 'ru' ? 'Каталог' : 'Catalog'}
                   </button>
                 </div>

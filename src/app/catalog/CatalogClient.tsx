@@ -657,7 +657,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               </select>
 
               {/* View mode toggle */}
-              <div className="hidden sm:flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+              <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}
@@ -694,9 +694,9 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               </div>
 
               <button onClick={() => setMobileFilters(true)} className="lg:hidden flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 shrink-0">
-                <SlidersHorizontal className="w-4 h-4" /> <span className="hidden xs:inline">Filtre</span>
+                <SlidersHorizontal className="w-4 h-4 shrink-0" /> <span className="hidden xs:inline shrink-0">{locale === 'ru' ? 'Фильтры' : 'Filtre'}</span>
                 {hasActiveFilters && (
-                  <span className="min-w-[18px] h-[18px] bg-primary text-white text-[10px] rounded-full flex items-center justify-center font-bold px-1">
+                  <span className="min-w-[18px] h-[18px] bg-primary text-white text-[10px] rounded-full flex items-center justify-center font-bold px-1 shrink-0">
                     {[...selectedCategories, ...selectedBrands, ...selectedConditions, ...Object.keys(specFilters)].length}
                   </span>
                 )}
