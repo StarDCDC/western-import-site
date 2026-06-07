@@ -89,19 +89,23 @@ export default function Footer() {
           {/* Map */}
           <div>
             <h4 className="text-slate-100 dark:text-slate-200 text-sm font-bold mb-4">{t('footer.location')}</h4>
-            <div className="rounded-2xl overflow-hidden h-[180px] bg-slate-800">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2727.5!2d28.856!3d47.024!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c33b9e0f8e7%3A0x0!2sStrada%20Podgorenilor%2017%2C%20Chi%C8%99in%C4%83u%2C%20Moldova!5e0!3m2!1sro!2s!4v1700000000000!5m2!1sro!2s"
-                width="100%"
-                height="180"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full"
-                title="Western Import - Podgorenilor 17, Chișinău"
-              />
-            </div>
+            <a
+              href="https://www.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-2xl overflow-hidden h-[180px] bg-gradient-to-br from-slate-700 to-slate-800 relative group cursor-pointer"
+            >
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <MapPin className="w-6 h-6 text-primary" />
+                </div>
+                <p className="text-xs font-semibold text-slate-200 mb-1">str. Podgorenilor 17</p>
+                <p className="text-[10px] text-slate-400 mb-3">Chișinău, Moldova</p>
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-semibold group-hover:bg-primary-dark transition-colors">
+                  📍 {t('footer.location')}
+                </span>
+              </div>
+            </a>
           </div>
         </div>
 
