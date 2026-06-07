@@ -91,13 +91,11 @@ export default function Footer() {
             <h4 className="text-slate-100 dark:text-slate-200 text-sm font-bold mb-4">{t('footer.location')}</h4>
             <div className="rounded-2xl overflow-hidden h-[180px] bg-slate-800">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2727.5!2d28.85!3d47.02!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c33b9e0f8e7%3A0x0!2sStrada%20Podgorenilor%2017%2C%20Chi%C8%99in%C4%83u%2C%20Moldova!5e0!3m2!1sro!2s!4v1700000000000!5m2!1sro!2s"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=28.82%2C46.99%2C28.90%2C47.04&layer=mapnik&marker=47.0239%2C28.8561"
                 width="100%"
                 height="180"
                 style={{ border: 0 }}
-                allowFullScreen
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
                 className="w-full"
                 title="Western Import - Podgorenilor 17, Chișinău"
               />

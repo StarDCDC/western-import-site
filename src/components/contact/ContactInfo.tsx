@@ -87,7 +87,7 @@ export default function ContactInfo({ locale }: { locale: string }) {
       {/* Map — OpenStreetMap (no API key needed) */}
       <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-[260px]">
         <iframe
-          src="https://www.openstreetmap.org/export/embed.html?bbox=28.82%2C46.99%2C28.90%2C47.04&layer=mapnik&marker=47.0239%2C28.8561"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=28.845%2C47.02%2C28.867%2C47.028&layer=mapnik&marker=47.024%2C28.856"
           width="100%"
           height="260"
           style={{ border: 0 }}
