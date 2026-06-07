@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -7,19 +6,7 @@ import { getPageContent } from "@/lib/pages";
 import { parseBlocks } from "@/lib/blocks";
 import PageBlocks from "@/components/public/PageBlocks";
 
-export const metadata: Metadata = {
-  title: "Termeni și Condiții",
-  description:
-    "Termenii și condițiile de utilizare a site-ului Western Import. Informații despre comenzi, plată, livrare, returnare și drepturile consumatorului.",
-  alternates: {
-    canonical: "/terms",
-  },
-  openGraph: {
-    title: "Termeni și Condiții — Western Import",
-    description: "Termenii și condițiile de utilizare a site-ului Western Import.",
-  },
-};
-
+// Metadata moved to layout.tsx
 export const dynamic = "force-dynamic";
 
 export default async function TermsPage() {

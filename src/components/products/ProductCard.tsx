@@ -1,7 +1,6 @@
 "use client";
 
 import { Heart, ShoppingCart } from "lucide-react";
-import { motion } from "framer-motion";
 
 export type ProductBadge = "sale" | "new" | "refurb" | null;
 
@@ -42,12 +41,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     : null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-30px" }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 transition-all hover:-translate-y-1 hover:shadow-md hover:border-transparent dark:hover:border-transparent relative overflow-hidden"
+    <div
+      className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-transparent dark:hover:border-transparent relative overflow-hidden"
     >
       {/* Badge */}
       {product.badge && (
@@ -107,6 +102,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <Heart size={15} />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

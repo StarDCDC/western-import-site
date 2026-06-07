@@ -67,16 +67,16 @@ export default function Header() {
           {/* Desktop/Tablet Logo — logo mare */}
           <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
             <div className="h-[44px] w-auto max-w-[180px] overflow-hidden dark:overflow-visible">
-              <Image src="/logo.jpg" alt="Western Import" width={180} height={44} className="h-[44px] w-auto object-contain dark:hidden" priority />
-              <Image src="/logo-dark.jpg" alt="Western Import" width={180} height={44} className="h-[44px] w-auto object-contain hidden dark:block" priority />
+              <Image src="/logo.jpg" alt="Western Import" width={180} height={44} sizes="180px" className="h-[44px] w-auto object-contain dark:hidden" priority />
+              <Image src="/logo-dark.jpg" alt="Western Import" width={180} height={44} sizes="180px" className="h-[44px] w-auto object-contain hidden dark:block" priority />
             </div>
           </Link>
 
           {/* Mobile logo — logo mare compact */}
           <Link href="/" className="sm:hidden shrink-0">
             <div className="h-[34px] w-auto max-w-[140px] overflow-hidden dark:overflow-visible">
-              <Image src="/logo.jpg" alt="Western Import" width={140} height={34} className="h-[34px] w-auto object-contain dark:hidden" />
-              <Image src="/logo-dark.jpg" alt="Western Import" width={140} height={34} className="h-[34px] w-auto object-contain hidden dark:block" />
+              <Image src="/logo.jpg" alt="Western Import" width={140} height={34} sizes="140px" className="h-[34px] w-auto object-contain dark:hidden" />
+              <Image src="/logo-dark.jpg" alt="Western Import" width={140} height={34} sizes="140px" className="h-[34px] w-auto object-contain hidden dark:block" />
             </div>
           </Link>
 
@@ -128,13 +128,14 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className="flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group">
+              <Link href="/login" className="flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group" aria-label="Login">
                 <User className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
               </Link>
             )}
             <Link
               href="/wishlist"
               className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
+              aria-label="Wishlist"
             >
               <Heart className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
               {mounted && wishlistCount > 0 && (
@@ -146,6 +147,7 @@ export default function Header() {
             <button
               onClick={() => setCartOpen(true)}
               className="relative flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
+              aria-label="Shopping cart"
             >
               <ShoppingCart className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
               {mounted && cartCount > 0 && (
@@ -157,6 +159,7 @@ export default function Header() {
             <Link
               href="/contact"
               className="hidden md:flex items-center justify-center px-2 py-1.5 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors group"
+              aria-label="Contact phone"
             >
               <Phone className="w-[18px] h-[18px] text-slate-300 dark:text-slate-600 group-hover:text-sky-400 dark:group-hover:text-primary" />
             </Link>
@@ -177,7 +180,7 @@ export default function Header() {
               <button
                 onClick={toggle}
                 className="p-1.5 rounded-md text-slate-400 hover:bg-white/10 dark:hover:bg-slate-100 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
-                title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
@@ -189,6 +192,7 @@ export default function Header() {
             <button
               onClick={() => setCartOpen(true)}
               className="relative p-2 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100 transition-colors"
+              aria-label="Shopping cart"
             >
               <ShoppingCart className="w-5 h-5 text-slate-300 dark:text-slate-600" />
               {mounted && cartCount > 0 && (
@@ -200,6 +204,7 @@ export default function Header() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl hover:bg-white/10 dark:hover:bg-slate-100"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>

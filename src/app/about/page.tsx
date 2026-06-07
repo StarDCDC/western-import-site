@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -6,19 +5,7 @@ import { getPageContent } from "@/lib/pages";
 import { parseBlocks } from "@/lib/blocks";
 import PageBlocks from "@/components/public/PageBlocks";
 
-export const metadata: Metadata = {
-  title: "Despre Noi",
-  description:
-    "Despre Western Import — povestea, misiunea, valorile și echipa din spatele magazinului de electronică premium din Chișinău.",
-  alternates: {
-    canonical: "/about",
-  },
-  openGraph: {
-    title: "Despre Noi — Western Import",
-    description: "Povestea, misiunea și valorile magazinului de electronică premium din Chișinău.",
-  },
-};
-
+// Metadata moved to layout.tsx
 export const dynamic = "force-dynamic";
 
 export default async function AboutPage() {

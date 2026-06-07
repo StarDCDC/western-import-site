@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -7,19 +6,7 @@ import { parseBlocks } from "@/lib/blocks";
 import PageBlocks from "@/components/public/PageBlocks";
 import { ShieldCheck, Clock, Wrench, Phone, AlertTriangle, CheckCircle } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Garanție",
-  description:
-    "Politica de garanție Western Import. Perioade de garanție, ce acoperă, procedura de service și contact.",
-  alternates: {
-    canonical: "/warranty",
-  },
-  openGraph: {
-    title: "Garanție — Western Import",
-    description: "Politica de garanție Western Import.",
-  },
-};
-
+// Metadata moved to layout.tsx
 export const dynamic = "force-dynamic";
 
 export default async function WarrantyPage() {

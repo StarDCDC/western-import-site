@@ -1,13 +1,8 @@
-import { Metadata } from 'next';
+// Metadata moved to layout.tsx
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ContactForm from '@/components/contact/ContactForm';
 import ContactInfo from '@/components/contact/ContactInfo';
-
-export const metadata: Metadata = {
-  title: 'Contact — Western Import',
-  description: 'Contactează-ne pentru orice întrebare sau comandă.',
-};
 
 export default function ContactPage() {
   return (

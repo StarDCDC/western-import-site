@@ -68,7 +68,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
       <section className="max-w-[1280px] mx-auto px-5 pt-6 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
           <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary-dark to-primary aspect-[16/9] sm:min-h-[420px] flex items-center">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=1200&q=80')] bg-cover bg-center opacity-20" />
+            <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=1200&q=80" alt="" width={1280} height={420} className="absolute inset-0 w-full h-full object-cover opacity-20" aria-hidden="true" />
             <div className="relative z-10 p-6 sm:p-8 md:p-12 text-white max-w-xl">
               <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-sm font-medium mb-4">{t('home.hero.badge')}</span>
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 leading-tight">{t('home.hero.title')}</h1>
@@ -104,7 +104,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
       <section className="max-w-[1280px] mx-auto px-5 pt-6 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
           <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary-dark to-primary aspect-[16/9] sm:min-h-[420px] flex items-center">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=1200&q=80')] bg-cover bg-center opacity-20" />
+            <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=1200&q=80" alt="" width={1280} height={420} className="absolute inset-0 w-full h-full object-cover opacity-20" aria-hidden="true" />
             <div className="relative z-10 p-6 sm:p-8 md:p-12 text-white max-w-xl">
               <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-sm font-medium mb-4">{t('home.hero.badge')}</span>
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 leading-tight">{t('home.hero.title')}</h1>
@@ -164,7 +164,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
               className={`absolute inset-0 ${banner.image ? '' : `bg-gradient-to-br ${banner.gradient || 'from-[#0c3a8f] via-[#1a56db] to-[#2563eb]'}`}`}
             >
               <div className="absolute inset-0 bg-black/30" />
-              {banner.image && <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${banner.image})` }} />}
+              {banner.image && <img src={banner.image} alt={(locale === 'ru' && banner.titleRu) ? banner.titleRu : banner.title} width={1280} height={420} className="absolute inset-0 w-full h-full object-cover" loading={currentSlide === 0 ? 'eager' : 'lazy'} fetchPriority={currentSlide === 0 ? 'high' : undefined} />}
               <div className="relative z-10 h-full flex flex-col justify-center p-6 sm:p-8 md:p-12 text-white">
                 {banner.badge && (
                   <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-4 w-fit shadow-lg">{banner.badge}</span>
@@ -204,7 +204,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
         <div className="hidden lg:flex flex-col gap-4">
           {displayPromos.map((promo) => (
             <div key={promo.id} className="flex-1 rounded-2xl overflow-hidden relative min-h-[190px] cursor-pointer hover:scale-[1.02] transition-transform group" onClick={() => router.push(promo.link)}>
-              {promo.image ? <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${promo.image})` }} /> : <div className={`absolute inset-0 bg-gradient-to-br ${promo.gradient}`} />}
+              {promo.image ? <img src={promo.image} alt={promo.title} width={340} height={190} className="absolute inset-0 w-full h-full object-cover" loading="lazy" /> : <div className={`absolute inset-0 bg-gradient-to-br ${promo.gradient}`} />}
               <div className="absolute inset-0 bg-black/30" />
               <div className="relative z-10 h-full p-5 flex flex-col justify-between text-white">
                 <div><p className="text-xs font-medium opacity-80 mb-1 drop-shadow-md">{promo.subtitle}</p><h3 className="text-base font-bold leading-snug line-clamp-2 drop-shadow-lg">{promo.title}</h3></div>

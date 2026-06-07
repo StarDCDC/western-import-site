@@ -27,7 +27,7 @@ export default function Footer() {
           {/* Brand + Social */}
           <div>
             <div className="mb-4">
-              <Image src="/logo-footer.jpg" alt="Western Import" width={180} height={50} className="h-10 w-auto object-contain" priority />
+              <Image src="/logo-footer.jpg" alt="Western Import" width={180} height={50} sizes="180px" className="h-10 w-auto object-contain" loading="lazy" />
             </div>
             <p className="text-sm leading-relaxed mb-4">
               {t('footer.description')}

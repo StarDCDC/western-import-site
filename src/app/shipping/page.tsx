@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -8,19 +7,7 @@ import { parseBlocks } from "@/lib/blocks";
 import PageBlocks from "@/components/public/PageBlocks";
 import { Truck, RotateCcw, Package, Clock, ShieldCheck, MapPin } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Livrare și Returnare",
-  description:
-    "Informații despre livrarea și returnarea produselor Western Import. Curier Chișinău, livrare națională, ridicare din magazin.",
-  alternates: {
-    canonical: "/shipping",
-  },
-  openGraph: {
-    title: "Livrare și Returnare — Western Import",
-    description: "Informații livrare și returnare produse Western Import.",
-  },
-};
-
+// Metadata moved to layout.tsx
 export const dynamic = "force-dynamic";
 
 export default async function ShippingPage() {
