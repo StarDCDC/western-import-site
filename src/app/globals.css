@@ -3,27 +3,35 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Premium Tech Palette */
-  --color-primary: #2563EB;
-  --color-primary-dark: #1D4ED8;
+  /* Primary Brand */
+  --color-primary: #1E40AF;
+  --color-primary-dark: #1E3A8A;
   --color-primary-light: #3B82F6;
-  --color-accent: #DC2626;
+  --color-accent: #B91C1C;
   --color-accent-light: #FCA5A5;
-  --color-topbar: #0F1115;
+  --color-topbar: #0F172A;
 
-  /* Dark mode premium surfaces */
+  /* ─── Light Mode Premium ─── */
+  --color-light-bg: #F5F6F8;
+  --color-light-surface: #FFFFFF;
+  --color-light-elevated: #FFFFFF;
+  --color-light-border: rgba(0, 0, 0, 0.05);
+  --color-light-text: #1E293B;
+  --color-light-muted: #64748B;
+
+  /* ─── Dark Mode Premium ─── */
   --color-dark-bg: #0F1115;
   --color-dark-surface: #1A1D23;
   --color-dark-elevated: #252830;
   --color-dark-border: rgba(255, 255, 255, 0.06);
 
   /* Status */
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
+  --color-success: #059669;
+  --color-warning: #D97706;
   --color-info: #6366F1;
 
-  /* Amber for premium */
-  --color-premium: #D97706;
+  /* Premium amber */
+  --color-premium: #B45309;
   --color-premium-light: #FDE68A;
 }
 
@@ -32,7 +40,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Interactive elements show the pointer cursor */
+/* Interactive elements */
 button:not(:disabled),
 [role="button"]:not(:disabled),
 label[for],
@@ -43,7 +51,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Custom scrollbar — premium thin */
+/* ─── Premium Scrollbar ─── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -52,17 +60,17 @@ button:disabled {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #CBD5E1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #94A3B8;
 }
 .dark ::-webkit-scrollbar-thumb {
   background: #374151;
 }
 
-/* Brand carousel animation */
+/* ─── Brand Carousel ─── */
 @keyframes scroll-left {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -71,7 +79,7 @@ button:disabled {
   animation: scroll-left 30s linear infinite;
 }
 
-/* Focus styles for accessibility */
+/* ─── Accessibility Focus ─── */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
@@ -81,36 +89,76 @@ button:disabled {
   outline: none;
 }
 
-/* Premium Button Glow */
+/* ─── Premium Card System ─── */
+.card-premium {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-premium:hover {
+  transform: translateY(-4px);
+  border-color: rgba(30, 64, 175, 0.12);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(30, 64, 175, 0.04);
+}
+.dark .card-premium {
+  background: rgba(26, 29, 35, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+}
+.dark .card-premium:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+/* ─── Button Glow Effects ─── */
 .btn-glow {
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(30, 64, 175, 0.15);
 }
-.btn-glow::after {
+.btn-glow:hover {
+  box-shadow: 0 4px 20px rgba(30, 64, 175, 0.25), 0 1px 4px rgba(30, 64, 175, 0.15);
+}
+.btn-glow:active {
+  transform: scale(0.97);
+}
+.dark .btn-glow {
+  box-shadow: none;
+}
+.dark .btn-glow::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
   opacity: 0;
   transition: opacity 0.3s ease;
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.4), 0 0 40px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   pointer-events: none;
 }
-.btn-glow:hover::after {
+.dark .btn-glow:hover::after {
   opacity: 1;
 }
-.btn-glow:active {
-  transform: scale(0.97);
-}
 
-/* Accent CTA glow */
 .btn-accent-glow {
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(185, 28, 28, 0.15);
 }
-.btn-accent-glow::after {
+.btn-accent-glow:hover {
+  box-shadow: 0 4px 20px rgba(185, 28, 28, 0.2);
+}
+.btn-accent-glow:active {
+  transform: scale(0.97);
+}
+.dark .btn-accent-glow {
+  box-shadow: none;
+}
+.dark .btn-accent-glow::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -120,39 +168,21 @@ button:disabled {
   box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
   pointer-events: none;
 }
-.btn-accent-glow:hover::after {
+.dark .btn-accent-glow:hover::after {
   opacity: 1;
 }
-.btn-accent-glow:active {
-  transform: scale(0.97);
-}
 
-/* Product card micro-border + glassmorphism */
-.card-premium {
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-}
-.dark .card-premium {
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(26, 29, 35, 0.8);
-  backdrop-filter: blur(12px);
-}
-.card-premium:hover {
-  border-color: rgba(37, 99, 235, 0.2);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(37, 99, 235, 0.06);
-}
-.dark .card-premium:hover {
-  border-color: rgba(37, 99, 235, 0.3);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(37, 99, 235, 0.1);
-}
-
-/* Badge premium styling */
+/* ─── Badge System ─── */
 .badge-certified {
+  background: linear-gradient(135deg, rgba(180, 83, 9, 0.08) 0%, rgba(180, 83, 9, 0.03) 100%);
+  border: 1px solid rgba(180, 83, 9, 0.15);
+}
+.dark .badge-certified {
   background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
   border: 1px solid rgba(217, 119, 6, 0.2);
 }
 
-/* Image hover crossfade */
+/* ─── Image Crossfade ─── */
 .img-crossfade {
   position: relative;
   overflow: hidden;
@@ -175,7 +205,7 @@ button:disabled {
   opacity: 1;
 }
 
-/* Urgency pulse */
+/* ─── Urgency ─── */
 @keyframes urgency-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
@@ -184,19 +214,29 @@ button:disabled {
   animation: urgency-pulse 2s ease-in-out infinite;
 }
 
-/* Shimmer loading effect */
+/* ─── Shimmer Loading ─── */
 @keyframes shimmer {
   0% { background-position: -200px 0; }
   100% { background-position: calc(200px + 100%) 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(90deg, #F1F5F9 25%, #E8ECF1 50%, #F1F5F9 75%);
   background-size: 200px 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 .dark .shimmer {
   background: linear-gradient(90deg, #1A1D23 25%, #252830 50%, #1A1D23 75%);
   background-size: 200px 100%;
+}
+
+/* ─── Section Dividers — ambient, no hard lines ─── */
+.section-divider {
+  border: none;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.04);
+}
+.dark .section-divider {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 @media (max-width: 640px) {

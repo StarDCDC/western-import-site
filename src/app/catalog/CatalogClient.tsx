@@ -463,7 +463,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     // LIST MODE — horizontal card: image left, text+price right
     if (listMode) {
       return (
-        <div className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl hover:shadow-md transition-all relative flex flex-row gap-0 overflow-hidden">
+        <div className="card-premium rounded-2xl relative flex flex-row gap-0 overflow-hidden">
           {/* Badge */}
           <span className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[11px] font-bold text-white z-10 ${badgeClass}`}>
             {discount ? `${t('catalog.discount')} -${discount}%` : badgeText}
@@ -534,7 +534,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
     // GRID MODE — original card layout
     return (
       <div
-        className="bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all relative flex flex-row sm:flex-col gap-2 sm:gap-0"
+        className="card-premium rounded-2xl p-2 sm:p-4 relative flex flex-row sm:flex-col gap-2 sm:gap-0"
       >
         {/* Badge */}
         <span className={`absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-2 rounded text-[9px] sm:text-[11px] font-bold text-white z-10 ${badgeClass}`}>
