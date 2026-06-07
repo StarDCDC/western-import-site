@@ -466,7 +466,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                       {sp.oldPrice && (
                         <span className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 rounded-md">{locale === 'ru' ? 'СКИДКА' : 'REDUCERE'}</span>
                       )}
-                      <Link href={`/product/${sp.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
+                      <Link href={`/product/${sp.id}`} prefetch={false} className="flex-shrink-0 w-[100px] sm:w-full">
                         {(() => {
                           const imgs = Array.isArray(sp.images) ? sp.images : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (() => { let s = (sp.images as string).trim(); if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } } return s.split(',').map((u: string) => u.trim()).filter((u: string) => u.startsWith('http') || u.startsWith('/')); })() : []);
                           const hasSecond = Array.isArray(imgs) && imgs.length > 1;
@@ -524,7 +524,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                   const imgUrl = Array.isArray(sp.images) ? sp.images[0] : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (sp.images as string).split(',')[0] : null);
                   return (
                     <div key={`sim-${sp.id}-${i}`} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-2 sm:p-4 hover:-translate-y-1 hover:shadow-md transition-all flex flex-row sm:flex-col gap-2 sm:gap-0 relative">
-                      <Link href={`/product/${sp.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
+                      <Link href={`/product/${sp.id}`} prefetch={false} className="flex-shrink-0 w-[100px] sm:w-full">
                         {(() => {
                           const imgs = Array.isArray(sp.images) ? sp.images : ((typeof (sp.images as string | string[]) === 'string') && (sp.images as string).length > 0 ? (() => { let s = (sp.images as string).trim(); if (s.startsWith('[')) { try { return JSON.parse(s); } catch { return []; } } return s.split(',').map((u: string) => u.trim()).filter((u: string) => u.startsWith('http') || u.startsWith('/')); })() : []);
                           const hasSecond = Array.isArray(imgs) && imgs.length > 1;
@@ -547,7 +547,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                         })()}
                       </Link>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <Link href={`/product/${sp.id}`}><h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4></Link>
+                        <Link href={`/product/${sp.id}`} prefetch={false}><h4 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white line-clamp-2 sm:line-clamp-1">{sp.name}</h4></Link>
                         <p className="hidden sm:block text-xs text-slate-500 mt-1">{sp.specs?.procesor || ""}</p>
                         <div className="flex-1 min-h-1" />
                         <div className="flex items-center justify-between mt-1 sm:mt-2">

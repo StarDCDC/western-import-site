@@ -92,7 +92,7 @@ function ProductCard({ product }: { product: Product }) {
       </button>
 
       {/* Image */}
-      <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[110px] sm:w-full">
+      <Link href={`/product/${product.id}`} prefetch={false} className="flex-shrink-0 w-[110px] sm:w-full">
         {/* Mobile: fixed width square, Desktop: full width aspect ratio */}
         <div className="relative w-[110px] h-[110px] sm:w-full sm:aspect-[4/3] sm:h-auto overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50">
           {imageUrl ? (
@@ -126,7 +126,7 @@ function ProductCard({ product }: { product: Product }) {
 
       {/* Content — right side on mobile, below on desktop */}
       <div className="flex flex-col flex-1 min-w-0 sm:mt-3">
-        <Link href={`/product/${product.id}`}>
+        <Link href={`/product/${product.id}`} prefetch={false}>
           <h3 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-0.5 sm:mb-1 line-clamp-2 hover:text-primary transition-colors">
             {product.name}
           </h3>

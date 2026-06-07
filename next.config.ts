@@ -36,6 +36,14 @@ const nextConfig: NextConfig = {
 
   allowedDevOrigins: ['172.25.17.179', 'localhost'],
   devIndicators: false,
+  // Reduce prefetch requests — only prefetch on hover, not on scroll
+  experimental: {
+    optimizeCss: false,
+  staleTimes: {
+      dynamic: 30,
+      static: 300,
+    },
+  },
   // removed — conflicts with Turbopack path resolution
   images: {
     remotePatterns: [

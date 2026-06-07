@@ -109,7 +109,7 @@ export default function RecentlyViewed() {
                   transition={{ delay: index * 0.04 }}
                   className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
-                  <Link href={`/product/${product.id}`}>
+                  <Link href={`/product/${product.id}`} prefetch={false}>
                     <div className="flex items-center justify-center aspect-square mb-2 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden group/img relative">
                       {(() => {
                         let imgs: string[] = [];
@@ -157,7 +157,7 @@ export default function RecentlyViewed() {
                       })()}
                     </div>
                   </Link>
-                  <Link href={`/product/${product.id}`}>
+                  <Link href={`/product/${product.id}`} prefetch={false}>
                     <h4 className="text-xs font-semibold text-slate-800 dark:text-white line-clamp-2 leading-snug mb-1">
                       {product.name}
                     </h4>

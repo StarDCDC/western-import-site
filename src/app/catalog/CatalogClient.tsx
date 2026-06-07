@@ -470,7 +470,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           </span>
 
           {/* Image — left side, fixed width */}
-          <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[200px] sm:w-[240px]">
+          <Link href={`/product/${product.id}`} prefetch={false} className="flex-shrink-0 w-[200px] sm:w-[240px]">
             <div className="relative w-full h-full min-h-[160px] overflow-hidden bg-slate-50 dark:bg-slate-700/50 group/img">
               {imgUrl ? (
                 <>
@@ -503,7 +503,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
           {/* Content — right side */}
           <div className="flex flex-col flex-1 min-w-0 p-4 sm:p-5">
-            <Link href={`/product/${product.id}`}>
+            <Link href={`/product/${product.id}`} prefetch={false}>
               <h3 className="text-sm sm:text-base font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2">{product.name}</h3>
             </Link>
             <p className="text-xs text-slate-500 mb-2 line-clamp-1">{product.specs?.procesor}{product.specs?.display ? `, ${product.specs.display}` : ''}</p>
@@ -542,7 +542,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
         </span>
 
         {/* Image — fixed size square on mobile, full width on desktop */}
-        <Link href={`/product/${product.id}`} className="flex-shrink-0 w-[100px] sm:w-full">
+        <Link href={`/product/${product.id}`} prefetch={false} className="flex-shrink-0 w-[100px] sm:w-full">
           <div className="relative w-[100px] h-[100px] sm:w-full sm:aspect-[4/3] sm:h-auto overflow-hidden rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 mb-0 sm:mb-3 group/img">
             {imgUrl ? (
               <>
@@ -575,7 +575,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
         {/* Content — right side on mobile, below on desktop */}
         <div className="flex flex-col flex-1 min-w-0 sm:mt-0">
-          <Link href={`/product/${product.id}`}>
+          <Link href={`/product/${product.id}`} prefetch={false}>
             <h3 className="text-[11px] sm:text-sm font-semibold text-slate-800 dark:text-white leading-snug mb-0.5 sm:mb-1 line-clamp-2">{product.name}</h3>
           </Link>
           <p className="hidden sm:block text-xs text-slate-500 mb-1 sm:mb-2 line-clamp-1">{product.specs?.procesor}{product.specs?.display ? `, ${product.specs.display}` : ''}</p>
