@@ -67,7 +67,7 @@ export default function Footer() {
           <div>
             <h4 className="text-slate-100 dark:text-slate-200 text-sm font-bold mb-4">{t('footer.payment')}</h4>
             {/* Payment — official brand logos */}
-            <div className="flex gap-3 flex-wrap items-center justify-center mb-5">
+            <div className="flex gap-3 flex-wrap items-center justify-start mb-5">
               <img src="/payment-visa.jpg" alt="Visa" width={56} height={35} className="h-8 w-auto rounded" />
               <img src="/payment-mastercard.png" alt="Mastercard" width={56} height={35} className="h-8 w-auto" />
               <img src="/payment-applepay.png" alt="Apple Pay" width={56} height={35} className="h-8 w-auto rounded-lg" />
@@ -93,15 +93,11 @@ export default function Footer() {
               href="https://www.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova"
               target="_blank"
               rel="noopener noreferrer"
-              className="block rounded-2xl overflow-hidden h-[180px] bg-gradient-to-br from-slate-700 to-slate-800 relative group cursor-pointer"
+              className="block rounded-2xl overflow-hidden h-[180px] relative group cursor-pointer"
             >
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <MapPin className="w-6 h-6 text-primary" />
-                </div>
-                <p className="text-xs font-semibold text-slate-200 mb-1">str. Podgorenilor 17</p>
-                <p className="text-[10px] text-slate-400 mb-3">Chișinău, Moldova</p>
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-semibold group-hover:bg-primary-dark transition-colors">
+              <img src="/map-location.png" alt="Western Import" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end justify-center pb-3">
+                <span className="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
                   📍 {t('footer.location')}
                 </span>
               </div>

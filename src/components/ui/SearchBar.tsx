@@ -3,6 +3,7 @@
 
 import { Search, X, Loader2 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useLanguage } from '@/components/ui/LanguageProvider';
 import { formatPrice } from '@/lib/api';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +23,8 @@ interface SearchResult {
 }
 
 export default function SearchBar() {
+  const { locale } = useLanguage();
+  const isRu = locale === 'ru';
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -138,7 +141,7 @@ export default function SearchBar() {
         <input
           ref={inputRef}
           type="text"
-          placeholder="Caută laptopuri, telefoane, accesorii..."
+          placeholder={isRu ? "Поиск ноутбуков, телефонов, аксессуаров..." : "Caută laptopuri, telefoane, accesorii..."}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length >= 2 && setOpen(true)}
@@ -231,14 +234,14 @@ export default function SearchBar() {
                     onClick={closeDropdown}
                     className="block px-4 py-3 text-center text-sm font-semibold text-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 border-t border-slate-100 dark:border-slate-700 transition-colors"
                   >
-                    Vezi toate cele {total} rezultate →
+                    {isRu ? `Все ${total} результатов →` : `Vezi toate cele ${total} rezultate →`}
                   </Link>
                 )}
               </>
             ) : (
               <div className="px-4 py-6 text-sm text-slate-500 text-center">
                 <Search className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                Niciun rezultat pentru &ldquo;{query}&rdquo;
+                {isRu ? `Ничего не найдено для "${query}"` : `Niciun rezultat pentru \u201C${query}\u201D`}
               </div>
             )}
           </motion.div>

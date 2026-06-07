@@ -84,21 +84,17 @@ export default function ContactInfo({ locale }: { locale: string }) {
         )}
       </div>
 
-      {/* Map — static card + link */}
+      {/* Map — static image + Google Maps link */}
       <a
         href="https://www.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova"
         target="_blank"
         rel="noopener noreferrer"
-        className="block rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-[260px] bg-gradient-to-br from-emerald-50 to-sky-50 dark:from-slate-800 dark:to-slate-700 relative group cursor-pointer"
+        className="block rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-[260px] relative group cursor-pointer"
       >
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-            <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-          </div>
-          <p className="text-sm font-bold text-slate-800 dark:text-white mb-1">Western Import</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">str. Podgorenilor 17, Chișinău</p>
-          <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold group-hover:bg-primary-dark transition-colors">
-            📍 {isRu ? 'Открыть карту' : 'Deschide harta'}
+        <img src="/map-location.png" alt="Western Import — str. Podgorenilor 17, Chișinău" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end justify-center pb-4">
+          <span className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+            📍 {isRu ? 'Открыть в Google Maps' : 'Deschide în Google Maps'}
           </span>
         </div>
       </a>
