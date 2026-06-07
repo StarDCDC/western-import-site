@@ -36,7 +36,7 @@ function ProductCard({ product }: { product: Product }) {
     ? t('product.nou')
     : discount
     ? `-${discount}%`
-    : t('product.refurbished');
+    : 'Grade A+';
 
   const badgeClass = product.condition === 'nou'
     ? 'bg-emerald-500'
@@ -167,7 +167,7 @@ function ProductCard({ product }: { product: Product }) {
         <div className="flex gap-1.5 sm:gap-2">
           <button
             onClick={() => addToCart(product)}
-            className="flex-1 bg-primary hover:bg-primary-dark text-white py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-colors flex items-center justify-center gap-1"
+            className="btn-glow flex-1 bg-primary hover:bg-primary-dark text-white py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all flex items-center justify-center gap-1"
           >
             <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t('product.addToCart')}
           </button>

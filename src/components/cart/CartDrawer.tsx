@@ -118,14 +118,14 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 <Link
                   href={isRu ? "/ru/cart" : "/cart"}
                   onClick={onClose}
-                  className="block w-full bg-primary text-white text-center py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors"
+                  className="block w-full bg-primary text-white text-center py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all"
                 >
                   {txt.viewCart}
                 </Link>
                 <Link
                   href={isRu ? "/ru/checkout" : "/checkout"}
                   onClick={onClose}
-                  className="block w-full bg-accent text-white text-center py-3 rounded-xl font-semibold hover:bg-red-700 transition-colors"
+                  className="btn-accent-glow block w-full bg-accent text-white text-center py-3 rounded-lg font-semibold hover:bg-red-700 transition-all"
                 >
                   {txt.checkout}
                 </Link>

@@ -966,7 +966,7 @@ export default function CheckoutPage({ forceLocale }: { forceLocale?: string }) 
                   <button
                     type="submit"
                     disabled={step === 'loading'}
-                    className="w-full bg-accent text-white py-3 rounded-xl font-semibold mt-4 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="btn-accent-glow w-full bg-accent text-white py-3 rounded-lg font-semibold mt-4 hover:bg-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {step === 'loading' ? (
                       <>

@@ -319,7 +319,7 @@ export default function ProductClient({ product, similar }: { product: Product; 
                 </div>
                 <button
                   onClick={() => { for (let i = 0; i < qty; i++) addToCart(product); }}
-                  className="flex-1 bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+                  className="btn-glow flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-4 h-4" /> {locale === 'ru' ? 'В корзину' : 'Adaugă în coș'}
                 </button>
