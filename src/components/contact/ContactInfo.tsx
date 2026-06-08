@@ -84,20 +84,19 @@ export default function ContactInfo({ locale }: { locale: string }) {
         )}
       </div>
 
-      {/* Map — static image + Google Maps link */}
-      <a
-        href="https://www.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block rounded-2xl overflow-hidden border border-slate-200 dark:border-white/[0.06] h-[260px] relative group cursor-pointer"
-      >
-        <img src="/map-location.png" alt="Western Import — str. Podgorenilor 17, Chișinău" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end justify-center pb-4">
-          <span className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-            📍 {isRu ? 'Открыть в Google Maps' : 'Deschide în Google Maps'}
-          </span>
-        </div>
-      </a>
+      {/* Map — Google Maps embedded */}
+      <div className="rounded-2xl overflow-hidden border border-black/[0.04] dark:border-white/[0.06] h-[260px]">
+        <iframe
+          src="https://maps.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova&t=&z=15&ie=UTF8&iwloc=&output=embed"
+          width="100%"
+          height="260"
+          style={{ border: 0 }}
+          allowFullScreen={false}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Western Import — Strada Podgorenilor 17, Chișinău"
+        />
+      </div>
     </div>
   );
 }
