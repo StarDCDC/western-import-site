@@ -26,7 +26,7 @@ export default async function HomePage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-slate-50 dark:bg-[var(--color-dark-bg)] min-h-screen">
+      <main className="flex-1 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] min-h-screen">
         <HeroSection initialBanners={banners} />
         <CategorySlider initialCategories={categories} />
         <FeaturesBar />

@@ -82,13 +82,13 @@ function ProductCard({ product }: { product: Product }) {
           if (isInWishlist(product.id)) removeWishlist(product.id);
           else toggleWishlist(product);
         }}
-        className={`hidden sm:block absolute top-3 right-3 z-10 p-1.5 rounded-lg transition-colors ${
+        className={`hidden sm:block absolute top-3 right-3 z-10 p-1.5 rounded-lg transition-all duration-200 ${
           isInWishlist(product.id)
-            ? 'bg-red-50 dark:bg-red-900/30 text-red-500'
-            : 'bg-white/80 dark:bg-slate-700/80 text-slate-400 hover:text-red-500'
+            ? 'bg-rose-50 dark:bg-red-900/30 text-rose-500'
+            : 'bg-white/90 dark:bg-slate-700/80 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-red-900/20'
         }`}
       >
-        <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-red-500' : ''}`} />
+        <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-rose-500' : ''}`} />
       </button>
 
       {/* Image */}
@@ -149,14 +149,14 @@ function ProductCard({ product }: { product: Product }) {
 
         {/* Price */}
         <div className="flex items-baseline gap-1 sm:gap-2 mb-1.5 sm:mb-3">
-          <span className="text-xs sm:text-lg font-extrabold text-primary-dark dark:text-blue-400">
+          <span className="text-xs sm:text-lg font-extrabold text-slate-900 dark:text-blue-300">
             {formatPrice(product.price)}
           </span>
           {product.oldPrice && (
             <span className="text-[10px] sm:text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>
           )}
           {discount && (
-            <span className="text-[9px] sm:text-[11px] text-amber-600 font-bold bg-amber-50 dark:bg-amber-900/20 px-1 py-0.5 rounded">
+            <span className="text-[9px] sm:text-[11px] text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-900/20 px-1 py-0.5 rounded">
               -{discount}%
             </span>
           )}
@@ -167,7 +167,7 @@ function ProductCard({ product }: { product: Product }) {
         <div className="flex gap-1.5 sm:gap-2">
           <button
             onClick={() => addToCart(product)}
-            className="btn-glow flex-1 bg-primary hover:bg-primary-dark text-white py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all flex items-center justify-center gap-1"
+            className="btn-glow flex-1 bg-primary hover:bg-primary-dark text-white py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-1 shadow-sm hover:shadow-md"
           >
             <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t('product.addToCart')}
           </button>
@@ -176,13 +176,13 @@ function ProductCard({ product }: { product: Product }) {
               if (isInWishlist(product.id)) removeWishlist(product.id);
               else toggleWishlist(product);
             }}
-            className={`p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl border transition-colors ${
+            className={`p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl border transition-all duration-200 ${
               isInWishlist(product.id)
-                ? 'border-red-300 text-red-500 bg-red-50 dark:bg-red-900/20'
-                : 'border-slate-200 dark:border-white/[0.08] text-slate-400 hover:text-red-500 hover:border-red-300'
+                ? 'border-rose-300 dark:border-rose-500/30 text-rose-500 bg-rose-50 dark:bg-rose-900/20'
+                : 'border-slate-100 dark:border-white/[0.08] text-slate-400 hover:text-rose-500 hover:border-rose-200 dark:hover:border-rose-500/30'
             }`}
           >
-            <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? 'fill-red-500' : ''}`} />
+            <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? 'fill-rose-500' : ''}`} />
           </button>
         </div>
       </div>

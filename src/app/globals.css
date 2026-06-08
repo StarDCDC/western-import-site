@@ -15,9 +15,11 @@
   --color-light-bg: #F5F6F8;
   --color-light-surface: #FFFFFF;
   --color-light-elevated: #FFFFFF;
-  --color-light-border: rgba(0, 0, 0, 0.05);
+  --color-light-border: rgba(0, 0, 0, 0.06);
+  --color-light-border-strong: rgba(0, 0, 0, 0.10);
   --color-light-text: #1E293B;
-  --color-light-muted: #64748B;
+  --color-light-text-secondary: #64748B;
+  --color-light-text-muted: #94A3B8;
 
   /* ─── Dark Mode Premium ─── */
   --color-dark-bg: #0F1115;
@@ -33,6 +35,11 @@
   /* Premium amber */
   --color-premium: #B45309;
   --color-premium-light: #FDE68A;
+
+  /* ─── Warm Accent (Premium feel) ─── */
+  --color-warm-accent: #F59E0B;
+  --color-warm-accent-bg: #FFFBEB;
+  --color-warm-accent-border: #FDE68A;
 }
 
 /* Smooth scrolling */
@@ -92,14 +99,14 @@ button:disabled {
 /* ─── Premium Card System ─── */
 .card-premium {
   background: #FFFFFF;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(0, 0, 0, 0.02);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card-premium:hover {
   transform: translateY(-4px);
-  border-color: rgba(30, 64, 175, 0.12);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(30, 64, 175, 0.04);
+  border-color: rgba(30, 64, 175, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(30, 64, 175, 0.04);
 }
 .dark .card-premium {
   background: rgba(26, 29, 35, 0.8);
@@ -111,6 +118,79 @@ button:disabled {
   transform: translateY(-4px);
   border-color: rgba(59, 130, 246, 0.25);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+/* ─── Premium Section Card (checkouts, forms) ─── */
+.card-section {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+.dark .card-section {
+  background: var(--color-dark-surface);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Premium Input Focus Ring ─── */
+.input-premium {
+  background: #F8FAFC;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.input-premium::placeholder {
+  color: #94A3B8;
+}
+.input-premium:focus {
+  background: #FFFFFF;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+.dark .input-premium {
+  background: var(--color-dark-elevated);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+.dark .input-premium::placeholder {
+  color: #64748B;
+}
+.dark .input-premium:focus {
+  background: var(--color-dark-elevated);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ─── Premium Tab Selector ─── */
+.tab-active {
+  background: rgba(30, 64, 175, 0.08);
+  color: #1E40AF;
+  border: 1px solid rgba(30, 64, 175, 0.15);
+  font-weight: 600;
+}
+.dark .tab-active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93C5FD;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+.tab-inactive {
+  background: #F8FAFC;
+  color: #64748B;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.dark .tab-inactive {
+  background: var(--color-dark-elevated);
+  color: #94A3B8;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.tab-inactive:hover {
+  background: #F1F5F9;
+  color: #334155;
+}
+.dark .tab-inactive:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #CBD5E1;
 }
 
 /* ─── Button Glow Effects ─── */

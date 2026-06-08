@@ -340,7 +340,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           placeholder={t('catalog.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="w-full py-2 px-3 rounded-lg border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-sm focus:outline-none focus:border-primary"
+          className="w-full py-2 px-3 rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[var(--color-dark-elevated)] text-sm focus:outline-none focus:border-primary"
         />
       </FilterSection>
 
@@ -649,7 +649,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               <select
                 value={perPage}
                 onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
-                className="px-3 py-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl text-sm font-medium focus:outline-none focus:border-primary"
+                className="px-3 py-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] rounded-xl text-sm font-medium focus:outline-none focus:border-primary"
               >
                 {[20, 24, 28].map(n => (
                   <option key={n} value={n}>{n}</option>
@@ -657,7 +657,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               </select>
 
               {/* View mode toggle */}
-              <div className="hidden sm:flex items-center bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl overflow-hidden">
+              <div className="hidden sm:flex items-center bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] rounded-xl overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-slate-400 hover:text-primary'}`}
@@ -675,14 +675,14 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               </div>
 
               <div className="relative">
-                <button onClick={() => setShowSortDropdown(!showSortDropdown)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl text-sm font-medium hover:border-primary transition-colors">
+                <button onClick={() => setShowSortDropdown(!showSortDropdown)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] rounded-xl text-sm font-medium hover:border-primary transition-colors">
                   <ArrowUpDown className="w-4 h-4" />
                   <span className="hidden sm:inline">{SORT_OPTIONS.find(o => o.val === sort) ? t(SORT_OPTIONS.find(o => o.val === sort)!.labelKey) : t('catalog.popular')}</span>
                   <ChevronDown className="w-3 h-3" />
                 </button>
                 <AnimatePresence>
                   {showSortDropdown && (
-                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="absolute right-0 top-full mt-1 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl shadow-lg z-20 py-1 min-w-[200px]">
+                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="absolute right-0 top-full mt-1 bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] rounded-xl shadow-lg z-20 py-1 min-w-[200px]">
                       {SORT_OPTIONS.map((opt) => (
                         <button key={opt.val} onClick={() => { setSort(opt.val); setPage(1); setShowSortDropdown(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${sort === opt.val ? 'text-primary font-semibold' : 'text-slate-600 dark:text-slate-300'}`}>
                           {t(opt.labelKey)}
@@ -693,7 +693,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
                 </AnimatePresence>
               </div>
 
-              <button onClick={() => setMobileFilters(true)} className="lg:hidden flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 shrink-0">
+              <button onClick={() => setMobileFilters(true)} className="lg:hidden flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 shrink-0">
                 <SlidersHorizontal className="w-4 h-4 shrink-0" /> <span className="hidden xs:inline shrink-0">{locale === 'ru' ? 'Фильтры' : 'Filtre'}</span>
                 {hasActiveFilters && (
                   <span className="min-w-[18px] h-[18px] bg-primary text-white text-[10px] rounded-full flex items-center justify-center font-bold px-1 shrink-0">
@@ -745,7 +745,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
           <div className="flex gap-6">
             <aside className="hidden lg:block w-64 shrink-0">
-              <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-slate-200 dark:border-white/[0.06] sticky top-24">
+              <div className="bg-white dark:bg-[var(--color-dark-elevated)] rounded-2xl p-5 border border-black/[0.04] dark:border-white/[0.06] sticky top-24">
                 {FilterSidebar()}
               </div>
             </aside>
@@ -780,7 +780,7 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
               {loading ? (
                 <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col gap-4 list-mode"}>
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className={`bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] rounded-2xl animate-pulse ${viewMode === 'list' ? 'h-[160px]' : 'p-4'}`}>
+                    <div key={i} className={`bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl animate-pulse ${viewMode === 'list' ? 'h-[160px]' : 'p-4'}`}>
                       {viewMode === 'list' ? (
                         <div className="flex h-full">
                           <div className="w-[200px] bg-slate-200 dark:bg-slate-700" />
@@ -821,19 +821,19 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
 
               {totalPages > 1 && !loading && (
                 <div className="flex justify-center items-center gap-1.5 mt-8">
-                  <button onClick={() => { setPage(Math.max(1, page - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === 1} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:border-primary">
+                  <button onClick={() => { setPage(Math.max(1, page - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === 1} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:border-primary">
                     ‹
                   </button>
                   {getPageNumbers().map((p, i) =>
                     typeof p === 'string' ? (
                       <span key={`dots-${i}`} className="px-2 text-slate-400">…</span>
                     ) : (
-                      <button key={p} onClick={() => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`w-10 h-10 rounded-xl font-semibold text-sm transition-colors ${page === p ? 'bg-primary text-white' : 'bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:border-primary'}`}>
+                      <button key={p} onClick={() => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`w-10 h-10 rounded-xl font-semibold text-sm transition-colors ${page === p ? 'bg-primary text-white' : 'bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:border-primary'}`}>
                         {p}
                       </button>
                     )
                   )}
-                  <button onClick={() => { setPage(Math.min(totalPages, page + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === totalPages} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-[var(--color-dark-elevated)] border border-slate-200 dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:border-primary">
+                  <button onClick={() => { setPage(Math.min(totalPages, page + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === totalPages} className="w-10 h-10 rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 bg-white dark:bg-[var(--color-dark-elevated)] border border-black/[0.04] dark:border-white/[0.06] text-slate-600 dark:text-slate-300 hover:border-primary">
                     ›
                   </button>
                 </div>
