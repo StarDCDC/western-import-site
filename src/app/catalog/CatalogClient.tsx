@@ -470,8 +470,8 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           </span>
 
           {/* Image — left side, fixed width */}
-          <Link href={`/product/${product.id}`} prefetch={false} className="flex-shrink-0 w-[200px] sm:w-[240px]">
-            <div className="relative w-full h-full min-h-[160px] overflow-hidden bg-slate-50 dark:bg-slate-700/50 group/img">
+          <Link href={`/product/${product.id}`} prefetch={false} className="flex-shrink-0 w-[110px] sm:w-[200px] lg:w-[240px]">
+            <div className="relative w-full h-full min-h-[120px] sm:min-h-[160px] overflow-hidden bg-slate-50 dark:bg-slate-700/50 group/img">
               {imgUrl ? (
                 <>
                   <img
@@ -502,28 +502,28 @@ function CatalogContent({ initial }: { initial: CatalogInitial }) {
           </Link>
 
           {/* Content — right side */}
-          <div className="flex flex-col flex-1 min-w-0 p-4 sm:p-5">
+          <div className="flex flex-col flex-1 min-w-0 p-3 sm:p-5">
             <Link href={`/product/${product.id}`} prefetch={false}>
-              <h3 className="text-sm sm:text-base font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2">{product.name}</h3>
+              <h3 className="text-xs sm:text-base font-semibold text-slate-800 dark:text-white leading-snug mb-1 line-clamp-2">{product.name}</h3>
             </Link>
-            <p className="text-xs text-slate-500 mb-2 line-clamp-1">{product.specs?.procesor}{product.specs?.display ? `, ${product.specs.display}` : ''}</p>
+            <p className="text-[10px] sm:text-xs text-slate-500 mb-2 line-clamp-1">{product.specs?.procesor}{product.specs?.display ? `, ${product.specs.display}` : ''}</p>
 
             {/* Spacer */}
             <div className="flex-1 min-h-1" />
 
             {/* Price */}
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="text-lg sm:text-xl font-extrabold text-primary-dark dark:text-primary">{formatPrice(product.price)}</span>
-              {product.oldPrice && <span className="text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}
+            <div className="flex items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+              <span className="text-sm sm:text-xl font-extrabold text-slate-900 dark:text-blue-300">{formatPrice(product.price)}</span>
+              {product.oldPrice && <span className="text-[10px] sm:text-xs text-slate-400 line-through">{formatPrice(product.oldPrice)}</span>}
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2">
-              <button onClick={() => addToCart(product)} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-1.5">
-                <ShoppingCart className="w-4 h-4" /> {t('catalog.addToCart')}
+            <div className="flex gap-1.5 sm:gap-2">
+              <button onClick={() => addToCart(product)} className="flex-1 bg-primary hover:bg-primary-dark text-white py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-1 shadow-sm hover:shadow-md">
+                <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" /> {t('catalog.addToCart')}
               </button>
-              <button onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)} className={`p-2.5 rounded-xl border transition-colors ${isInWishlist(product.id) ? 'border-accent text-accent' : 'border-slate-200 text-slate-400 hover:text-accent hover:border-accent'}`}>
-                <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-accent' : ''}`} />
+              <button onClick={() => isInWishlist(product.id) ? removeWishlist(product.id) : toggleWishlist(product)} className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl border transition-all duration-200 ${isInWishlist(product.id) ? 'border-rose-300 dark:border-rose-500/30 text-rose-500' : 'border-slate-100 dark:border-white/[0.08] text-slate-400 hover:text-rose-500 hover:border-rose-200 dark:hover:border-rose-500/30'}`}>
+                <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? 'fill-rose-500' : ''}`} />
               </button>
             </div>
           </div>
