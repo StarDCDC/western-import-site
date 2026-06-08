@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 500">
+  <g transform="translate(232,150)">
+    <!-- Apple logo -->
+    <path fill="#FFFFFF" d="M155 80c-3-21 10-43 32-55 12 18 8 43-8 58-12 16-35 22-48 14-2-18 10-35 24-42v25z"/>
+    <path fill="#FFFFFF" d="M175 110c20-28 42-25 45-25 0 0-16 48-42 48-14 0-25-12-25-27 0-8 5-15 10-20l12 24z"/>
+    <text x="60" y="220" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="140" font-weight="300" letter-spacing="-5">Pay</text>
+  </g>
+</svg>

@@ -66,17 +66,15 @@ export default function Header() {
           {/* Logo */}
           {/* Desktop/Tablet Logo — logo mare */}
           <Link href="/" className="hidden sm:flex items-center gap-2.5 shrink-0">
-            <div className="h-[44px] w-auto max-w-[180px] overflow-hidden dark:overflow-visible">
-              <Image src="/logo.jpg" alt="Western Import" width={180} height={44} sizes="180px" className="h-[44px] w-auto object-contain dark:hidden" priority />
-              <Image src="/logo-dark.jpg" alt="Western Import" width={180} height={44} sizes="180px" className="h-[44px] w-auto object-contain hidden dark:block" priority />
+            <div className="h-[44px] w-auto max-w-[180px]">
+              <Image src="/logo-dark.jpg" alt="Western Import" width={180} height={44} sizes="180px" className="h-[44px] w-auto object-contain" priority />
             </div>
           </Link>
 
           {/* Mobile logo — logo mare compact */}
           <Link href="/" className="sm:hidden shrink-0">
-            <div className="h-[34px] w-auto max-w-[140px] overflow-hidden dark:overflow-visible">
-              <Image src="/logo.jpg" alt="Western Import" width={140} height={34} sizes="140px" className="h-[34px] w-auto object-contain dark:hidden" />
-              <Image src="/logo-dark.jpg" alt="Western Import" width={140} height={34} sizes="140px" className="h-[34px] w-auto object-contain hidden dark:block" />
+            <div className="h-[34px] w-auto max-w-[140px]">
+              <Image src="/logo-dark.jpg" alt="Western Import" width={140} height={34} sizes="140px" className="h-[34px] w-auto object-contain" />
             </div>
           </Link>
 
