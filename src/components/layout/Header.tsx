@@ -263,7 +263,7 @@ export default function Header() {
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-2 py-2.5 text-sm font-medium ${
-                      item.highlight ? 'text-accent font-bold' : 'text-slate-300 dark:text-slate-700'
+                      item.highlight ? 'text-accent font-bold' : 'text-slate-100 dark:text-slate-300'
                     }`}
                   >
                     <span>{item.icon}</span>

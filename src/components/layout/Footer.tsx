@@ -93,13 +93,19 @@ export default function Footer() {
               href="https://www.google.com/maps?q=Strada+Podgorenilor+17+Chisinau+Moldova"
               target="_blank"
               rel="noopener noreferrer"
-              className="block rounded-2xl overflow-hidden h-[180px] relative group cursor-pointer"
+              className="block rounded-2xl overflow-hidden h-[180px] relative group cursor-pointer border border-white/10 hover:border-white/20 transition-colors"
             >
-              <img src="/map-location.png" alt="Western Import" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end justify-center pb-3">
-                <span className="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                  📍 {t('footer.location')}
-                </span>
+              <img src="/map-location.png" alt="Western Import — Strada Podgorenilor 17, Chișinău" className="w-full h-full object-cover" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors" />
+              <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">Strada Podgorenilor 17</p>
+                  <p className="text-[10px] text-white/70">Chișinău, Moldova</p>
+                </div>
               </div>
             </a>
           </div>
